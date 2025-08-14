@@ -37,13 +37,14 @@
     "provenance": true
   },
   "devDependencies": {
-    "dharma-core": "workspace:*",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.1.10",
+    "dharma-core": "workspace:*",
     "react": "^19.1.1"
   },
   "peerDependencies": {
-    "react": "^19.1.1",
-    "dharma-core": "^0.1.0"
+    "dharma-core": "^0.1.0",
+    "react": "^19.1.1"
   }
 }
