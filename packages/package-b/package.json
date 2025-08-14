@@ -1,0 +1,39 @@
+{
+  "name": "@fransek/package-b",
+  "version": "0.2.0",
+  "author": "Frans Ekman <fransedvinekman@gmail.com>",
+  "license": "MIT",
+  "description": "My package description",
+  "keywords": [],
+  "homepage": "https://github.com/fransek/package-monorepo-template/tree/main/packages/package-b#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fransek/package-monorepo-template/tree/main/packages/package-b"
+  },
+  "bugs": {
+    "url": "https://github.com/fransek/package-monorepo-template/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "coverage": "vitest --run --coverage --passWithNoTests",
+    "lint": "eslint"
+  },
+  "publishConfig": {
+    "provenance": true
+  }
+}

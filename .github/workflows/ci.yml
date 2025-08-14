@@ -1,0 +1,49 @@
+name: 🤖 CI
+
+on:
+  - push
+
+jobs:
+  unit-tests:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run tests
+        run: pnpm run test:coverage
+
+  lint:
+    name: Run linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: ESLint
+        run: pnpm lint
+
+      - name: Typescript
+        if: always()
+        run: pnpm tsc --noEmit -p tsconfig.json
+
+      - name: Prettier
+        if: always()
+        run: pnpm prettier --check packages/*/src
