@@ -1,11 +1,11 @@
 {
-  "homepage": "https://github.com/fransek/package-monorepo-template#readme",
+  "homepage": "https://github.com/fransek/dharma#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fransek/package-monorepo-template"
+    "url": "git+https://github.com/fransek/dharma"
   },
   "bugs": {
-    "url": "https://github.com/fransek/package-monorepo-template/issues"
+    "url": "https://github.com/fransek/dharma/issues"
   },
   "scripts": {
     "build": "pnpm -r build",
@@ -31,7 +31,9 @@
     "eslint": "^9.33.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "happy-dom": "^18.0.1",
     "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
     "lint-staged": "^16.1.5",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.2.0",

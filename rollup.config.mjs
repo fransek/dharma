@@ -1,8 +1,9 @@
 import typescript from "@rollup/plugin-typescript";
 
 /** @type {() => import('rollup').RollupOptions} */
-const createConfig = (format, dir) => ({
+export const createConfig = (format, dir, external) => ({
   input: "src/index.ts",
+  external,
   output: {
     dir,
     format,
@@ -19,8 +20,3 @@ const createConfig = (format, dir) => ({
     }),
   ],
 });
-
-export default [
-  createConfig("cjs", "dist/cjs"),
-  createConfig("esm", "dist/esm"),
-];

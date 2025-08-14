@@ -1,17 +1,17 @@
 {
-  "name": "@fransek/package-a",
-  "version": "0.2.0",
+  "name": "dharma-core",
+  "version": "0.1.0",
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
   "description": "My package description",
   "keywords": [],
-  "homepage": "https://github.com/fransek/package-monorepo-template/tree/main/packages/package-a#readme",
+  "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-core#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fransek/package-monorepo-template/tree/main/packages/package-a"
+    "url": "git+https://github.com/fransek/dharma/tree/main/packages/dharma-core"
   },
   "bugs": {
-    "url": "https://github.com/fransek/package-monorepo-template/issues"
+    "url": "https://github.com/fransek/dharma/issues"
   },
   "files": [
     "dist"

@@ -3,7 +3,7 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     projects: ["packages/*"],
-    environment: "node",
+    environment: "jsdom",
     include: ["src/**/*.test.{ts,tsx}"],
     coverage: {
       include: ["src/**/*.{ts,tsx}"],

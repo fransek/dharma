@@ -20,6 +20,6 @@ export default [
     },
   },
   {
-    ignores: ["dist/", "coverage/"],
+    ignores: ["packages/*/dist/", "packages/*/coverage/"],
   },
 ];
