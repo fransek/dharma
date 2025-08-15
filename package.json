@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "pnpm -F \"./packages/*\" build",
-    "ci:publish": "pnpm build && changeset publish",
+    "ci:publish": "changeset publish",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui --coverage",

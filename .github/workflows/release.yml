@@ -36,7 +36,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Create release PR or build and publish packages
+      - name: Build packages
+        run: pnpm build
+
+      - name: Create release PR or publish packages
         uses: changesets/action@v1
         with:
           publish: pnpm ci:publish
