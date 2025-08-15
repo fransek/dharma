@@ -8,7 +8,7 @@
     "url": "https://github.com/fransek/dharma/issues"
   },
   "scripts": {
-    "build": "pnpm -r build",
+    "build": "pnpm -F \"./packages/*\" build",
     "ci:publish": "pnpm build && changeset publish",
     "test": "vitest --run",
     "test:watch": "vitest",

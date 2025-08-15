@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Statekit examples</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="src/logo.svg" type="image/svg+xml" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap");
+    </style>
+    <style type="text/tailwindcss">
+      html {
+        color-scheme: dark;
+      }
+      body {
+        font-family: "Geist", serif;
+      }
+      * {
+        @apply border-gray-800 underline-offset-4;
+      }
+      body {
+        @apply bg-gray-900 text-gray-200;
+      }
+      input {
+        @apply border rounded p-1 bg-gray-950;
+      }
+      button {
+        @apply border rounded px-4 py-1;
+      }
+      a {
+        @apply hover:underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
