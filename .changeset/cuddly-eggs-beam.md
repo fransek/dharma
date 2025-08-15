@@ -3,5 +3,4 @@
 "dharma-react": minor
 ---
 
-- Simplified API
-- Configuration tweaks
+Simplified API and minor configuration tweaks
