@@ -1,2 +1,3 @@
 lint-staged
+pnpm build
 vitest run --changed --silent
