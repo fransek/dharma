@@ -1,5 +1,11 @@
 # dharma-core
 
+## 0.2.1
+
+### Patch Changes
+
+- [#4](https://github.com/fransek/dharma/pull/4) [`706c988`](https://github.com/fransek/dharma/commit/706c98838bbd033d20dbff6e41595ac5b0d69ad2) Thanks [@fransek](https://github.com/fransek)! - Updated some jsdoc comments
+
 ## 0.2.0
 
 ### Minor Changes
