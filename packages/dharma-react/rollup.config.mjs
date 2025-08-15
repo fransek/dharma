@@ -1,6 +1,12 @@
 import { createConfig } from "../../rollup.config.mjs";
 
+const external = ["dharma-core", "react"];
+
 export default [
-  createConfig("cjs", "dist/cjs", ["dharma-core", "react"]),
-  createConfig("esm", "dist/esm", ["dharma-core", "react"]),
+  createConfig("cjs", "dist/cjs", {
+    external,
+  }),
+  createConfig("esm", "dist/esm", {
+    external,
+  }),
 ];

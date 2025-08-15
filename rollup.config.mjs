@@ -1,9 +1,13 @@
 import typescript from "@rollup/plugin-typescript";
 
-/** @type {() => import('rollup').RollupOptions} */
-export const createConfig = (format, dir, external) => ({
+/**
+ * @param {import('rollup').ModuleFormat} format
+ * @param {string} dir
+ * @param {import('rollup').RollupOptions} [extendConfig]
+ * @returns {import('rollup').RollupOptions}
+ */
+export const createConfig = (format, dir, extendConfig = {}) => ({
   input: "src/index.ts",
-  external,
   output: {
     dir,
     format,
@@ -19,4 +23,5 @@ export const createConfig = (format, dir, external) => ({
       exclude: ["**/*.test.ts", "**/*.spec.ts"],
     }),
   ],
+  ...extendConfig,
 });

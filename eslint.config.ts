@@ -1,6 +1,7 @@
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import tsParser from "@typescript-eslint/parser";
+import { Linter } from "eslint";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -20,6 +21,6 @@ export default [
     },
   },
   {
-    ignores: ["packages/*/dist/", "packages/*/coverage/"],
+    ignores: ["packages/*/dist/", "coverage/"],
   },
-];
+] satisfies Linter.Config[];
