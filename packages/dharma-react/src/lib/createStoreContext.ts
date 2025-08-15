@@ -19,7 +19,8 @@ export type StoreContext<
  *
  * @example
  * ```tsx
- * import { createStore, createStoreContext } from "@fransek/statekit";
+ * import { createStore } from "dharma-core";
+ * import { createStoreContext } from "dharma-react";
  * import { useMemo } from "react";
  *
  * const StoreContext = createStoreContext((initialCount: number) =>

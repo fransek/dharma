@@ -1,7 +1,6 @@
 import { act, render, renderHook, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createStore } from "dharma-core";
-import React from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { useStore } from "./useStore";
 

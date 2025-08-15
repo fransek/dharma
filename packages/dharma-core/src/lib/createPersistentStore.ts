@@ -37,7 +37,7 @@ export type PersistentStoreOptions<TState extends object> =
  * @example
  * Basic usage:
  * ```ts
- * import { createPersistentStore } from "@fransek/statekit";
+ * import { createPersistentStore } from "dharma-core";
  *
  * const store = createPersistentStore("count", { count: 0 }, (set) => ({
  *   increment: () => set((state) => ({ count: state.count + 1 })),
@@ -48,7 +48,7 @@ export type PersistentStoreOptions<TState extends object> =
  * @example
  * With superjson serialization and session storage:
  * ```ts
- * import { createPersistentStore } from "@fransek/statekit";
+ * import { createPersistentStore } from "dharma-core";
  * import superjson from "superjson";
  *
  * const store = createPersistentStore(

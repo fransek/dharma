@@ -12,7 +12,7 @@ import { BoundStore, useStore } from "./useStore";
  * @example
  * Basic usage:
  * ```tsx
- * import { useStoreContext } from "@fransek/statekit";
+ * import { useStoreContext } from "dharma-react";
  * import { StoreContext } from "./store";
  *
  * function Counter() {

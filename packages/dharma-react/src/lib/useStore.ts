@@ -21,7 +21,7 @@ export type BoundStore<
  * @example
  * Basic usage:
  * ```tsx
- * import { useStore } from "@fransek/statekit";
+ * import { useStore } from "dharma-react";
  * import { store } from "./store";
  *
  * function Counter() {
