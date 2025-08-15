@@ -27,7 +27,7 @@ export const Nav: FC<Props> = ({ routes }) => {
     >
       <h1 className="font-bold text-xl text-gray-200 mb-2 flex items-center gap-2">
         <Logo size={24} />
-        Statekit examples
+        Dharma examples
       </h1>
       {routes.map(({ path, title }) => (
         <Link key={path} to={path} activeProps={activeProps} onClick={close}>

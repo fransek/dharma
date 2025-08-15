@@ -10,7 +10,7 @@ import { StateModifier } from "./createStore";
  *
  * @example
  * ```ts
- * import { createStore, merge, StateModifier } from "@fransek/statekit";
+ * import { createStore, merge, StateModifier } from "dharma-core";
  *
  * const store = createStore(
  *   {

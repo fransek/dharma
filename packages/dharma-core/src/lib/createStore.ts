@@ -53,7 +53,7 @@ export type StoreOptions<TState extends object> = {
  *
  * @example
  * ```ts
- * import { createStore } from "@fransek/statekit";
+ * import { createStore } from "dharma-core";
  *
  * const store = createStore({ count: 0 }, (set) => ({
  *   increment: () => set((state) => ({ count: state.count + 1 })),
