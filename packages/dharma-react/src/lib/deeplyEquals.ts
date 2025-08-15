@@ -12,10 +12,24 @@ export const deeplyEquals = (a: unknown, b: unknown): boolean => {
     return false;
   }
 
-  if (
-    Object.getPrototypeOf(a) !== Object.prototype &&
-    Object.getPrototypeOf(b) !== Object.prototype
-  ) {
+  const protoA = Object.getPrototypeOf(a);
+  const protoB = Object.getPrototypeOf(b);
+
+  if (protoA !== protoB) {
+    return false;
+  }
+
+  if (protoA === Array.prototype) {
+    const arrA = a as unknown[];
+    const arrB = b as unknown[];
+    if (arrA.length !== arrB.length) return false;
+    for (let i = 0; i < arrA.length; i++) {
+      if (!deeplyEquals(arrA[i], arrB[i])) return false;
+    }
+    return true;
+  }
+
+  if (protoA !== Object.prototype) {
     return false;
   }
 

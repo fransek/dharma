@@ -54,12 +54,19 @@ describe("deeplyEquals", () => {
     expect(deeplyEquals(null, obj)).toBe(false);
   });
 
-  it("should return false for any two values with different references except object literals", () => {
+  it("should return true for identical arrays", () => {
+    const b = deeplyEquals([1, 2, 3], [1, 2, 3]);
+    expect(b).toBe(true);
+  });
+
+  it("should return false for different arrays", () => {
+    const b = deeplyEquals([1, 2, 3], [1, 2, 4]);
+    expect(b).toBe(false);
+  });
+
+  it("should return false for everything else", () => {
     const a = deeplyEquals(new Date(2021, 1, 1), new Date(2021, 1, 1));
     expect(a).toBe(false);
-
-    const b = deeplyEquals([1, 2, 3], [1, 2, 3]);
-    expect(b).toBe(false);
 
     const c = deeplyEquals(vi.fn(), vi.fn());
     expect(c).toBe(false);
