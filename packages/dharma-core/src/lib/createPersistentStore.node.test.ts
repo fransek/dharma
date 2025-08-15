@@ -1,16 +1,23 @@
 // @vitest-environment node
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createPersistentStore } from "./createPersistentStore";
 
 describe("createPersistentStore", () => {
+  const actions = vi.fn();
   it("should not throw in a node environment", () => {
-    expect(() => createPersistentStore("test", { count: 0 })).not.toThrow();
     expect(() =>
-      createPersistentStore("test", { count: 0 }, null, { storage: "local" }),
+      createPersistentStore("test", { count: 0 }, actions),
     ).not.toThrow();
     expect(() =>
-      createPersistentStore("test", { count: 0 }, null, { storage: "session" }),
+      createPersistentStore("test", { count: 0 }, actions, {
+        storage: "local",
+      }),
+    ).not.toThrow();
+    expect(() =>
+      createPersistentStore("test", { count: 0 }, actions, {
+        storage: "session",
+      }),
     ).not.toThrow();
   });
 });

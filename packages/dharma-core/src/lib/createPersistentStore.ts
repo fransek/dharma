@@ -29,7 +29,7 @@ export type PersistentStoreOptions<TState extends object> =
  *
  * @param {string} key - A unique key to identify the store in storage.
  * @param {TState} initialState - The initial state of the store.
- * @param {DefineActions<TState, TActions> | null} [defineActions] - A function to define actions for the store.
+ * @param {DefineActions<TState, TActions>} [defineActions] - A function to define actions for the store.
  * @param {PersistentStoreOptions<TState>} [options] - Additional options for the persistent store.
  *
  * @returns {Store<TState, TActions>} The created store.
@@ -73,13 +73,13 @@ export const createPersistentStore = <
 >(
   key: string,
   initialState: TState,
-  defineActions: DefineActions<TState, TActions> | null = null,
+  defineActions: DefineActions<TState, TActions>,
   {
     storage: _storage = "local",
     serializer = JSON,
     onAttach,
     onDetach,
-    onStateChange,
+    onChange,
     ...options
   }: PersistentStoreOptions<TState> = {},
 ): Store<TState, TActions> => {
@@ -128,8 +128,8 @@ export const createPersistentStore = <
       onDetach?.(...args);
       window.removeEventListener("focus", updateState);
     },
-    onStateChange: (state, ...args) => {
-      onStateChange?.(state, ...args);
+    onChange: (state, ...args) => {
+      onChange?.(state, ...args);
       updateSnapshot(state);
     },
     ...options,

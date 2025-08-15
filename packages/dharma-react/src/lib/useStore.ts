@@ -1,4 +1,4 @@
-import { StateModifier, Store } from "dharma-core";
+import { Store } from "dharma-core";
 import { useRef, useSyncExternalStore } from "react";
 import { deeplyEquals } from "./deeplyEquals";
 
@@ -9,7 +9,6 @@ export type BoundStore<
 > = {
   state: TSelection;
   actions: TActions;
-  set: (stateModifier: StateModifier<TState>) => TState;
 };
 
 /**
@@ -60,7 +59,7 @@ export const useStore = <
   TActions extends object,
   TSelection = TState,
 >(
-  { get, set, subscribe, actions }: Store<TState, TActions>,
+  { get, subscribe, actions }: Store<TState, TActions>,
   select?: (state: TState) => TSelection,
 ): BoundStore<TState, TActions, TSelection> => {
   const latestSnapshotRef = useRef<TSelection | null>(null);
@@ -82,5 +81,5 @@ export const useStore = <
     getState,
   ) as TSelection;
 
-  return { state, actions, set };
+  return { state, actions };
 };

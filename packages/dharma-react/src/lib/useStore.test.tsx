@@ -26,18 +26,7 @@ describe("useStore", () => {
         decrement: expect.any(Function),
         reset: expect.any(Function),
       },
-      set: expect.any(Function),
     });
-  });
-
-  it("should call the set function with the state modifier", () => {
-    const { result } = renderHook(() => useStore(store));
-
-    act(() => {
-      result.current.set((state) => ({ count: state.count + 1 }));
-    });
-
-    expect(result.current.state).toStrictEqual({ count: 1 });
   });
 
   it("should call the action functions", () => {

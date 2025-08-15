@@ -43,7 +43,6 @@ describe("useStoreContext", () => {
         decrement: expect.any(Function),
         reset: expect.any(Function),
       },
-      set: expect.any(Function),
     });
   });
 

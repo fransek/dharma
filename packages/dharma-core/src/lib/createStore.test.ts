@@ -2,22 +2,24 @@ import { describe, expect, it, vi } from "vitest";
 import { createStore } from "./createStore";
 
 describe("createStore", () => {
+  const actions = vi.fn();
+
   it("should initialize with the given state", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState);
+    const store = createStore(initialState, actions);
     expect(store.get()).toEqual(initialState);
   });
 
   it("should update the state using set", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState);
+    const store = createStore(initialState, actions);
     store.set({ count: 1 });
     expect(store.get().count).toBe(1);
   });
 
   it("should notify subscribers on state change", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState);
+    const store = createStore(initialState, actions);
     const listener = vi.fn();
     store.subscribe(listener);
     store.set({ count: 1 });
@@ -26,7 +28,7 @@ describe("createStore", () => {
 
   it("should unsubscribe listeners correctly", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState);
+    const store = createStore(initialState, actions);
     const listener = vi.fn();
     const unsubscribe = store.subscribe(listener);
     unsubscribe();
@@ -47,38 +49,18 @@ describe("createStore", () => {
     expect(store.actions.getCount()).toBe(0);
   });
 
-  it("should call onStateChange if provided", () => {
+  it("should call onChange if provided", () => {
     const initialState = { count: 0, other: "foo" };
-    const store = createStore(initialState, null, {
-      onStateChange: (state, set) => set({ other: state.other + "bar" }),
+    const store = createStore(initialState, actions, {
+      onChange: (state, set) => set({ other: state.other + "bar" }),
     });
     store.set({ count: 1 });
     expect(store.get()).toEqual({ count: 1, other: "foobar" });
   });
 
-  it("should reset on detach if resetOnDetach is true", () => {
-    const initialState = { count: 0 };
-    const store = createStore(initialState, null, { resetOnDetach: true });
-    const listener = vi.fn();
-    const unsubscribe = store.subscribe(listener);
-    store.set({ count: 1 });
-    unsubscribe();
-    expect(store.get()).toEqual(initialState);
-  });
-
-  it("should not reset on detach if resetOnDetach is false", () => {
-    const initialState = { count: 0 };
-    const store = createStore(initialState, null, { resetOnDetach: false });
-    const listener = vi.fn();
-    const unsubscribe = store.subscribe(listener);
-    store.set({ count: 1 });
-    unsubscribe();
-    expect(store.get()).toEqual({ count: 1 });
-  });
-
   it("should call onAttach on first subscribe", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState, null, {
+    const store = createStore(initialState, actions, {
       onAttach: (state, set) => set({ count: state.count + 1 }),
     });
     const listener = vi.fn();
@@ -88,7 +70,7 @@ describe("createStore", () => {
 
   it("should call onDetach on last unsubscribe", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState, null, {
+    const store = createStore(initialState, actions, {
       onDetach: (state, set) => set({ count: state.count + 1 }),
     });
     const listener = vi.fn();
@@ -99,7 +81,7 @@ describe("createStore", () => {
 
   it("should call onLoad on store creation", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState, null, {
+    const store = createStore(initialState, actions, {
       onLoad: (state, set) => set({ count: state.count + 1 }),
     });
     expect(store.get().count).toBe(1);

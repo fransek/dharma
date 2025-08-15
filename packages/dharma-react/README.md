@@ -1,1 +1,1 @@
-# Package B
+# Dharma React

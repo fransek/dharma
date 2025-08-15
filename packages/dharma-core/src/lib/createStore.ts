@@ -39,16 +39,14 @@ export type StoreOptions<TState extends object> = {
   /** Invoked when the store is unsubscribed from. */
   onDetach?: StoreEventHandler<TState>;
   /** Invoked whenever the state changes. */
-  onStateChange?: StoreEventHandler<TState>;
-  /** Whether to reset the state to the initial state when the store is detached. */
-  resetOnDetach?: boolean;
+  onChange?: StoreEventHandler<TState>;
 };
 
 /**
  * Creates a store with an initial state and actions that can modify the state.
  *
  * @param {TState} initialState - The initial state of the store.
- * @param {DefineActions<TState, TActions> | null} [defineActions] - A function that defines actions that can modify the state.
+ * @param {DefineActions<TState, TActions>} [defineActions] - A function that defines actions that can modify the state.
  * @param {StoreOptions<TState>} [options] - Additional options for the store.
  *
  * @returns {Store<TState, TActions>} The created store with state management methods.
@@ -70,14 +68,8 @@ export const createStore = <
   TActions extends object = Record<never, never>,
 >(
   initialState: TState,
-  defineActions: DefineActions<TState, TActions> | null = null,
-  {
-    onLoad,
-    onAttach,
-    onDetach,
-    onStateChange,
-    resetOnDetach = false,
-  }: StoreOptions<TState> = {},
+  defineActions: DefineActions<TState, TActions>,
+  { onLoad, onAttach, onDetach, onChange }: StoreOptions<TState> = {},
 ): Store<TState, TActions> => {
   let state = initialState;
   const listeners = new Set<Listener>();
@@ -90,7 +82,7 @@ export const createStore = <
   };
 
   const dispatch = () => {
-    onStateChange?.(state, setSilently);
+    onChange?.(state, setSilently);
     listeners.forEach((listener) => listener());
   };
 
@@ -112,10 +104,6 @@ export const createStore = <
 
       if (listeners.size === 0) {
         onDetach?.(state, set);
-
-        if (resetOnDetach) {
-          set(initialState);
-        }
       }
     };
   };
