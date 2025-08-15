@@ -1,6 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { createStore } from "dharma-core";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { describe, expect, it } from "vitest";
 import { createStoreContext } from "./createStoreContext";
 import { useStoreContext } from "./useStoreContext";
