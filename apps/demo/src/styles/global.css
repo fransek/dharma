@@ -1,0 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Nata+Sans:wght@100..900&display=swap");
+@import "tailwindcss";
+
+html {
+  color-scheme: dark;
+}
+body {
+  font-family: "Nata Sans", sans-serif;
+  font-optical-sizing: auto;
+}
+* {
+  @apply border-gray-800 underline-offset-4;
+}
+body {
+  @apply bg-gray-900 text-gray-200;
+}
+input {
+  @apply border rounded p-1 bg-gray-950;
+}
+button {
+  @apply border rounded px-4 py-1 cursor-pointer;
+}
+a {
+  @apply hover:underline;
+}
