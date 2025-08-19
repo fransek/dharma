@@ -21,12 +21,14 @@
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "require": "./dist/cjs/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
+  "types": "dist/index.d.ts",
   "sideEffects": false,
   "scripts": {
-    "build": "rollup -c",
+    "build": "rm -rf dist && rollup -c",
     "dev": "rollup -c -w",
     "test": "vitest --run",
     "test:watch": "vitest",

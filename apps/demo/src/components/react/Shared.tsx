@@ -1,5 +1,4 @@
-import { createStore, merge, StateModifier } from "dharma-core";
-import { useStore } from "dharma-react";
+import { createStore, merge, useStore, type StateModifier } from "dharma-react";
 
 interface CountState {
   count: number;

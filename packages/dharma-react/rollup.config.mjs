@@ -1,6 +1,6 @@
-import { createConfig } from "../../rollup.config.mjs";
+import { createConfig, createDtsConfig } from "../../rollup.config.mjs";
 
-const external = ["dharma-core", "react"];
+const external = ["react"];
 
 export default [
   createConfig("cjs", "dist/cjs", {
@@ -8,5 +8,8 @@ export default [
   }),
   createConfig("esm", "dist/esm", {
     external,
+  }),
+  createDtsConfig("dist", {
+    includeExternal: ["dharma-core"],
   }),
 ];

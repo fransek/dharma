@@ -1,5 +1,4 @@
-import { createPersistentStore } from "dharma-core";
-import { useStore } from "dharma-react";
+import { createPersistentStore, useStore } from "dharma-react";
 
 // Create the store
 const store = createPersistentStore(
