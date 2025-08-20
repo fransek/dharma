@@ -9,6 +9,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@apps/*": ["./apps/*"],
+      "@packages/*": ["./packages/*"]
+    }
   }
 }

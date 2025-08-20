@@ -1,4 +1,6 @@
 import { createStore, useStore } from "dharma-react";
+import { RefreshCw } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface User {
   id: number;
@@ -12,10 +14,8 @@ interface State {
   loading: boolean;
 }
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const fetchUsers = async () => {
-  await sleep(500);
+  await new Promise((resolve) => setTimeout(resolve, 500));
   const response = await fetch("https://jsonplaceholder.typicode.com/users");
   return await response.json();
 };
@@ -47,12 +47,15 @@ export function Async() {
   } = useStore(store);
 
   return (
-    <div className="flex flex-col items-start gap-4">
+    <div className="container-md">
       {loading ? (
         <div data-testid="loading">Fetching users...</div>
       ) : (
         <>
-          <button onClick={refresh}>Refresh</button>
+          <Button onClick={refresh} className="w-fit">
+            Refresh
+            <RefreshCw />
+          </Button>
           {users.map((user, index) => (
             <div key={user.id}>
               <div

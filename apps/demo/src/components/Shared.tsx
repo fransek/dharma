@@ -1,4 +1,9 @@
 import { createStore, merge, useStore, type StateModifier } from "dharma-react";
+import { useRef } from "react";
+import { cn } from "../lib/utils";
+import { Button } from "./ui/button";
+import { Checkbox } from "./ui/checkbox";
+import { Input } from "./ui/input";
 
 interface CountState {
   count: number;
@@ -22,6 +27,12 @@ const initialState: SharedState = {
     input: "",
     todos: [],
   },
+};
+
+const useRenderCount = () => {
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  return renderCount.current;
 };
 
 const sharedStore = createStore(initialState, (set, get) => {
@@ -67,8 +78,6 @@ const sharedStore = createStore(initialState, (set, get) => {
 const useSharedStore = <T = SharedState,>(select?: (state: SharedState) => T) =>
   useStore(sharedStore, select);
 
-let counterRenderCount = 0;
-
 const Counter = () => {
   const {
     state: { count },
@@ -77,22 +86,22 @@ const Counter = () => {
     },
   } = useSharedStore((state) => state.countState);
 
+  const renderCount = useRenderCount();
+
   return (
-    <div className="flex flex-col gap-4 border p-4 rounded items-start">
+    <div className="flex flex-col gap-4 card items-start">
       <h2 className="font-bold">Counter</h2>
       <div className="grid grid-cols-3 text-center items-center">
-        <button onClick={decrement}>-</button>
+        <Button onClick={decrement}>-</Button>
         <div aria-label="count">{count}</div>
-        <button onClick={increment}>+</button>
+        <Button onClick={increment}>+</Button>
       </div>
       <div className="text-sm" data-testid="counterRenderCount">
-        Render count: {++counterRenderCount}
+        Render count: {renderCount}
       </div>
     </div>
   );
 };
-
-let todoRenderCount = 0;
 
 const Todo = () => {
   const {
@@ -102,25 +111,24 @@ const Todo = () => {
     },
   } = useSharedStore((state) => state.todoState);
 
+  const renderCount = useRenderCount();
+
   return (
-    <div
-      className="flex flex-col gap-4 border p-4 rounded items-start"
-      id="todo"
-    >
+    <div className="flex flex-col gap-4 card items-start" id="todo">
       <h2 className="font-bold">To do</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           addTodo();
         }}
+        className="flex gap-2 w-full"
       >
-        <input
+        <Input
           aria-label="Add a new todo"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="mr-2"
         />
-        <button type="submit">Add</button>
+        <Button type="submit">Add</Button>
       </form>
       {todos.length > 0 && (
         <ul>
@@ -128,17 +136,28 @@ const Todo = () => {
             <li
               key={todo.title}
               data-testid={`todo-${index}`}
-              role="button"
-              onClick={() => toggleTodo(index)}
-              className={`list-disc list-inside ${todo.complete && "line-through"}`}
+              className="flex items-center gap-2"
             >
-              {todo.title}
+              <Checkbox
+                checked={todo.complete}
+                onCheckedChange={() => toggleTodo(index)}
+                id={`todo-${index}`}
+              />
+              <label
+                htmlFor={`todo-${index}`}
+                className={cn(
+                  "transition-colors",
+                  todo.complete && "line-through text-gray-400",
+                )}
+              >
+                {todo.title}
+              </label>
             </li>
           ))}
         </ul>
       )}
       <div className="text-sm" data-testid="todoRenderCount">
-        Render count: {++todoRenderCount}
+        Render count: {renderCount}
       </div>
     </div>
   );
@@ -146,7 +165,7 @@ const Todo = () => {
 
 export const Shared = () => {
   return (
-    <div className="flex flex-col gap-4 w-fit">
+    <div className="container-md">
       <Counter />
       <Todo />
     </div>

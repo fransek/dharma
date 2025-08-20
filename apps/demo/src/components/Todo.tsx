@@ -1,4 +1,8 @@
 import { createStore, useStore } from "dharma-react";
+import { cn } from "../lib/utils";
+import { Button } from "./ui/button";
+import { Checkbox } from "./ui/checkbox";
+import { Input } from "./ui/input";
 
 interface TodoState {
   input: string;
@@ -40,21 +44,21 @@ export const Todo = () => {
   } = useStore(store);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 container-md">
       <h2 className="font-bold">To do</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           addTodo();
         }}
+        className="flex gap-2"
       >
-        <input
+        <Input
           aria-label="Add a new todo"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="mr-2"
         />
-        <button type="submit">Add</button>
+        <Button type="submit">Add</Button>
       </form>
       {todos.length > 0 && (
         <ul>
@@ -62,11 +66,22 @@ export const Todo = () => {
             <li
               key={todo.title}
               data-testid={`todo-${index}`}
-              role="button"
-              onClick={() => toggleTodo(index)}
-              className={`list-disc list-inside cursor-pointer ${todo.complete && "line-through"}`}
+              className="flex items-center gap-2"
             >
-              {todo.title}
+              <Checkbox
+                checked={todo.complete}
+                onCheckedChange={() => toggleTodo(index)}
+                id={`todo-${index}`}
+              />
+              <label
+                htmlFor={`todo-${index}`}
+                className={cn(
+                  "transition-colors",
+                  todo.complete && "line-through text-gray-400",
+                )}
+              >
+                {todo.title}
+              </label>
             </li>
           ))}
         </ul>

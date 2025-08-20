@@ -1,4 +1,6 @@
 import { createPersistentStore, useStore } from "dharma-react";
+import { ExternalLink } from "lucide-react";
+import { Button } from "./ui/button";
 
 // Create the store
 const store = createPersistentStore(
@@ -25,13 +27,16 @@ export const Persistent = () => {
   return (
     <>
       <div className="grid grid-cols-3 text-center items-center">
-        <button onClick={decrement}>-</button>
+        <Button onClick={decrement}>-</Button>
         <div aria-label="count">{count}</div>
-        <button onClick={increment}>+</button>
+        <Button onClick={increment}>+</Button>
       </div>
-      <a target="_blank" href="/">
-        Duplicate this tab
-      </a>
+      <Button asChild variant="link">
+        <a target="_blank" href="/persistent">
+          Duplicate this tab
+          <ExternalLink />
+        </a>
+      </Button>
     </>
   );
 };
