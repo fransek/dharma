@@ -11,27 +11,28 @@ import '../styles/global.css';
     <meta name='generator' content={Astro.generator} />
     <title>Astro Basics</title>
   </head>
-  <body class='dark'>
-    <div class='flex flex-col md:flex-row'>
-      <div class='w-full overflow-auto'>
-        <nav class='p-4 bg-muted'>
-          <ul
-            class='flex flex-row gap-4 overflow-x-auto [scrollbar-width:none]'
-          >
-            <li><a href='/'>dharma-react</a></li>
-            <li class='border-x border-muted-foreground'></li>
-            <li><a href='/counter'>Counter</a></li>
-            <li><a href='/todo'>Todo</a></li>
-            <li><a href='/context'>Context</a></li>
-            <li><a href='/shared'>Shared</a></li>
-            <li><a href='/persistent'>Persistent</a></li>
-            <li><a href='/async'>Async</a></li>
-          </ul>
-        </nav>
-        <main class='px-4 py-8 flex flex-col gap-4 items-center'>
-          <slot />
-        </main>
-      </div>
-    </div>
+  <body
+    class='flex min-h-screen flex-col justify-between bg-background text-foreground antialiased dark'
+  >
+    <header>
+      <nav class='p-4 bg-muted'>
+        <ul class='flex flex-row gap-4 overflow-x-auto [scrollbar-width:none]'>
+          <li><a href='/'>dharma-react</a></li>
+          <li class='border-x border-muted-foreground'></li>
+          <li><a href='/counter'>Counter</a></li>
+          <li><a href='/todo'>Todo</a></li>
+          <li><a href='/context'>Context</a></li>
+          <li><a href='/shared'>Shared</a></li>
+          <li><a href='/persistent'>Persistent</a></li>
+          <li><a href='/async'>Async</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main
+      class='flex flex-1 flex-col items-center gap-8 px-4 py-8 md:px-10 md:py-20'
+    >
+      <slot />
+    </main>
+    <footer class='p-2 text-center'>Footer</footer>
   </body>
 </html>
