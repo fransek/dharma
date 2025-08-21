@@ -47,7 +47,7 @@ export function Async() {
   } = useStore(store);
 
   return (
-    <div className="container-full">
+    <div className="container-full w-fit">
       {loading ? (
         <div data-testid="loading">Fetching users...</div>
       ) : (

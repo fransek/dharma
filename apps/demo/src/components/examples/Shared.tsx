@@ -165,7 +165,7 @@ const Todo = () => {
 
 export const Shared = () => {
   return (
-    <div className="container-full">
+    <div className="container-full w-fit">
       <Counter />
       <Todo />
     </div>

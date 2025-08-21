@@ -15,10 +15,11 @@ import '../styles/global.css';
     class='flex min-h-screen flex-col justify-between bg-background text-foreground antialiased dark'
   >
     <header>
-      <nav class='p-4 bg-muted'>
-        <ul class='flex flex-row gap-4 overflow-x-auto [scrollbar-width:none]'>
-          <li><a href='/'>dharma-react</a></li>
-          <li class='border-x border-muted-foreground'></li>
+      <nav class='card rounded-none border-0 border-b'>
+        <ul
+          class='flex flex-row gap-4 overflow-x-auto [scrollbar-width:none] text-sm'
+        >
+          <li><a href='/' class='font-bold'>dharma-react</a></li>
           <li><a href='/counter'>Counter</a></li>
           <li><a href='/todo'>Todo</a></li>
           <li><a href='/context'>Context</a></li>
@@ -33,6 +34,13 @@ import '../styles/global.css';
     >
       <slot />
     </main>
-    <footer class='p-2 text-center'>Footer</footer>
+    <footer class='p-2 text-center text-sm text-muted-foreground'>
+      <a
+        href='https://github.com/fransek/dharma/tree/main/packages/dharma-react#readme'
+        target='_blank'
+      >
+        dharma-react by Fransek
+      </a>
+    </footer>
   </body>
 </html>

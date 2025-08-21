@@ -78,7 +78,7 @@
 }
 
 .dark {
-  --background: oklch(0.129 0.042 264.695);
+  --background: oklch(15.873% 0.02129 279.276);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
   --card-foreground: oklch(0.984 0.003 247.858);
@@ -130,10 +130,7 @@
 
 @layer components {
   .card {
-    border-radius: var(--radius);
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-    padding: --spacing(4);
+    @apply bg-gradient-to-r from-muted/10 to-card/10 rounded-lg border p-4;
   }
 
   .container-full {

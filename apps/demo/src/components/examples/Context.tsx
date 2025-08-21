@@ -61,7 +61,7 @@ const DoubleCounter = () => {
 };
 
 export const Context = () => (
-  <div className="container-full">
+  <div className="container-full w-fit">
     <div className="container-full card">
       <h2 className="font-bold">Counter 1</h2>
       <Counter initialCount={0} />

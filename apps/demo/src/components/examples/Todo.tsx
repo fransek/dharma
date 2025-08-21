@@ -44,7 +44,7 @@ export const Todo = () => {
   } = useStore(store);
 
   return (
-    <div className="flex flex-col gap-4 container-full">
+    <div className="flex flex-col gap-4 container-full w-fit">
       <h2 className="font-bold">To do</h2>
       <form
         onSubmit={(e) => {
@@ -77,7 +77,7 @@ export const Todo = () => {
                 htmlFor={`todo-${index}`}
                 className={cn(
                   "transition-colors",
-                  todo.complete && "line-through text-gray-400",
+                  todo.complete && "line-through text-foreground/60",
                 )}
               >
                 {todo.title}

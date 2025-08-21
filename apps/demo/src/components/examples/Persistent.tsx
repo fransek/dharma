@@ -25,7 +25,7 @@ export const Persistent = () => {
   } = useStore(store);
 
   return (
-    <>
+    <div className="container-full w-fit items-center">
       <div className="grid grid-cols-3 text-center items-center w-fit">
         <Button onClick={decrement}>-</Button>
         <div aria-label="count">{count}</div>
@@ -37,6 +37,6 @@ export const Persistent = () => {
           <ExternalLink />
         </a>
       </Button>
-    </>
+    </div>
   );
 };

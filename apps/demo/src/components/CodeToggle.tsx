@@ -13,7 +13,10 @@ export const CodeToggle: FC<Props> = ({ component, children }) => {
         <TabsTrigger value="preview">Preview</TabsTrigger>
         <TabsTrigger value="code">Code</TabsTrigger>
       </TabsList>
-      <TabsContent value="preview" className="card">
+      <TabsContent
+        value="preview"
+        className="card flex justify-center items-center min-h-[300px]"
+      >
         {component}
       </TabsContent>
       <TabsContent value="code" className="card">
