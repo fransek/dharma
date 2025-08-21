@@ -1,6 +1,6 @@
 import { createStore, useStore } from "dharma-react";
 import { RefreshCw } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 interface User {
   id: number;
@@ -47,7 +47,7 @@ export function Async() {
   } = useStore(store);
 
   return (
-    <div className="container-md">
+    <div className="container-full">
       {loading ? (
         <div data-testid="loading">Fetching users...</div>
       ) : (

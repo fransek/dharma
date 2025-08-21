@@ -5,7 +5,7 @@ import {
   useStoreContext,
 } from "dharma-react";
 import { useMemo } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 // Create the store context
 const CounterStoreContext = createStoreContext((initialCount: number) =>
@@ -61,7 +61,7 @@ const DoubleCounter = () => {
 };
 
 export const Context = () => (
-  <div className="container-md">
+  <div className="container-full">
     <div className="container-full card">
       <h2 className="font-bold">Counter 1</h2>
       <Counter initialCount={0} />

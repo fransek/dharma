@@ -1,8 +1,8 @@
 import { createStore, useStore } from "dharma-react";
-import { cn } from "../lib/utils";
-import { Button } from "./ui/button";
-import { Checkbox } from "./ui/checkbox";
-import { Input } from "./ui/input";
+import { cn } from "../../lib/utils";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import { Input } from "../ui/input";
 
 interface TodoState {
   input: string;
@@ -44,14 +44,14 @@ export const Todo = () => {
   } = useStore(store);
 
   return (
-    <div className="flex flex-col gap-4 container-md">
+    <div className="flex flex-col gap-4 container-full">
       <h2 className="font-bold">To do</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           addTodo();
         }}
-        className="flex gap-2"
+        className="flex gap-2 max-w-lg"
       >
         <Input
           aria-label="Add a new todo"

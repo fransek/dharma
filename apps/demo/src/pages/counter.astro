@@ -1,8 +1,12 @@
 ---
-import { Counter as Example } from '../components/Counter';
+import { Code } from 'astro/components';
+import code from '../components/examples/Counter?raw';
+import { CounterExample } from '../components/Examples';
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <Example client:load />
+  <CounterExample client:load>
+    <Code code={code} lang='tsx' class='p-4 rounded-lg' />
+  </CounterExample>
 </Layout>

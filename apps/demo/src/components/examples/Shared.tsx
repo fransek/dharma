@@ -1,9 +1,9 @@
 import { createStore, merge, useStore, type StateModifier } from "dharma-react";
 import { useRef } from "react";
-import { cn } from "../lib/utils";
-import { Button } from "./ui/button";
-import { Checkbox } from "./ui/checkbox";
-import { Input } from "./ui/input";
+import { cn } from "../../lib/utils";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import { Input } from "../ui/input";
 
 interface CountState {
   count: number;
@@ -114,14 +114,14 @@ const Todo = () => {
   const renderCount = useRenderCount();
 
   return (
-    <div className="flex flex-col gap-4 card items-start" id="todo">
+    <div className="container-full card" id="todo">
       <h2 className="font-bold">To do</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           addTodo();
         }}
-        className="flex gap-2 w-full"
+        className="flex gap-2 max-w-lg"
       >
         <Input
           aria-label="Add a new todo"
@@ -165,7 +165,7 @@ const Todo = () => {
 
 export const Shared = () => {
   return (
-    <div className="container-md">
+    <div className="container-full">
       <Counter />
       <Todo />
     </div>

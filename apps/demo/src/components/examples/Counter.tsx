@@ -1,5 +1,5 @@
 import { createStore, useStore } from "dharma-react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 
 // Create the store
 const store = createStore({ count: 0 }, (set) => ({
@@ -15,7 +15,7 @@ export const Counter = () => {
   } = useStore(store);
 
   return (
-    <div className="grid grid-cols-3 text-center items-center">
+    <div className="grid grid-cols-3 text-center items-center w-fit">
       <Button onClick={decrement}>-</Button>
       <div aria-label="count">{count}</div>
       <Button onClick={increment}>+</Button>
