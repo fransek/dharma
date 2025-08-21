@@ -7,5 +7,9 @@ import Layout from '../layouts/Layout.astro';
 <Layout>
   <h1 class='text-3xl font-bold'>dharma-react</h1>
   <p>A simple state management library for React.</p>
-  <Code code={code} lang='tsx' class='p-4 rounded-lg' />
+  <Code
+    code={code}
+    lang='tsx'
+    class='p-4 rounded-lg overflow-auto w-full max-w-2xl'
+  />
 </Layout>

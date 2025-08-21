@@ -19,9 +19,7 @@ export const CodeToggle: FC<Props> = ({ component, children }) => {
       >
         {component}
       </TabsContent>
-      <TabsContent value="code" className="card">
-        {children}
-      </TabsContent>
+      <TabsContent value="code">{children}</TabsContent>
     </Tabs>
   );
 };

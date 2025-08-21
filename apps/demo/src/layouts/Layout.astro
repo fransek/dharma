@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Nav from '../components/Nav.tsx';
 ---
 
 <!doctype html>
@@ -9,25 +10,13 @@ import '../styles/global.css';
     <meta name='viewport' content='width=device-width' />
     <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
     <meta name='generator' content={Astro.generator} />
-    <title>Astro Basics</title>
+    <title>dharma-react</title>
   </head>
   <body
     class='flex min-h-screen flex-col justify-between bg-background text-foreground antialiased dark'
   >
-    <header>
-      <nav class='card rounded-none border-0 border-b'>
-        <ul
-          class='flex flex-row gap-4 overflow-x-auto [scrollbar-width:none] text-sm'
-        >
-          <li><a href='/' class='font-bold'>dharma-react</a></li>
-          <li><a href='/counter'>Counter</a></li>
-          <li><a href='/todo'>Todo</a></li>
-          <li><a href='/context'>Context</a></li>
-          <li><a href='/shared'>Shared</a></li>
-          <li><a href='/persistent'>Persistent</a></li>
-          <li><a href='/async'>Async</a></li>
-        </ul>
-      </nav>
+    <header class='sticky top-0 bg-background'>
+      <Nav client:load />
     </header>
     <main
       class='flex flex-1 flex-col items-center gap-8 px-4 py-8 md:px-10 md:py-20'
@@ -39,7 +28,7 @@ import '../styles/global.css';
         href='https://github.com/fransek/dharma/tree/main/packages/dharma-react#readme'
         target='_blank'
       >
-        dharma-react by Fransek
+        dharma-react by fransek
       </a>
     </footer>
   </body>
