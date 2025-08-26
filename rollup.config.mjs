@@ -24,7 +24,9 @@ export const createConfig = (
     ...output,
   },
   plugins: [
-    nodeResolve(),
+    nodeResolve({
+      mainFields: [format === "esm" ? "module" : "main"],
+    }),
     typescript({
       exclude: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
     }),
@@ -35,11 +37,11 @@ export const createConfig = (
 
 /**
  * @param {string} dir
- * @param {import('rollup-plugin-dts').Options} [pluginOptions]
+ * @param {import('rollup-plugin-dts').Options} [dtsOptions]
  * @returns {import('rollup').RollupOptions}
  */
-export const createDtsConfig = (dir, pluginOptions) => ({
+export const createDtsConfig = (dir, dtsOptions) => ({
   input: "src/index.ts",
   output: { dir, format: "esm" },
-  plugins: [dts(pluginOptions)],
+  plugins: [dts(dtsOptions)],
 });
