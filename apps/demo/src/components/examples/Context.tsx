@@ -10,13 +10,13 @@ import { Button } from "../ui/button";
 // Create the store context
 const CounterStoreContext = createStoreContext((initialCount: number) =>
   createStore(
-    { count: initialCount, double: initialCount * 2 },
+    { count: initialCount, isEven: initialCount % 2 === 0 },
     (set) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
     }),
     {
-      onChange: (state, set) => set({ double: state.count * 2 }),
+      onChange: (state, set) => set({ isEven: state.count % 2 === 0 }),
     },
   ),
 );
@@ -24,7 +24,7 @@ const CounterStoreContext = createStoreContext((initialCount: number) =>
 export const Counter = ({ initialCount }: { initialCount: number }) => {
   // Create an instance of the store. Make sure the store is not instantiated on every render.
   const store = useMemo(
-    () => CounterStoreContext.instantiate(initialCount),
+    () => CounterStoreContext.initialize(initialCount),
     [initialCount],
   );
   // Use the store
@@ -35,27 +35,27 @@ export const Counter = ({ initialCount }: { initialCount: number }) => {
 
   return (
     // Provide the store to the context
-    <CounterStoreContext.Provider value={store}>
+    <CounterStoreContext value={store}>
       <div className="grid grid-cols-3 text-center items-center w-fit">
         <Button onClick={decrement}>-</Button>
         <div aria-label="count">{count}</div>
         <Button onClick={increment}>+</Button>
       </div>
       <DoubleCounter />
-    </CounterStoreContext.Provider>
+    </CounterStoreContext>
   );
 };
 
 const DoubleCounter = () => {
   // Access the store from the context
-  const { state: double } = useStoreContext(
+  const { state: isEven } = useStoreContext(
     CounterStoreContext,
-    (state) => state.double,
+    (state) => state.isEven,
   );
 
   return (
     <div className="text-sm" aria-label="double">
-      Double: {double}
+      {isEven ? "Even" : "Odd"}
     </div>
   );
 };
@@ -68,7 +68,7 @@ export const Context = () => (
     </div>
     <div className="container-full card">
       <h2 className="font-bold">Counter 2</h2>
-      <Counter initialCount={10} />
+      <Counter initialCount={5} />
     </div>
   </div>
 );
