@@ -93,6 +93,7 @@ export const createStore = <
   };
 
   const subscribe = (listener: Listener) => {
+    listener();
     if (listeners.size === 0) {
       onAttach?.(state, set);
     }

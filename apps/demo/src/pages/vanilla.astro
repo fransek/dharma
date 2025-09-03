@@ -1,0 +1,29 @@
+---
+import { Button } from '../components/ui/button';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <div class='grid grid-cols-3 text-center items-center w-fit'>
+    <Button id='decrement-btn'>-</Button>
+    <div id='count' aria-label='count'></div>
+    <Button id='increment-btn'>+</Button>
+  </div>
+</Layout>
+
+<script>
+  import { createStore } from 'dharma-react';
+
+  const store = createStore({ count: 0 }, (set) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }));
+
+  const count = document.getElementById('count')!;
+  const decrementBtn = document.getElementById('decrement-btn')!;
+  const incrementBtn = document.getElementById('increment-btn')!;
+
+  store.subscribe(() => (count.innerHTML = store.get().count.toString()));
+  decrementBtn.addEventListener('click', store.actions.decrement);
+  incrementBtn.addEventListener('click', store.actions.increment);
+</script>
