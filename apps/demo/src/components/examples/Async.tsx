@@ -1,4 +1,5 @@
-import { createStore, useStore } from "dharma-react";
+import { createStore } from "dharma-core";
+import { useStore } from "dharma-react";
 import { RefreshCw } from "lucide-react";
 import { Button } from "../ui/button";
 

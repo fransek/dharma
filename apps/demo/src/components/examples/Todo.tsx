@@ -1,4 +1,5 @@
-import { createStore, useStore } from "dharma-react";
+import { createStore } from "dharma-core";
+import { useStore } from "dharma-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";

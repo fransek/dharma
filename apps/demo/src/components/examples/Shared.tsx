@@ -1,4 +1,5 @@
-import { createStore, merge, useStore, type StateModifier } from "dharma-react";
+import { createStore, merge, type StateModifier } from "dharma-core";
+import { useStore } from "dharma-react";
 import { useRef } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";

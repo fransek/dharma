@@ -1,6 +1,4 @@
-import { nodeResolve } from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
-import { dts } from "rollup-plugin-dts";
 
 /**
  * @param {import('rollup').ModuleFormat} format
@@ -19,29 +17,17 @@ export const createConfig = (
     format,
     sourcemap: true,
     preserveModules: true,
-    preserveModulesRoot: "src",
-    exports: "named",
     ...output,
   },
   plugins: [
-    nodeResolve({
-      mainFields: [format === "esm" ? "module" : "main"],
-    }),
     typescript({
-      exclude: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+      compilerOptions: {
+        declaration: true,
+        declarationDir: dir,
+      },
+      exclude: ["**/*.test.ts", "**/*.spec.ts"],
     }),
-    ...(plugins ?? []),
+    ...(plugins || []),
   ],
   ...extendConfig,
-});
-
-/**
- * @param {string} dir
- * @param {import('rollup-plugin-dts').Options} [dtsOptions]
- * @returns {import('rollup').RollupOptions}
- */
-export const createDtsConfig = (dir, dtsOptions) => ({
-  input: "src/index.ts",
-  output: { dir, format: "esm" },
-  plugins: [dts(dtsOptions)],
 });

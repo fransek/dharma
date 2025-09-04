@@ -1,4 +1,5 @@
-import { createPersistentStore, useStore } from "dharma-react";
+import { createPersistentStore } from "dharma-core";
+import { useStore } from "dharma-react";
 import { ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 

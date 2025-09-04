@@ -1,4 +1,5 @@
-import { createStore, useStore } from "dharma-react";
+import { createStore } from "dharma-core";
+import { useStore } from "dharma-react";
 
 // Create the store
 const store = createStore({ count: 0 }, (set) => ({
