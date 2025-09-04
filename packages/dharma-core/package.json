@@ -24,6 +24,21 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js"
+    },
+    "./createStore": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/lib/createStore.js",
+      "require": "./dist/cjs/lib/createStore.js"
+    },
+    "./createPersistentStore": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/lib/createPersistentStore.js",
+      "require": "./dist/cjs/lib/createPersistentStore.js"
+    },
+    "./merge": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/lib/merge.js",
+      "require": "./dist/cjs/lib/merge.js"
     }
   },
   "sideEffects": false,
