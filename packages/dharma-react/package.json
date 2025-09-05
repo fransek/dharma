@@ -1,6 +1,6 @@
 {
   "name": "dharma-react",
-  "version": "0.2.1",
+  "version": "1.0.0",
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
   "description": "My package description",
@@ -46,7 +46,7 @@
     "react": "^19.1.1"
   },
   "peerDependencies": {
-    "dharma-core": "^0.2.1",
+    "dharma-core": "^0.3.0",
     "react": "^19.1.1"
   }
 }
