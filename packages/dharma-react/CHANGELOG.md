@@ -1,5 +1,16 @@
 # dharma-react
 
+## 0.3.0
+
+### Minor Changes
+
+- [#6](https://github.com/fransek/dharma/pull/6) [`4eaa8c1`](https://github.com/fransek/dharma/commit/4eaa8c15499e1d3d7d1001d6eb2da0157fbae56d) Thanks [@fransek](https://github.com/fransek)! - createStoreContext - instantiate renamed to createStore
+
+### Patch Changes
+
+- Updated dependencies [[`4eaa8c1`](https://github.com/fransek/dharma/commit/4eaa8c15499e1d3d7d1001d6eb2da0157fbae56d), [`4eaa8c1`](https://github.com/fransek/dharma/commit/4eaa8c15499e1d3d7d1001d6eb2da0157fbae56d)]:
+  - dharma-core@0.3.0
+
 ## 0.2.1
 
 ### Patch Changes
