@@ -12,7 +12,7 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <script>
-  import { createStore } from 'dharma-react';
+  import { createStore } from 'dharma-core';
 
   const store = createStore({ count: 0 }, (set) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
@@ -23,7 +23,7 @@ import Layout from '../layouts/Layout.astro';
   const decrementBtn = document.getElementById('decrement-btn')!;
   const incrementBtn = document.getElementById('increment-btn')!;
 
-  store.subscribe(() => (count.innerHTML = store.get().count.toString()));
+  store.subscribe((state) => (count.innerHTML = state.count.toString()));
   decrementBtn.addEventListener('click', store.actions.decrement);
   incrementBtn.addEventListener('click', store.actions.increment);
 </script>

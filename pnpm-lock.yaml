@@ -111,8 +111,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       dharma-core:
-        specifier: ^0.2.1
-        version: 0.2.1
+        specifier: workspace:*
+        version: link:../../packages/dharma-core
       dharma-react:
         specifier: workspace:*
         version: link:../../packages/dharma-react
@@ -1730,9 +1730,6 @@ packages:
 
   dfa@1.2.0:
     resolution: {integrity: sha512-ED3jP8saaweFTjeGX8HQPjeC1YYyZs98jGNZx6IiBvxW7JG5v492kamAQB3m2wop07CvU/RQmzcKr6bgcC5D/Q==}
-
-  dharma-core@0.2.1:
-    resolution: {integrity: sha512-jyp5B/GvJjH8hyVTxRIeqrBqryq0KFywpepvW7XwNacFexK1L82ZO9K4VjSvzWkMzHfnSwHNseOuNc8wlZDe+A==}
 
   diff@5.2.0:
     resolution: {integrity: sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==}
@@ -5292,8 +5289,6 @@ snapshots:
       dequal: 2.0.3
 
   dfa@1.2.0: {}
-
-  dharma-core@0.2.1: {}
 
   diff@5.2.0: {}
 

@@ -1,8 +1,15 @@
 import { act, render, renderHook, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createStore } from "dharma-core";
+import { useRef } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { useStore } from "./useStore";
+
+const useRenderCount = () => {
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  return renderCount.current;
+};
 
 describe("useStore", () => {
   const store = createStore({ count: 0 }, (set) => ({
@@ -44,13 +51,12 @@ describe("useStore", () => {
       increaseFoo: () => set((state) => ({ foo: state.foo + 1 })),
     }));
 
-    let renderCount = 0;
-
     const Component = () => {
       const {
-        state: { count },
+        state: count,
         actions: { increaseCount, increaseFoo },
-      } = useStore(testStore, ({ count }) => ({ count }));
+      } = useStore(testStore, (state) => state.count);
+      const renderCount = useRenderCount();
 
       return (
         <>
@@ -60,7 +66,7 @@ describe("useStore", () => {
           <button data-testid="fooButton" onClick={increaseFoo}>
             Increase Foo
           </button>
-          <div data-testid="renderCount">{++renderCount}</div>
+          <div data-testid="renderCount">{renderCount}</div>
         </>
       );
     };
