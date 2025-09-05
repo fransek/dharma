@@ -148,7 +148,7 @@ const Todo = () => {
                 htmlFor={`todo-${index}`}
                 className={cn(
                   "transition-colors",
-                  todo.complete && "line-through text-gray-400",
+                  todo.complete && "line-through text-foreground/60",
                 )}
               >
                 {todo.title}
