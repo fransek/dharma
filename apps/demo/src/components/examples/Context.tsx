@@ -20,7 +20,7 @@ const CounterStoreContext = createStoreContext((initialCount: number) =>
 export const Counter = ({ initialCount }: { initialCount: number }) => {
   // Create an instance of the store. Make sure the store is not instantiated on every render.
   const store = useMemo(
-    () => CounterStoreContext.initialize(initialCount),
+    () => CounterStoreContext.createStore(initialCount),
     [initialCount],
   );
   // Use the store

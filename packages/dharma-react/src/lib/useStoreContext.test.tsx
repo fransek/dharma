@@ -19,7 +19,7 @@ describe("useStoreContext", () => {
   ) =>
     renderHook(() => useStoreContext(StoreContext, select), {
       wrapper: ({ children }) => {
-        const store = useRef(StoreContext.initialize(0)).current;
+        const store = useRef(StoreContext.createStore(0)).current;
         return (
           <StoreContext.Provider value={store}>
             {children}
