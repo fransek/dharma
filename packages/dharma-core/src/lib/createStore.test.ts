@@ -23,7 +23,7 @@ describe("createStore", () => {
     const listener = vi.fn();
     store.subscribe(listener);
     store.set({ count: 1 });
-    expect(listener).toHaveBeenCalled();
+    expect(listener).toHaveBeenCalledTimes(2);
   });
 
   it("should unsubscribe listeners correctly", () => {
@@ -33,7 +33,7 @@ describe("createStore", () => {
     const unsubscribe = store.subscribe(listener);
     unsubscribe();
     store.set({ count: 1 });
-    expect(listener).not.toHaveBeenCalled();
+    expect(listener).toHaveBeenCalledOnce();
   });
 
   it("should create actions if provided", () => {

@@ -13,8 +13,8 @@ describe("createStoreContext", () => {
 
     const StoreContext = createStoreContext(instantiate);
 
-    expect(StoreContext).toHaveProperty("instantiate");
-    expect(typeof StoreContext.instantiate).toBe("function");
+    expect(StoreContext).toHaveProperty("createStore");
+    expect(typeof StoreContext.createStore).toBe("function");
   });
 
   it("should instantiate a new store with the given arguments", () => {
@@ -26,7 +26,7 @@ describe("createStoreContext", () => {
       }));
 
     const StoreContext = createStoreContext(instantiate);
-    const store = StoreContext.instantiate(5);
+    const store = StoreContext.createStore(5);
 
     expect(store.get()).toEqual({ count: 5 });
     store.actions.increment();

@@ -9,6 +9,8 @@
   },
   "scripts": {
     "build": "pnpm -F \"./packages/*\" build",
+    "demo:dev": "pnpm -F demo dev",
+    "demo:build": "pnpm -F demo build",
     "ci:publish": "changeset publish",
     "test": "vitest --run",
     "test:watch": "vitest",

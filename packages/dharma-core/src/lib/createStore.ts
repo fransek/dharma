@@ -8,10 +8,10 @@ export type Store<TState extends object, TActions extends object> = {
   /** Actions that can modify the state of the store. */
   actions: TActions;
   /** Subscribes to changes in the state of the store. Returns an unsubscribe function. */
-  subscribe: (listener: Listener) => Listener;
+  subscribe: (listener: Listener<TState>) => () => void;
 };
 
-type Listener = () => void;
+type Listener<TState extends object> = (state: TState) => void;
 
 export type StoreEventHandler<TState extends object> = (
   state: TState,
@@ -72,7 +72,7 @@ export const createStore = <
   { onLoad, onAttach, onDetach, onChange }: StoreOptions<TState> = {},
 ): Store<TState, TActions> => {
   let state = initialState;
-  const listeners = new Set<Listener>();
+  const listeners = new Set<Listener<TState>>();
 
   const get = () => state;
 
@@ -83,7 +83,7 @@ export const createStore = <
 
   const dispatch = () => {
     onChange?.(state, setSilently);
-    listeners.forEach((listener) => listener());
+    listeners.forEach((listener) => listener(state));
   };
 
   const set = (stateModifier: StateModifier<TState>) => {
@@ -92,7 +92,8 @@ export const createStore = <
     return state;
   };
 
-  const subscribe = (listener: Listener) => {
+  const subscribe = (listener: Listener<TState>) => {
+    listener(state);
     if (listeners.size === 0) {
       onAttach?.(state, set);
     }

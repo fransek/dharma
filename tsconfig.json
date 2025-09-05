@@ -8,8 +8,12 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@apps/*": ["./apps/*"],
+      "@packages/*": ["./packages/*"]
+    }
   }
 }
