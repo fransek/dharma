@@ -1,5 +1,5 @@
 ---
-"dharma-react": patch
+"dharma-react": minor
 ---
 
 createStoreContext - instantiate renamed to createStore
