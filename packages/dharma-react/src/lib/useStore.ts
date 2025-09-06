@@ -5,7 +5,7 @@ import { deeplyEquals } from "./deeplyEquals";
 /**
  * A hook used to access a store created with `createStore` and bind it to a component.
  *
- * @param {Store<TState, TActions, TSelection>} store - The store created with `createStore`.
+ * @param {Store<TState, TActions>} store - The store created with `createStore`.
  * @param {(state: TState) => TSelection} [select] - A function to select a subset of the state. Can prevent unnecessary re-renders.
  * @returns {TSelection} The selected state from the store.
  *

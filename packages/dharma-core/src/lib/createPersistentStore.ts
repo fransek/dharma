@@ -17,8 +17,8 @@ export type PersistentStoreConfiguration<
   TActions extends object,
 > = StoreConfiguration<TState, TActions> & {
   key: string;
-  /** The storage to use for persisting the state. Defaults to local storage. */
-  storage?: StorageAPI | "local" | "session";
+  /** The storage to use for persisting the state. Defaults to local storage if available. */
+  storage?: StorageAPI;
   /** The serializer to use for storing the state. Defaults to JSON. */
   serializer?: Serializer<TState>;
 };
@@ -30,10 +30,7 @@ export type PersistentStoreConfiguration<
  * **Note:** The state needs to be serializable by whatever serializer you use. (JSON by default)
  * If you need something more versatile I would recommend using a library like [superjson](https://github.com/flightcontrolhq/superjson).
  *
- * @param {string} key - A unique key to identify the store in storage.
- * @param {TState} initialState - The initial state of the store.
- * @param {DefineActions<TState, TActions>} [defineActions] - A function to define actions for the store.
- * @param {PersistentStoreConfiguration<TState>} [options] - Additional options for the persistent store.
+ * @param {PersistentStoreConfiguration<TState, TActions>} config - The configuration for the persistent store.
  *
  * @returns {Store<TState, TActions>} The created store.
  *
@@ -42,11 +39,15 @@ export type PersistentStoreConfiguration<
  * ```ts
  * import { createPersistentStore } from "dharma-core";
  *
- * const store = createPersistentStore("count", { count: 0 }, ({ set }) => ({
- *   increment: () => set((state) => ({ count: state.count + 1 })),
- *   decrement: () => set((state) => ({ count: state.count - 1 })),
- *   reset: () => set({ count: 0 }),
- * }));
+ * const store = createPersistentStore({
+ *   key: "count",
+ *   initialState: { count: 0 },
+ *   defineActions: ({ set }) => ({
+ *     increment: () => set((state) => ({ count: state.count + 1 })),
+ *     decrement: () => set((state) => ({ count: state.count - 1 })),
+ *     reset: () => set({ count: 0 }),
+ *   }),
+ * });
  * ```
  * @example
  * With superjson serialization and session storage:
@@ -54,64 +55,64 @@ export type PersistentStoreConfiguration<
  * import { createPersistentStore } from "dharma-core";
  * import superjson from "superjson";
  *
- * const store = createPersistentStore(
- *   "count",
- *   { count: 0 },
- *   ({ set }) => ({
+ * const store = createPersistentStore({
+ *   key: "count",
+ *   initialState: { count: 0 },
+ *   defineActions: ({ set }) => ({
  *     increment: () => set((state) => ({ count: state.count + 1 })),
  *     decrement: () => set((state) => ({ count: state.count - 1 })),
  *     reset: () => set({ count: 0 }),
  *   }),
- *   {
- *     serializer: superjson,
- *     storage: "session",
- *   },
- * );
+ *   serializer: superjson,
+ *   storage: sessionStorage,
+ * });
  * ```
  */
 export const createPersistentStore = <
   TState extends object,
   TActions extends object = Record<never, never>,
 >(
-  options: PersistentStoreConfiguration<TState, TActions>,
+  config: PersistentStoreConfiguration<TState, TActions>,
 ): Store<TState, TActions> => {
-  if (typeof window === "undefined") {
-    return createStore(options);
-  }
-
   const {
     key,
     initialState,
-    storage: _storage = "local",
+    storage: customStorage,
     serializer = JSON,
     onAttach,
     onDetach,
     onChange,
     ...rest
-  } = options;
+  } = config;
 
-  const storage = getStorage(_storage);
-  const stateKey = `store_${key}`;
+  const IS_BROWSER = typeof window !== "undefined";
+  const storage = customStorage ?? (IS_BROWSER ? localStorage : undefined);
+
+  if (!storage) {
+    return createStore(config);
+  }
+
   const initialStateKey = `init_${key}`;
+
   const initialStateSnapshot = storage.getItem(initialStateKey);
   const initialStateString = serializer.stringify(initialState);
 
   if (initialStateSnapshot !== initialStateString) {
     storage.setItem(initialStateKey, initialStateString);
-    storage.removeItem(stateKey);
+    storage.removeItem(key);
   }
 
   const updateSnapshot = (newState: TState) => {
-    const currentSnapshot = storage.getItem(stateKey);
+    const currentSnapshot = storage.getItem(key);
     const newSnapshot = serializer.stringify(newState);
 
     if (newSnapshot !== currentSnapshot) {
-      storage.setItem(stateKey, newSnapshot);
+      storage.setItem(key, newSnapshot);
     }
   };
 
   const updateState = () => {
-    const currentSnapshot = storage.getItem(stateKey);
+    const currentSnapshot = storage.getItem(key);
 
     if (
       currentSnapshot &&
@@ -126,11 +127,15 @@ export const createPersistentStore = <
     onAttach: (ctx) => {
       onAttach?.(ctx);
       updateState();
-      window.addEventListener("focus", updateState);
+      if (IS_BROWSER) {
+        window.addEventListener("focus", updateState);
+      }
     },
     onDetach: (ctx) => {
       onDetach?.(ctx);
-      window.removeEventListener("focus", updateState);
+      if (IS_BROWSER) {
+        window.removeEventListener("focus", updateState);
+      }
     },
     onChange: ({ state, ...ctx }) => {
       onChange?.({ state, ...ctx });
@@ -140,15 +145,4 @@ export const createPersistentStore = <
   });
 
   return store;
-};
-
-const getStorage = (storage: StorageAPI | "local" | "session"): StorageAPI => {
-  switch (storage) {
-    case "local":
-      return localStorage;
-    case "session":
-      return sessionStorage;
-    default:
-      return storage;
-  }
 };
