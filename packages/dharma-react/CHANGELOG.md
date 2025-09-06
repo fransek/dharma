@@ -1,5 +1,15 @@
 # dharma-react
 
+## 0.4.0
+
+### Minor Changes
+
+- [#8](https://github.com/fransek/dharma/pull/8) [`2060d71`](https://github.com/fransek/dharma/commit/2060d71fbbecba7d37f658f03fdfd9d1f49bc275) Thanks [@fransek](https://github.com/fransek)! - useStore no longer returns store actions
+
+### Patch Changes
+
+- [#8](https://github.com/fransek/dharma/pull/8) [`2060d71`](https://github.com/fransek/dharma/commit/2060d71fbbecba7d37f658f03fdfd9d1f49bc275) Thanks [@fransek](https://github.com/fransek)! - jsdoc update
+
 ## 0.3.0
 
 ### Minor Changes
