@@ -1,5 +1,17 @@
 # dharma-core
 
+## 0.5.0
+
+### Minor Changes
+
+- [#11](https://github.com/fransek/dharma/pull/11) [`02d9045`](https://github.com/fransek/dharma/commit/02d90457696dc1c2921c4e1d2e74b33234f96baf) Thanks [@fransek](https://github.com/fransek)! - createPersistentStorage: The storage option now only supports storage objects (previously "local" and "session")
+
+### Patch Changes
+
+- [#11](https://github.com/fransek/dharma/pull/11) [`02d9045`](https://github.com/fransek/dharma/commit/02d90457696dc1c2921c4e1d2e74b33234f96baf) Thanks [@fransek](https://github.com/fransek)! - createPersistentStorage now works in non-browser environments if a storage is provided
+
+- [#11](https://github.com/fransek/dharma/pull/11) [`02d9045`](https://github.com/fransek/dharma/commit/02d90457696dc1c2921c4e1d2e74b33234f96baf) Thanks [@fransek](https://github.com/fransek)! - jsdoc updates
+
 ## 0.4.0
 
 ### Minor Changes
