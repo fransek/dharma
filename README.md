@@ -50,24 +50,23 @@ yarn add dharma-core dharma-react
 ```ts
 import { createStore } from "dharma-core";
 
-const store = createStore({ count: 0 }, (set) => ({
+export const store = createStore({ count: 0 }, (set) => ({
   increment: () => set((state) => ({ count: state.count + 1 })),
   decrement: () => set((state) => ({ count: state.count - 1 })),
   reset: () => set({ count: 0 }),
 }));
+
+export const { increment, decrement, reset } = store.actions;
 ```
 
 3. Use the store:
 
 ```tsx
 import { useStore } from "dharma-react";
-import { store } from "./store";
+import { decrement, increment, reset, store } from "./store";
 
 function Counter() {
-  const {
-    state: { count },
-    actions: { increment, decrement, reset },
-  } = useStore(store);
+  const { count } = useStore(store);
 
   return (
     <div>
