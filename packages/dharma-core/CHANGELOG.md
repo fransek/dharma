@@ -1,5 +1,19 @@
 # dharma-core
 
+## 0.4.0
+
+### Minor Changes
+
+- [#8](https://github.com/fransek/dharma/pull/8) [`2060d71`](https://github.com/fransek/dharma/commit/2060d71fbbecba7d37f658f03fdfd9d1f49bc275) Thanks [@fransek](https://github.com/fransek)! - Event handler and defineActions arguments consolidated to an object
+
+- [#8](https://github.com/fransek/dharma/pull/8) [`2060d71`](https://github.com/fransek/dharma/commit/2060d71fbbecba7d37f658f03fdfd9d1f49bc275) Thanks [@fransek](https://github.com/fransek)! - Consolidated createStore arguments to one configuration object
+
+- [#8](https://github.com/fransek/dharma/pull/8) [`2060d71`](https://github.com/fransek/dharma/commit/2060d71fbbecba7d37f658f03fdfd9d1f49bc275) Thanks [@fransek](https://github.com/fransek)! - Added reset function to store event handlers
+
+### Patch Changes
+
+- [#8](https://github.com/fransek/dharma/pull/8) [`2060d71`](https://github.com/fransek/dharma/commit/2060d71fbbecba7d37f658f03fdfd9d1f49bc275) Thanks [@fransek](https://github.com/fransek)! - onAttach is now invoked before the first listener subscribes
+
 ## 0.3.0
 
 ### Minor Changes
