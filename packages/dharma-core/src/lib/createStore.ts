@@ -7,6 +7,8 @@ export type Store<TState extends object, TActions extends object> = {
   get: () => TState;
   /** Sets the state of the store. */
   set: (stateModifier: StateModifier<TState>) => TState;
+  /** Resets the state of the store to its initial value. */
+  reset: () => TState;
   /** Actions that can modify the state of the store. */
   actions: TActions;
   /** Subscribes to changes in the state of the store. Returns an unsubscribe function. */
@@ -33,6 +35,7 @@ export type StateModifier<TState extends object> =
 export type StateFunctions<TState extends object> = {
   set: (stateModifier: StateModifier<TState>) => TState;
   get: () => TState;
+  reset: () => TState;
 };
 
 export type DefineActions<TState extends object, TActions> = (
@@ -117,8 +120,14 @@ export const createStore = <
     };
   };
 
+  const reset = () => {
+    state = initialState;
+    dispatch();
+    return state;
+  };
+
   const actions = defineActions
-    ? defineActions({ set, get })
+    ? defineActions({ set, get, reset })
     : ({} as TActions);
 
   onLoad?.({ state, set });
@@ -126,6 +135,7 @@ export const createStore = <
   return {
     get,
     set,
+    reset,
     subscribe,
     actions,
   };

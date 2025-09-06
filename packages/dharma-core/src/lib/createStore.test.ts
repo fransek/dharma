@@ -10,11 +10,13 @@ describe("createStore", () => {
     expect(store.get()).toEqual(initialState);
   });
 
-  it("should update the state using set", () => {
+  it("should update the state using set and reset", () => {
     const initialState = { count: 0 };
     const store = createStore(initialState, actions);
     store.set({ count: 1 });
     expect(store.get().count).toBe(1);
+    store.reset();
+    expect(store.get().count).toBe(0);
   });
 
   it("should notify subscribers on state change", () => {
@@ -38,14 +40,14 @@ describe("createStore", () => {
 
   it("should create actions if provided", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState, ({ set, get }) => ({
+    const store = createStore(initialState, ({ set, get, reset }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
-      decrement: () => set((state) => ({ count: state.count - 1 })),
       getCount: () => get().count,
+      resetCount: () => reset(),
     }));
     store.actions.increment();
     expect(store.actions.getCount()).toBe(1);
-    store.actions.decrement();
+    store.actions.resetCount();
     expect(store.actions.getCount()).toBe(0);
   });
 
