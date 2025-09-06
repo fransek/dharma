@@ -16,6 +16,7 @@ export type PersistentStoreConfiguration<
   TState extends object,
   TActions extends object,
 > = StoreConfiguration<TState, TActions> & {
+  /** The unique key used to identify this store in storage. */
   key: string;
   /** The storage to use for persisting the state. Defaults to local storage if available. */
   storage?: StorageAPI;
