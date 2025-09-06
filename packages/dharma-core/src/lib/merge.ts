@@ -4,8 +4,8 @@ import { StateModifier } from "./createStore";
  * Merges the current state with a state modifier.
  * Useful for creating custom set functions.
  *
- * @param {T} stateModifier - A function or object that modifies the state.
- * @param {StateModifier<T>} stateModifier - The current state object.
+ * @param {T} currentState - The current state object.
+ * @param {StateModifier<T>} stateModifier - A function or object that modifies the state.
  * @returns {T} The new state object, which is a combination of the current state and the state modifier.
  *
  * @example
