@@ -126,11 +126,11 @@ export const createStore = <
   };
 
   const subscribe = (listener: Listener<TState>) => {
-    listener(state);
     if (listeners.size === 0) {
       onAttach?.({ state, set, reset });
     }
 
+    listener(state);
     listeners.add(listener);
 
     return () => {
