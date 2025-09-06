@@ -1,7 +1,6 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["packages/*"],
-  "out": "apps/docs",
   "name": "Dharma",
   "entryPointStrategy": "packages",
   "includeVersion": true,

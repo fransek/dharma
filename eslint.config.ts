@@ -21,6 +21,6 @@ export default [
     },
   },
   {
-    ignores: ["**/dist/", "coverage/", "apps/docs/", "apps/demo/.astro/"],
+    ignores: ["**/dist/", "coverage/", "docs/", "apps/demo/.astro/"],
   },
 ] satisfies Linter.Config[];
