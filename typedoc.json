@@ -1,0 +1,19 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["packages/*"],
+  "out": "apps/docs",
+  "name": "Dharma",
+  "entryPointStrategy": "packages",
+  "includeVersion": true,
+  "navigation": {
+    "includeGroups": true
+  },
+  "customCss": "./typedoc.css",
+  "navigationLinks": {
+    "GitHub": "https://github.com/fransek/dharma"
+  },
+  "headings": {
+    "readme": false
+  },
+  "readme": "./README.md"
+}
