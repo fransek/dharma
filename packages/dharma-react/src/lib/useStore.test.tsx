@@ -12,50 +12,50 @@ const useRenderCount = () => {
 };
 
 describe("useStore", () => {
-  const store = createStore({ count: 0 }, (set) => ({
-    increment: () => set((state) => ({ count: state.count + 1 })),
-    decrement: () => set((state) => ({ count: state.count - 1 })),
-    reset: () => set({ count: 0 }),
-  }));
+  const store = createStore({
+    initialState: { count: 0 },
+    defineActions: ({ set }) => ({
+      increment: () => set((state) => ({ count: state.count + 1 })),
+      decrement: () => set((state) => ({ count: state.count - 1 })),
+      reset: () => set({ count: 0 }),
+    }),
+  });
+
+  const { increment, reset } = store.actions;
 
   afterEach(() => {
-    store.actions.reset();
+    reset();
   });
 
   it("should return the initial state and actions", () => {
     const { result } = renderHook(() => useStore(store));
 
-    expect(result.current).toStrictEqual({
-      state: { count: 0 },
-      actions: {
-        increment: expect.any(Function),
-        decrement: expect.any(Function),
-        reset: expect.any(Function),
-      },
-    });
+    expect(result.current).toStrictEqual({ count: 0 });
   });
 
   it("should call the action functions", () => {
     const { result } = renderHook(() => useStore(store));
 
     act(() => {
-      result.current.actions.increment();
+      increment();
     });
 
-    expect(result.current.state).toStrictEqual({ count: 1 });
+    expect(result.current).toStrictEqual({ count: 1 });
   });
 
   it("should return the selected state and only re-render when the selected state changes", async () => {
-    const testStore = createStore({ count: 0, foo: 0 }, (set) => ({
-      increaseCount: () => set((state) => ({ count: state.count + 1 })),
-      increaseFoo: () => set((state) => ({ foo: state.foo + 1 })),
-    }));
+    const testStore = createStore({
+      initialState: { count: 0, foo: 0 },
+      defineActions: ({ set }) => ({
+        increaseCount: () => set((state) => ({ count: state.count + 1 })),
+        increaseFoo: () => set((state) => ({ foo: state.foo + 1 })),
+      }),
+    });
+
+    const { increaseCount, increaseFoo } = testStore.actions;
 
     const Component = () => {
-      const {
-        state: count,
-        actions: { increaseCount, increaseFoo },
-      } = useStore(testStore, (state) => state.count);
+      const count = useStore(testStore, (state) => state.count);
       const renderCount = useRenderCount();
 
       return (

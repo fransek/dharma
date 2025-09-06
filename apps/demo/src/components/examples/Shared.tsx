@@ -36,56 +36,57 @@ const useRenderCount = () => {
   return renderCount.current;
 };
 
-const sharedStore = createStore(initialState, (set, get) => {
-  const setCountState = (countState: StateModifier<CountState>) =>
-    set((state) => ({
-      countState: merge(state.countState, countState),
-    }));
+const sharedStore = createStore({
+  initialState,
+  defineActions: ({ set, get }) => {
+    const setCountState = (countState: StateModifier<CountState>) =>
+      set((state) => ({
+        countState: merge(state.countState, countState),
+      }));
 
-  const setTodoState = (todoState: StateModifier<TodoState>) =>
-    set((state) => ({
-      todoState: merge(state.todoState, todoState),
-    }));
+    const setTodoState = (todoState: StateModifier<TodoState>) =>
+      set((state) => ({
+        todoState: merge(state.todoState, todoState),
+      }));
 
-  return {
-    countActions: {
-      increment: () => setCountState((state) => ({ count: state.count + 1 })),
-      decrement: () => setCountState((state) => ({ count: state.count - 1 })),
-    },
-    todoActions: {
-      setInput: (input: string) => setTodoState({ input }),
-      addTodo: () => {
-        if (!get().todoState.input) {
-          return;
-        }
-        setTodoState((state) => ({
-          todos: [...state.todos, { title: state.input, complete: false }],
-          input: "",
-        }));
+    return {
+      count: {
+        increment: () => setCountState((state) => ({ count: state.count + 1 })),
+        decrement: () => setCountState((state) => ({ count: state.count - 1 })),
       },
-      toggleTodo: (index: number) =>
-        setTodoState((state) => ({
-          todos: state.todos.map((todo, i) => {
-            if (index === i) {
-              return { ...todo, complete: !todo.complete };
-            }
-            return todo;
-          }),
-        })),
-    },
-  };
+      todo: {
+        setInput: (input: string) => setTodoState({ input }),
+        addTodo: () => {
+          if (!get().todoState.input) {
+            return;
+          }
+          setTodoState((state) => ({
+            todos: [...state.todos, { title: state.input, complete: false }],
+            input: "",
+          }));
+        },
+        toggleTodo: (index: number) =>
+          setTodoState((state) => ({
+            todos: state.todos.map((todo, i) => {
+              if (index === i) {
+                return { ...todo, complete: !todo.complete };
+              }
+              return todo;
+            }),
+          })),
+      },
+    };
+  },
 });
+
+const { decrement, increment } = sharedStore.actions.count;
+const { addTodo, setInput, toggleTodo } = sharedStore.actions.todo;
 
 const useSharedStore = <T = SharedState,>(select?: (state: SharedState) => T) =>
   useStore(sharedStore, select);
 
 const Counter = () => {
-  const {
-    state: { count },
-    actions: {
-      countActions: { increment, decrement },
-    },
-  } = useSharedStore((state) => state.countState);
+  const { count } = useSharedStore((state) => state.countState);
 
   const renderCount = useRenderCount();
 
@@ -105,12 +106,7 @@ const Counter = () => {
 };
 
 const Todo = () => {
-  const {
-    state: { input, todos },
-    actions: {
-      todoActions: { addTodo, setInput, toggleTodo },
-    },
-  } = useSharedStore((state) => state.todoState);
+  const { input, todos } = useSharedStore((state) => state.todoState);
 
   const renderCount = useRenderCount();
 

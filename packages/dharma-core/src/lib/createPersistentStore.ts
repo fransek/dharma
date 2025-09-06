@@ -1,4 +1,4 @@
-import { createStore, DefineActions, Store, StoreOptions } from "./createStore";
+import { createStore, Store, StoreConfiguration } from "./createStore";
 
 export type StorageAPI = {
   getItem: (key: string) => string | null;
@@ -12,13 +12,16 @@ export type Serializer<T = any> = {
   parse: (value: string) => T;
 };
 
-export type PersistentStoreOptions<TState extends object> =
-  StoreOptions<TState> & {
-    /** The storage to use for persisting the state. Defaults to local storage. */
-    storage?: StorageAPI | "local" | "session";
-    /** The serializer to use for storing the state. Defaults to JSON. */
-    serializer?: Serializer<TState>;
-  };
+export type PersistentStoreConfiguration<
+  TState extends object,
+  TActions extends object,
+> = StoreConfiguration<TState, TActions> & {
+  key: string;
+  /** The storage to use for persisting the state. Defaults to local storage. */
+  storage?: StorageAPI | "local" | "session";
+  /** The serializer to use for storing the state. Defaults to JSON. */
+  serializer?: Serializer<TState>;
+};
 
 /**
  * Creates a store that persists its state in local or session storage.
@@ -30,7 +33,7 @@ export type PersistentStoreOptions<TState extends object> =
  * @param {string} key - A unique key to identify the store in storage.
  * @param {TState} initialState - The initial state of the store.
  * @param {DefineActions<TState, TActions>} [defineActions] - A function to define actions for the store.
- * @param {PersistentStoreOptions<TState>} [options] - Additional options for the persistent store.
+ * @param {PersistentStoreConfiguration<TState>} [options] - Additional options for the persistent store.
  *
  * @returns {Store<TState, TActions>} The created store.
  *
@@ -39,7 +42,7 @@ export type PersistentStoreOptions<TState extends object> =
  * ```ts
  * import { createPersistentStore } from "dharma-core";
  *
- * const store = createPersistentStore("count", { count: 0 }, (set) => ({
+ * const store = createPersistentStore("count", { count: 0 }, ({ set }) => ({
  *   increment: () => set((state) => ({ count: state.count + 1 })),
  *   decrement: () => set((state) => ({ count: state.count - 1 })),
  *   reset: () => set({ count: 0 }),
@@ -54,7 +57,7 @@ export type PersistentStoreOptions<TState extends object> =
  * const store = createPersistentStore(
  *   "count",
  *   { count: 0 },
- *   (set) => ({
+ *   ({ set }) => ({
  *     increment: () => set((state) => ({ count: state.count + 1 })),
  *     decrement: () => set((state) => ({ count: state.count - 1 })),
  *     reset: () => set({ count: 0 }),
@@ -65,27 +68,27 @@ export type PersistentStoreOptions<TState extends object> =
  *   },
  * );
  * ```
- * @group Core
  */
 export const createPersistentStore = <
   TState extends object,
   TActions extends object = Record<never, never>,
 >(
-  key: string,
-  initialState: TState,
-  defineActions: DefineActions<TState, TActions>,
-  {
+  options: PersistentStoreConfiguration<TState, TActions>,
+): Store<TState, TActions> => {
+  if (typeof window === "undefined") {
+    return createStore(options);
+  }
+
+  const {
+    key,
+    initialState,
     storage: _storage = "local",
     serializer = JSON,
     onAttach,
     onDetach,
     onChange,
-    ...options
-  }: PersistentStoreOptions<TState> = {},
-): Store<TState, TActions> => {
-  if (typeof window === "undefined") {
-    return createStore(initialState, defineActions, options);
-  }
+    ...rest
+  } = options;
 
   const storage = getStorage(_storage);
   const stateKey = `store_${key}`;
@@ -118,21 +121,22 @@ export const createPersistentStore = <
     }
   };
 
-  const store = createStore(initialState, defineActions, {
-    onAttach: (...args) => {
-      onAttach?.(...args);
+  const store = createStore({
+    initialState,
+    onAttach: (ctx) => {
+      onAttach?.(ctx);
       updateState();
       window.addEventListener("focus", updateState);
     },
-    onDetach: (...args) => {
-      onDetach?.(...args);
+    onDetach: (ctx) => {
+      onDetach?.(ctx);
       window.removeEventListener("focus", updateState);
     },
-    onChange: (state, ...args) => {
-      onChange?.(state, ...args);
+    onChange: ({ state, ...ctx }) => {
+      onChange?.({ state, ...ctx });
       updateSnapshot(state);
     },
-    ...options,
+    ...rest,
   });
 
   return store;

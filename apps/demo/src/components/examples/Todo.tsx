@@ -5,17 +5,21 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
 
+// Set up the store
+
 interface TodoState {
   input: string;
   todos: { title: string; complete: boolean }[];
 }
 
-const store = createStore(
-  {
-    input: "",
-    todos: [],
-  } as TodoState,
-  (set, get) => ({
+const initialState: TodoState = {
+  input: "",
+  todos: [],
+};
+
+const store = createStore({
+  initialState,
+  defineActions: ({ set, get }) => ({
     setInput: (input: string) => set({ input }),
     addTodo: () => {
       if (!get().input) {
@@ -36,13 +40,14 @@ const store = createStore(
         }),
       })),
   }),
-);
+});
+
+const { setInput, addTodo, toggleTodo } = store.actions;
+
+// Bind the store to the component
 
 export const Todo = () => {
-  const {
-    state: { input, todos },
-    actions: { addTodo, setInput, toggleTodo },
-  } = useStore(store);
+  const { input, todos } = useStore(store);
 
   return (
     <div className="flex flex-col gap-4 container-full w-fit">
