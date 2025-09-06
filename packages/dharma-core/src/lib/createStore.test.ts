@@ -38,7 +38,7 @@ describe("createStore", () => {
 
   it("should create actions if provided", () => {
     const initialState = { count: 0 };
-    const store = createStore(initialState, (set, get) => ({
+    const store = createStore(initialState, ({ set, get }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
       getCount: () => get().count,
@@ -52,7 +52,7 @@ describe("createStore", () => {
   it("should call onChange if provided", () => {
     const initialState = { count: 0, other: "foo" };
     const store = createStore(initialState, actions, {
-      onChange: (state, set) => set({ other: state.other + "bar" }),
+      onChange: ({ state, set }) => set({ other: state.other + "bar" }),
     });
     store.set({ count: 1 });
     expect(store.get()).toEqual({ count: 1, other: "foobar" });
@@ -61,7 +61,7 @@ describe("createStore", () => {
   it("should call onAttach on first subscribe", () => {
     const initialState = { count: 0 };
     const store = createStore(initialState, actions, {
-      onAttach: (state, set) => set({ count: state.count + 1 }),
+      onAttach: ({ state, set }) => set({ count: state.count + 1 }),
     });
     const listener = vi.fn();
     store.subscribe(listener);
@@ -71,7 +71,7 @@ describe("createStore", () => {
   it("should call onDetach on last unsubscribe", () => {
     const initialState = { count: 0 };
     const store = createStore(initialState, actions, {
-      onDetach: (state, set) => set({ count: state.count + 1 }),
+      onDetach: ({ state, set }) => set({ count: state.count + 1 }),
     });
     const listener = vi.fn();
     const unsubscribe = store.subscribe(listener);
@@ -82,7 +82,7 @@ describe("createStore", () => {
   it("should call onLoad on store creation", () => {
     const initialState = { count: 0 };
     const store = createStore(initialState, actions, {
-      onLoad: (state, set) => set({ count: state.count + 1 }),
+      onLoad: ({ state, set }) => set({ count: state.count + 1 }),
     });
     expect(store.get().count).toBe(1);
   });

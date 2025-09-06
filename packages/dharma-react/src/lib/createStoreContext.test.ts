@@ -5,7 +5,7 @@ import { createStoreContext } from "./createStoreContext";
 describe("createStoreContext", () => {
   it("should create a store context with an instantiation function", () => {
     const instantiate = (initialCount: number) =>
-      createStore({ count: initialCount }, (set) => ({
+      createStore({ count: initialCount }, ({ set }) => ({
         increment: () => set((state) => ({ count: state.count + 1 })),
         decrement: () => set((state) => ({ count: state.count - 1 })),
         reset: () => set({ count: 0 }),
@@ -19,7 +19,7 @@ describe("createStoreContext", () => {
 
   it("should instantiate a new store with the given arguments", () => {
     const instantiate = (initialCount: number) =>
-      createStore({ count: initialCount }, (set) => ({
+      createStore({ count: initialCount }, ({ set }) => ({
         increment: () => set((state) => ({ count: state.count + 1 })),
         decrement: () => set((state) => ({ count: state.count - 1 })),
         reset: () => set({ count: 0 }),

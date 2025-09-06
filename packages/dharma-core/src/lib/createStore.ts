@@ -1,5 +1,7 @@
 import { merge } from "./merge";
 
+type Listener<TState extends object> = (state: TState) => void;
+
 export type Store<TState extends object, TActions extends object> = {
   /** Returns the current state of the store. */
   get: () => TState;
@@ -11,11 +13,13 @@ export type Store<TState extends object, TActions extends object> = {
   subscribe: (listener: Listener<TState>) => () => void;
 };
 
-type Listener<TState extends object> = (state: TState) => void;
+export type EventHandlerContext<TState extends object> = {
+  state: TState;
+  set: SetState<TState>;
+};
 
 export type StoreEventHandler<TState extends object> = (
-  state: TState,
-  set: SetState<TState>,
+  context: EventHandlerContext<TState>,
 ) => void;
 
 export type SetState<TState extends object> = (
@@ -26,9 +30,13 @@ export type StateModifier<TState extends object> =
   | Partial<TState>
   | ((state: TState) => Partial<TState>);
 
+export type StateFunctions<TState extends object> = {
+  set: (stateModifier: StateModifier<TState>) => TState;
+  get: () => TState;
+};
+
 export type DefineActions<TState extends object, TActions> = (
-  set: (stateModifier: StateModifier<TState>) => TState,
-  get: () => TState,
+  stateFunctions: StateFunctions<TState>,
 ) => TActions;
 
 export type StoreOptions<TState extends object> = {
@@ -55,7 +63,7 @@ export type StoreOptions<TState extends object> = {
  * ```ts
  * import { createStore } from "dharma-core";
  *
- * const store = createStore({ count: 0 }, (set) => ({
+ * const store = createStore({ count: 0 }, ({ set }) => ({
  *   increment: () => set((state) => ({ count: state.count + 1 })),
  *   decrement: () => set((state) => ({ count: state.count - 1 })),
  *   reset: () => set({ count: 0 }),
@@ -82,7 +90,7 @@ export const createStore = <
   };
 
   const dispatch = () => {
-    onChange?.(state, setSilently);
+    onChange?.({ state, set: setSilently });
     listeners.forEach((listener) => listener(state));
   };
 
@@ -95,7 +103,7 @@ export const createStore = <
   const subscribe = (listener: Listener<TState>) => {
     listener(state);
     if (listeners.size === 0) {
-      onAttach?.(state, set);
+      onAttach?.({ state, set });
     }
 
     listeners.add(listener);
@@ -104,14 +112,16 @@ export const createStore = <
       listeners.delete(listener);
 
       if (listeners.size === 0) {
-        onDetach?.(state, set);
+        onDetach?.({ state, set });
       }
     };
   };
 
-  const actions = defineActions ? defineActions(set, get) : ({} as TActions);
+  const actions = defineActions
+    ? defineActions({ set, get })
+    : ({} as TActions);
 
-  onLoad?.(state, set);
+  onLoad?.({ state, set });
 
   return {
     get,

@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 
 // Create the store context
 const CounterStoreContext = createStoreContext((initialCount: number) =>
-  createStore({ count: initialCount, input: "" }, (set) => ({
+  createStore({ count: initialCount, input: "" }, ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
     setInput: (input: string) => set({ input }),

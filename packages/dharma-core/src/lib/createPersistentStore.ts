@@ -39,7 +39,7 @@ export type PersistentStoreOptions<TState extends object> =
  * ```ts
  * import { createPersistentStore } from "dharma-core";
  *
- * const store = createPersistentStore("count", { count: 0 }, (set) => ({
+ * const store = createPersistentStore("count", { count: 0 }, ({ set }) => ({
  *   increment: () => set((state) => ({ count: state.count + 1 })),
  *   decrement: () => set((state) => ({ count: state.count - 1 })),
  *   reset: () => set({ count: 0 }),
@@ -54,7 +54,7 @@ export type PersistentStoreOptions<TState extends object> =
  * const store = createPersistentStore(
  *   "count",
  *   { count: 0 },
- *   (set) => ({
+ *   ({ set }) => ({
  *     increment: () => set((state) => ({ count: state.count + 1 })),
  *     decrement: () => set((state) => ({ count: state.count - 1 })),
  *     reset: () => set({ count: 0 }),
@@ -119,17 +119,17 @@ export const createPersistentStore = <
   };
 
   const store = createStore(initialState, defineActions, {
-    onAttach: (...args) => {
-      onAttach?.(...args);
+    onAttach: (ctx) => {
+      onAttach?.(ctx);
       updateState();
       window.addEventListener("focus", updateState);
     },
-    onDetach: (...args) => {
-      onDetach?.(...args);
+    onDetach: (ctx) => {
+      onDetach?.(ctx);
       window.removeEventListener("focus", updateState);
     },
-    onChange: (state, ...args) => {
-      onChange?.(state, ...args);
+    onChange: ({ state, ...ctx }) => {
+      onChange?.({ state, ...ctx });
       updateSnapshot(state);
     },
     ...options,

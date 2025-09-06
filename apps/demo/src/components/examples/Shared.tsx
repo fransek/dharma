@@ -36,7 +36,7 @@ const useRenderCount = () => {
   return renderCount.current;
 };
 
-const sharedStore = createStore(initialState, (set, get) => {
+const sharedStore = createStore(initialState, ({ set, get }) => {
   const setCountState = (countState: StateModifier<CountState>) =>
     set((state) => ({
       countState: merge(state.countState, countState),

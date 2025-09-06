@@ -17,7 +17,7 @@ const initialState: TodoState = {
   todos: [],
 };
 
-const store = createStore(initialState, (set, get) => ({
+const store = createStore(initialState, ({ set, get }) => ({
   setInput: (input: string) => set({ input }),
   addTodo: () => {
     if (!get().input) {

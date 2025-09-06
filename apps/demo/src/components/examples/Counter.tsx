@@ -3,7 +3,7 @@ import { useStore } from "dharma-react";
 import { Button } from "../ui/button";
 
 // Create the store
-const store = createStore({ count: 0 }, (set) => ({
+const store = createStore({ count: 0 }, ({ set }) => ({
   increment: () => set((state) => ({ count: state.count + 1 })),
   decrement: () => set((state) => ({ count: state.count - 1 })),
 }));

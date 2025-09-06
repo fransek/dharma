@@ -23,7 +23,7 @@ const fetchUsers = async () => {
 
 const store = createStore(
   { users: [], loading: true } as State,
-  (set) => ({
+  ({ set }) => ({
     refresh: async () => {
       set({ users: [], loading: true });
       const users = await fetchUsers();
@@ -31,7 +31,7 @@ const store = createStore(
     },
   }),
   {
-    onAttach: async (state, set) => {
+    onAttach: async ({ state, set }) => {
       if (state.users.length) {
         return;
       }

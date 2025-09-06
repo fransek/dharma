@@ -11,7 +11,7 @@ A simple and lightweight state management solution for JavaScript and TypeScript
 ```ts
 import { createStore } from "dharma-core";
 
-const store = createStore({ count: 0 }, (set) => ({
+const store = createStore({ count: 0 }, ({ set }) => ({
   increment: () => set((state) => ({ count: state.count + 1 })),
   decrement: () => set((state) => ({ count: state.count - 1 })),
 }));
@@ -50,7 +50,7 @@ yarn add dharma-core dharma-react
 ```ts
 import { createStore } from "dharma-core";
 
-export const store = createStore({ count: 0 }, (set) => ({
+export const store = createStore({ count: 0 }, ({ set }) => ({
   increment: () => set((state) => ({ count: state.count + 1 })),
   decrement: () => set((state) => ({ count: state.count - 1 })),
   reset: () => set({ count: 0 }),

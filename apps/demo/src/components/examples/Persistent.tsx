@@ -8,7 +8,7 @@ const store = createPersistentStore(
   // Provide a unique key to identify the store in storage
   "count",
   { count: 0 },
-  (set) => ({
+  ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),

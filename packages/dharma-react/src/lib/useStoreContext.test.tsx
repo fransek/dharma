@@ -7,7 +7,7 @@ import { useStoreContext } from "./useStoreContext";
 
 describe("useStoreContext", () => {
   const StoreContext = createStoreContext((initialCount: number) =>
-    createStore({ count: initialCount }, (set) => ({
+    createStore({ count: initialCount }, ({ set }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
       reset: () => set({ count: 0 }),
