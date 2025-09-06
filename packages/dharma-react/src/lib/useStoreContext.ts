@@ -1,11 +1,22 @@
+import { StateModifier } from "dharma-core";
 import { useContext } from "react";
 import { StoreContext } from "./createStoreContext";
-import { BoundStore, useStore } from "./useStore";
+import { useStore } from "./useStore";
+
+export type BoundStore<
+  TState extends object,
+  TActions extends object,
+  TSelection = TState,
+> = {
+  state: TSelection;
+  actions: TActions;
+  set: (stateModifier: StateModifier<TState>) => TState;
+};
 
 /**
  * A hook used to access a store context created with `createStoreContext`.
  *
- * @param {StoreContext<TArgs, TState, TActions>} storeContext - The context of the store.
+ * @param {StoreContext<TArgs, TState, TActions>} StoreContext - The context of the store.
  * @param {(state: TState) => TSelection} [select] - A function to select a subset of the state. Can prevent unnecessary re-renders.
  * @returns {BoundStore<TState, TActions, TSelection>} The store instance.
  *
@@ -35,8 +46,8 @@ import { BoundStore, useStore } from "./useStore";
  * With a select function:
  * ```tsx
  * const {
- *   state: { count },
- * } = useStoreContext(GlobalStoreContext, (state) => state.counter);
+ *   state: count,
+ * } = useStoreContext(StoreContext, (state) => state.count);
  * ```
  * @remarks
  * If the `select` function is provided, an equality check is performed. This has some caveats:
@@ -51,14 +62,15 @@ export const useStoreContext = <
   TActions extends object,
   TSelection = TState,
 >(
-  storeContext: StoreContext<TArgs, TState, TActions>,
+  StoreContext: StoreContext<TArgs, TState, TActions>,
   select?: (state: TState) => TSelection,
 ): BoundStore<TState, TActions, TSelection> => {
-  const store = useContext(storeContext);
+  const store = useContext(StoreContext);
   if (!store) {
     throw new Error(
       "Store context not found. Make sure you are using the store context within a provider.",
     );
   }
-  return useStore(store, select);
+  const state = useStore(store, select);
+  return { state, actions: store.actions, set: store.set };
 };

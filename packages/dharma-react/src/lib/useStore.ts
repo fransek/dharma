@@ -2,21 +2,12 @@ import { Store } from "dharma-core";
 import { useRef, useSyncExternalStore } from "react";
 import { deeplyEquals } from "./deeplyEquals";
 
-export type BoundStore<
-  TState extends object,
-  TActions extends object,
-  TSelection = TState,
-> = {
-  state: TSelection;
-  actions: TActions;
-};
-
 /**
  * A hook used to access a store created with `createStore` and bind it to a component.
  *
  * @param {Store<TState, TActions, TSelection>} store - The store created with `createStore`.
  * @param {(state: TState) => TSelection} [select] - A function to select a subset of the state. Can prevent unnecessary re-renders.
- * @returns {BoundStore<TState, TActions, TSelection>} An object containing the current state, actions, and set function.
+ * @returns {TSelection} The selected state from the store.
  *
  * @example
  * Basic usage:
@@ -24,11 +15,10 @@ export type BoundStore<
  * import { useStore } from "dharma-react";
  * import { store } from "./store";
  *
+ * const { increment, decrement, reset } = store.actions;
+ *
  * function Counter() {
- *   const {
- *     state: { count },
- *     actions: { increment, decrement, reset },
- *   } = useStore(store);
+ *   const { count } = useStore(store);
  *
  *   return (
  *     <div>
@@ -43,9 +33,7 @@ export type BoundStore<
  * @example
  * With a select function:
  * ```tsx
- * const {
- *   state: { count },
- * } = useStore(globalStore, (state) => state.counter);
+ * const { count } = useStore(globalStore, (state) => state.counter);
  * ```
  * @remarks
  * If the `select` function is provided, an equality check is performed. This has some caveats:
@@ -59,27 +47,21 @@ export const useStore = <
   TActions extends object,
   TSelection = TState,
 >(
-  { get, subscribe, actions }: Store<TState, TActions>,
+  { get, subscribe }: Store<TState, TActions>,
   select?: (state: TState) => TSelection,
-): BoundStore<TState, TActions, TSelection> => {
-  const latestSnapshotRef = useRef<TSelection | null>(null);
+): TSelection => {
+  const snapshotRef = useRef<TSelection | null>(null);
 
   const getState = () => {
     if (select) {
       const newState = select(get());
-      if (!deeplyEquals(latestSnapshotRef.current, newState)) {
-        latestSnapshotRef.current = newState;
+      if (!deeplyEquals(snapshotRef.current, newState)) {
+        snapshotRef.current = newState;
       }
-      return latestSnapshotRef.current;
+      return snapshotRef.current;
     }
     return get();
   };
 
-  const state = useSyncExternalStore(
-    subscribe,
-    getState,
-    getState,
-  ) as TSelection;
-
-  return { state, actions };
+  return useSyncExternalStore(subscribe, getState, getState) as TSelection;
 };

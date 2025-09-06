@@ -18,12 +18,11 @@ const store = createPersistentStore(
   },
 );
 
+const { increment, decrement } = store.actions;
+
 export const Persistent = () => {
   // Use the store
-  const {
-    state: { count },
-    actions: { increment, decrement },
-  } = useStore(store);
+  const { count } = useStore(store);
 
   return (
     <div className="container-full w-fit items-center">

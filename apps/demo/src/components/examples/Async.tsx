@@ -41,11 +41,10 @@ const store = createStore(
   },
 );
 
+const { refresh } = store.actions;
+
 export function Async() {
-  const {
-    state: { users, loading },
-    actions: { refresh },
-  } = useStore(store);
+  const { users, loading } = useStore(store);
 
   return (
     <div className="container-full w-fit">

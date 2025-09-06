@@ -7,12 +7,11 @@ const store = createStore({ count: 0 }, (set) => ({
   decrement: () => set((state) => ({ count: state.count - 1 })),
 }));
 
+const { increment, decrement } = store.actions;
+
 export const Counter = () => {
   // Use the store
-  const {
-    state: { count },
-    actions: { increment, decrement },
-  } = useStore(store);
+  const { count } = useStore(store);
 
   return (
     <div>

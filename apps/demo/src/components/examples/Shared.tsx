@@ -48,11 +48,11 @@ const sharedStore = createStore(initialState, (set, get) => {
     }));
 
   return {
-    countActions: {
+    count: {
       increment: () => setCountState((state) => ({ count: state.count + 1 })),
       decrement: () => setCountState((state) => ({ count: state.count - 1 })),
     },
-    todoActions: {
+    todo: {
       setInput: (input: string) => setTodoState({ input }),
       addTodo: () => {
         if (!get().todoState.input) {
@@ -76,16 +76,14 @@ const sharedStore = createStore(initialState, (set, get) => {
   };
 });
 
+const { decrement, increment } = sharedStore.actions.count;
+const { addTodo, setInput, toggleTodo } = sharedStore.actions.todo;
+
 const useSharedStore = <T = SharedState,>(select?: (state: SharedState) => T) =>
   useStore(sharedStore, select);
 
 const Counter = () => {
-  const {
-    state: { count },
-    actions: {
-      countActions: { increment, decrement },
-    },
-  } = useSharedStore((state) => state.countState);
+  const { count } = useSharedStore((state) => state.countState);
 
   const renderCount = useRenderCount();
 
@@ -105,12 +103,7 @@ const Counter = () => {
 };
 
 const Todo = () => {
-  const {
-    state: { input, todos },
-    actions: {
-      todoActions: { addTodo, setInput, toggleTodo },
-    },
-  } = useSharedStore((state) => state.todoState);
+  const { input, todos } = useSharedStore((state) => state.todoState);
 
   const renderCount = useRenderCount();
 
