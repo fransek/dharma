@@ -6,15 +6,18 @@ import { Input } from "../ui/input";
 
 // Create the store context
 const CounterStoreContext = createStoreContext((initialCount: number) =>
-  createStore({ count: initialCount, input: "" }, ({ set }) => ({
-    increment: () => set((state) => ({ count: state.count + 1 })),
-    decrement: () => set((state) => ({ count: state.count - 1 })),
-    setInput: (input: string) => set({ input }),
-  })),
+  createStore({
+    initialState: { count: initialCount, input: "" },
+    defineActions: ({ set }) => ({
+      increment: () => set((state) => ({ count: state.count + 1 })),
+      decrement: () => set((state) => ({ count: state.count - 1 })),
+      setInput: (input: string) => set({ input }),
+    }),
+  }),
 );
 
 const Example = ({ initialCount }: { initialCount: number }) => {
-  // Create an instance of the store. Make sure the store is not instantiated on every render.
+  // Create an instance of the store. Make sure the store is not recreated on every render.
   const store = useMemo(
     () => CounterStoreContext.createStore(initialCount),
     [initialCount],

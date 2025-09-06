@@ -12,11 +12,14 @@ const useRenderCount = () => {
 };
 
 describe("useStore", () => {
-  const store = createStore({ count: 0 }, ({ set }) => ({
-    increment: () => set((state) => ({ count: state.count + 1 })),
-    decrement: () => set((state) => ({ count: state.count - 1 })),
-    reset: () => set({ count: 0 }),
-  }));
+  const store = createStore({
+    initialState: { count: 0 },
+    defineActions: ({ set }) => ({
+      increment: () => set((state) => ({ count: state.count + 1 })),
+      decrement: () => set((state) => ({ count: state.count - 1 })),
+      reset: () => set({ count: 0 }),
+    }),
+  });
 
   const { increment, reset } = store.actions;
 
@@ -41,10 +44,13 @@ describe("useStore", () => {
   });
 
   it("should return the selected state and only re-render when the selected state changes", async () => {
-    const testStore = createStore({ count: 0, foo: 0 }, ({ set }) => ({
-      increaseCount: () => set((state) => ({ count: state.count + 1 })),
-      increaseFoo: () => set((state) => ({ foo: state.foo + 1 })),
-    }));
+    const testStore = createStore({
+      initialState: { count: 0, foo: 0 },
+      defineActions: ({ set }) => ({
+        increaseCount: () => set((state) => ({ count: state.count + 1 })),
+        increaseFoo: () => set((state) => ({ foo: state.foo + 1 })),
+      }),
+    });
 
     const { increaseCount, increaseFoo } = testStore.actions;
 

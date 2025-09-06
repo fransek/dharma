@@ -11,18 +11,24 @@ A simple and lightweight state management solution for JavaScript and TypeScript
 ```ts
 import { createStore } from "dharma-core";
 
-const store = createStore({ count: 0 }, ({ set }) => ({
-  increment: () => set((state) => ({ count: state.count + 1 })),
-  decrement: () => set((state) => ({ count: state.count - 1 })),
-}));
+const store = createStore({
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }),
+});
+
+const { increment, decrement } = store.actions;
 
 // Subscribe to state changes
-store.subscribe((state) => console.log(state));
+const unsubscribe = store.subscribe((state) => console.log(state.count));
 // Update the state
-store.actions.increment();
+increment();
 // { count: 1 }
-store.actions.decrement();
+decrement();
 // { count: 0 }
+unsubscribe();
 ```
 
 ## With React
@@ -50,11 +56,13 @@ yarn add dharma-core dharma-react
 ```ts
 import { createStore } from "dharma-core";
 
-export const store = createStore({ count: 0 }, ({ set }) => ({
-  increment: () => set((state) => ({ count: state.count + 1 })),
-  decrement: () => set((state) => ({ count: state.count - 1 })),
-  reset: () => set({ count: 0 }),
-}));
+export const store = createStore({
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }),
+});
 
 export const { increment, decrement, reset } = store.actions;
 ```
@@ -73,7 +81,6 @@ function Counter() {
       <div>{count}</div>
       <button onClick={decrement}>-</button>
       <button onClick={increment}>+</button>
-      <button onClick={reset}>Reset</button>
     </div>
   );
 }

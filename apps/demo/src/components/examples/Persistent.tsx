@@ -4,19 +4,17 @@ import { ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 
 // Create the store
-const store = createPersistentStore(
+const store = createPersistentStore({
   // Provide a unique key to identify the store in storage
-  "count",
-  { count: 0 },
-  ({ set }) => ({
+  key: "count",
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),
-  {
-    // storage: sessionStorage,
-    // serializer: superjson,
-  },
-);
+  // storage: sessionStorage,
+  // serializer: superjson,
+});
 
 const { increment, decrement } = store.actions;
 

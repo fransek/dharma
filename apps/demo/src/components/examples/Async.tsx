@@ -21,25 +21,25 @@ const fetchUsers = async () => {
   return await response.json();
 };
 
-const store = createStore(
-  { users: [], loading: true } as State,
-  ({ set }) => ({
+const initialState: State = {
+  users: [],
+  loading: true,
+};
+
+const store = createStore({
+  initialState,
+  defineActions: ({ set }) => ({
     refresh: async () => {
       set({ users: [], loading: true });
       const users = await fetchUsers();
       set({ users: users, loading: false });
     },
   }),
-  {
-    onAttach: async ({ state, set }) => {
-      if (state.users.length) {
-        return;
-      }
-      const users = await fetchUsers();
-      set({ users: users, loading: false });
-    },
+  onAttach: async ({ set }) => {
+    const users = await fetchUsers();
+    set({ users: users, loading: false });
   },
-);
+});
 
 const { refresh } = store.actions;
 

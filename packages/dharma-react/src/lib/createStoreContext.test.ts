@@ -4,28 +4,34 @@ import { createStoreContext } from "./createStoreContext";
 
 describe("createStoreContext", () => {
   it("should create a store context with an instantiation function", () => {
-    const instantiate = (initialCount: number) =>
-      createStore({ count: initialCount }, ({ set }) => ({
-        increment: () => set((state) => ({ count: state.count + 1 })),
-        decrement: () => set((state) => ({ count: state.count - 1 })),
-        reset: () => set({ count: 0 }),
-      }));
+    const createCountStore = (initialCount: number) =>
+      createStore({
+        initialState: { count: initialCount },
+        defineActions: ({ set }) => ({
+          increment: () => set((state) => ({ count: state.count + 1 })),
+          decrement: () => set((state) => ({ count: state.count - 1 })),
+          reset: () => set({ count: 0 }),
+        }),
+      });
 
-    const StoreContext = createStoreContext(instantiate);
+    const StoreContext = createStoreContext(createCountStore);
 
     expect(StoreContext).toHaveProperty("createStore");
     expect(typeof StoreContext.createStore).toBe("function");
   });
 
   it("should instantiate a new store with the given arguments", () => {
-    const instantiate = (initialCount: number) =>
-      createStore({ count: initialCount }, ({ set }) => ({
-        increment: () => set((state) => ({ count: state.count + 1 })),
-        decrement: () => set((state) => ({ count: state.count - 1 })),
-        reset: () => set({ count: 0 }),
-      }));
+    const createCountStore = (initialCount: number) =>
+      createStore({
+        initialState: { count: initialCount },
+        defineActions: ({ set }) => ({
+          increment: () => set((state) => ({ count: state.count + 1 })),
+          decrement: () => set((state) => ({ count: state.count - 1 })),
+          reset: () => set({ count: 0 }),
+        }),
+      });
 
-    const StoreContext = createStoreContext(instantiate);
+    const StoreContext = createStoreContext(createCountStore);
     const store = StoreContext.createStore(5);
 
     expect(store.get()).toEqual({ count: 5 });

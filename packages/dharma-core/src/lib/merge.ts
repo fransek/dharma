@@ -12,14 +12,14 @@ import { StateModifier } from "./createStore";
  * ```ts
  * import { createStore, merge, StateModifier } from "dharma-core";
  *
- * const store = createStore(
- *   {
+ * const store = createStore({
+ *   initialState: {
  *     counter: {
  *       count: 0,
  *     },
  *     // ...
  *   },
- *   (set) => {
+ *   defineActions: ({ set }) => {
  *     const setCounter = (counter: StateModifier<{ count: number }>) =>
  *       set((state) => ({
  *         counter: merge(state.counter, counter),
@@ -32,7 +32,7 @@ import { StateModifier } from "./createStore";
  *       // ...
  *     };
  *   },
- * );
+ * });
  * ```
  * @group Utilities
  */

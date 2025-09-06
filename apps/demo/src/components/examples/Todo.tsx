@@ -17,27 +17,30 @@ const initialState: TodoState = {
   todos: [],
 };
 
-const store = createStore(initialState, ({ set, get }) => ({
-  setInput: (input: string) => set({ input }),
-  addTodo: () => {
-    if (!get().input) {
-      return;
-    }
-    set((state) => ({
-      todos: [...state.todos, { title: state.input, complete: false }],
-      input: "",
-    }));
-  },
-  toggleTodo: (index: number) =>
-    set((state) => ({
-      todos: state.todos.map((todo, i) => {
-        if (index === i) {
-          return { ...todo, complete: !todo.complete };
-        }
-        return todo;
-      }),
-    })),
-}));
+const store = createStore({
+  initialState,
+  defineActions: ({ set, get }) => ({
+    setInput: (input: string) => set({ input }),
+    addTodo: () => {
+      if (!get().input) {
+        return;
+      }
+      set((state) => ({
+        todos: [...state.todos, { title: state.input, complete: false }],
+        input: "",
+      }));
+    },
+    toggleTodo: (index: number) =>
+      set((state) => ({
+        todos: state.todos.map((todo, i) => {
+          if (index === i) {
+            return { ...todo, complete: !todo.complete };
+          }
+          return todo;
+        }),
+      })),
+  }),
+});
 
 const { setInput, addTodo, toggleTodo } = store.actions;
 
