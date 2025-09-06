@@ -12,17 +12,5 @@ describe("createPersistentStore", () => {
 
   it("should not throw in a node environment", () => {
     expect(() => createPersistentStore(base)).not.toThrow();
-    expect(() =>
-      createPersistentStore({
-        ...base,
-        storage: "local",
-      }),
-    ).not.toThrow();
-    expect(() =>
-      createPersistentStore({
-        ...base,
-        storage: "session",
-      }),
-    ).not.toThrow();
   });
 });

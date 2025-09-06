@@ -18,7 +18,7 @@ export type PersistentStoreConfiguration<
 > = StoreConfiguration<TState, TActions> & {
   key: string;
   /** The storage to use for persisting the state. Defaults to local storage. */
-  storage?: StorageAPI | "local" | "session";
+  storage?: StorageAPI;
   /** The serializer to use for storing the state. Defaults to JSON. */
   serializer?: Serializer<TState>;
 };
@@ -30,10 +30,7 @@ export type PersistentStoreConfiguration<
  * **Note:** The state needs to be serializable by whatever serializer you use. (JSON by default)
  * If you need something more versatile I would recommend using a library like [superjson](https://github.com/flightcontrolhq/superjson).
  *
- * @param {string} key - A unique key to identify the store in storage.
- * @param {TState} initialState - The initial state of the store.
- * @param {DefineActions<TState, TActions>} [defineActions] - A function to define actions for the store.
- * @param {PersistentStoreConfiguration<TState>} [options] - Additional options for the persistent store.
+ * @param {PersistentStoreConfiguration<TState, TActions>} config - The configuration for the persistent store.
  *
  * @returns {Store<TState, TActions>} The created store.
  *
@@ -42,11 +39,15 @@ export type PersistentStoreConfiguration<
  * ```ts
  * import { createPersistentStore } from "dharma-core";
  *
- * const store = createPersistentStore("count", { count: 0 }, ({ set }) => ({
- *   increment: () => set((state) => ({ count: state.count + 1 })),
- *   decrement: () => set((state) => ({ count: state.count - 1 })),
- *   reset: () => set({ count: 0 }),
- * }));
+ * const store = createPersistentStore({
+ *   key: "count",
+ *   initialState: { count: 0 },
+ *   defineActions: ({ set }) => ({
+ *     increment: () => set((state) => ({ count: state.count + 1 })),
+ *     decrement: () => set((state) => ({ count: state.count - 1 })),
+ *     reset: () => set({ count: 0 }),
+ *   }),
+ * });
  * ```
  * @example
  * With superjson serialization and session storage:
@@ -54,19 +55,17 @@ export type PersistentStoreConfiguration<
  * import { createPersistentStore } from "dharma-core";
  * import superjson from "superjson";
  *
- * const store = createPersistentStore(
- *   "count",
- *   { count: 0 },
- *   ({ set }) => ({
+ * const store = createPersistentStore({
+ *   key: "count",
+ *   initialState: { count: 0 },
+ *   defineActions: ({ set }) => ({
  *     increment: () => set((state) => ({ count: state.count + 1 })),
  *     decrement: () => set((state) => ({ count: state.count - 1 })),
  *     reset: () => set({ count: 0 }),
  *   }),
- *   {
- *     serializer: superjson,
- *     storage: "session",
- *   },
- * );
+ *   serializer: superjson,
+ *   storage: sessionStorage,
+ * });
  * ```
  */
 export const createPersistentStore = <
@@ -82,7 +81,7 @@ export const createPersistentStore = <
   const {
     key,
     initialState,
-    storage: _storage = "local",
+    storage = localStorage,
     serializer = JSON,
     onAttach,
     onDetach,
@@ -90,7 +89,6 @@ export const createPersistentStore = <
     ...rest
   } = options;
 
-  const storage = getStorage(_storage);
   const stateKey = `store_${key}`;
   const initialStateKey = `init_${key}`;
   const initialStateSnapshot = storage.getItem(initialStateKey);
@@ -140,15 +138,4 @@ export const createPersistentStore = <
   });
 
   return store;
-};
-
-const getStorage = (storage: StorageAPI | "local" | "session"): StorageAPI => {
-  switch (storage) {
-    case "local":
-      return localStorage;
-    case "session":
-      return sessionStorage;
-    default:
-      return storage;
-  }
 };
