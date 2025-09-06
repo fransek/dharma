@@ -31,6 +31,8 @@ decrement();
 unsubscribe();
 ```
 
+[Read the dharma-core documentation](https://fransek.github.io/dharma/modules/dharma-core.html)
+
 ## With React
 
 [![Version](https://img.shields.io/npm/v/dharma-react)](https://npmjs.com/package/dharma-react)
@@ -85,3 +87,5 @@ function Counter() {
   );
 }
 ```
+
+[Read the dharma-react documentation](https://fransek.github.io/dharma/modules/dharma-react.html)
