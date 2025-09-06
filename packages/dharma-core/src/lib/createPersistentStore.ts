@@ -17,7 +17,7 @@ export type PersistentStoreConfiguration<
   TActions extends object,
 > = StoreConfiguration<TState, TActions> & {
   key: string;
-  /** The storage to use for persisting the state. Defaults to local storage. */
+  /** The storage to use for persisting the state. Defaults to local storage if available. */
   storage?: StorageAPI;
   /** The serializer to use for storing the state. Defaults to JSON. */
   serializer?: Serializer<TState>;
@@ -72,44 +72,47 @@ export const createPersistentStore = <
   TState extends object,
   TActions extends object = Record<never, never>,
 >(
-  options: PersistentStoreConfiguration<TState, TActions>,
+  config: PersistentStoreConfiguration<TState, TActions>,
 ): Store<TState, TActions> => {
-  if (typeof window === "undefined") {
-    return createStore(options);
-  }
-
   const {
     key,
     initialState,
-    storage = localStorage,
+    storage: customStorage,
     serializer = JSON,
     onAttach,
     onDetach,
     onChange,
     ...rest
-  } = options;
+  } = config;
 
-  const stateKey = `store_${key}`;
+  const IS_BROWSER = typeof window !== "undefined";
+  const storage = customStorage ?? (IS_BROWSER ? localStorage : undefined);
+
+  if (!storage) {
+    return createStore(config);
+  }
+
   const initialStateKey = `init_${key}`;
+
   const initialStateSnapshot = storage.getItem(initialStateKey);
   const initialStateString = serializer.stringify(initialState);
 
   if (initialStateSnapshot !== initialStateString) {
     storage.setItem(initialStateKey, initialStateString);
-    storage.removeItem(stateKey);
+    storage.removeItem(key);
   }
 
   const updateSnapshot = (newState: TState) => {
-    const currentSnapshot = storage.getItem(stateKey);
+    const currentSnapshot = storage.getItem(key);
     const newSnapshot = serializer.stringify(newState);
 
     if (newSnapshot !== currentSnapshot) {
-      storage.setItem(stateKey, newSnapshot);
+      storage.setItem(key, newSnapshot);
     }
   };
 
   const updateState = () => {
-    const currentSnapshot = storage.getItem(stateKey);
+    const currentSnapshot = storage.getItem(key);
 
     if (
       currentSnapshot &&
@@ -124,11 +127,15 @@ export const createPersistentStore = <
     onAttach: (ctx) => {
       onAttach?.(ctx);
       updateState();
-      window.addEventListener("focus", updateState);
+      if (IS_BROWSER) {
+        window.addEventListener("focus", updateState);
+      }
     },
     onDetach: (ctx) => {
       onDetach?.(ctx);
-      window.removeEventListener("focus", updateState);
+      if (IS_BROWSER) {
+        window.removeEventListener("focus", updateState);
+      }
     },
     onChange: ({ state, ...ctx }) => {
       onChange?.({ state, ...ctx });

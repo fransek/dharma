@@ -7,11 +7,10 @@ import {
 
 describe("createPersistentStore", () => {
   const key = "test";
+  const initKey = `init_${key}`;
   const initialState = { count: 0 };
   const listener = vi.fn();
   const defineActions = vi.fn();
-  const initKey = `init_${key}`;
-  const storeKey = `store_${key}`;
 
   beforeEach(() => {
     localStorage.clear();
@@ -27,13 +26,13 @@ describe("createPersistentStore", () => {
     const store = createPersistentStore({ key, initialState, defineActions });
     store.subscribe(listener);
     store.set({ count: 1 });
-    const storedState = localStorage.getItem(storeKey);
+    const storedState = localStorage.getItem(key);
     expect(storedState).toBe(JSON.stringify({ count: 1 }));
   });
 
   it("should load state from localStorage if available", () => {
     localStorage.setItem(initKey, JSON.stringify({ count: 0 }));
-    localStorage.setItem(storeKey, JSON.stringify({ count: 1 }));
+    localStorage.setItem(key, JSON.stringify({ count: 1 }));
     const store = createPersistentStore({ key, initialState, defineActions });
     expect(store.get()).toEqual({ count: 0 });
     store.subscribe(listener);
@@ -42,7 +41,7 @@ describe("createPersistentStore", () => {
 
   it("should load state from sessionStorage if available", () => {
     sessionStorage.setItem(initKey, JSON.stringify({ count: 0 }));
-    sessionStorage.setItem(storeKey, JSON.stringify({ count: 2 }));
+    sessionStorage.setItem(key, JSON.stringify({ count: 2 }));
     const store = createPersistentStore({
       key,
       initialState,
@@ -57,7 +56,7 @@ describe("createPersistentStore", () => {
     const store = createPersistentStore({ key, initialState, defineActions });
     store.subscribe(listener);
     store.set({ count: 1 });
-    localStorage.setItem(storeKey, JSON.stringify({ count: 2 }));
+    localStorage.setItem(key, JSON.stringify({ count: 2 }));
     window.dispatchEvent(new Event("focus"));
     expect(store.get()).toEqual({ count: 2 });
   });
@@ -91,7 +90,7 @@ describe("createPersistentStore", () => {
     });
     store.set({ count: 1 });
     expect(customStorage.setItem).toHaveBeenCalledWith(
-      storeKey,
+      key,
       JSON.stringify({ count: 1 }),
     );
   });
