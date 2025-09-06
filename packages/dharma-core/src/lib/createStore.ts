@@ -86,7 +86,6 @@ export type StoreConfiguration<
  *   }),
  * });
  * ```
- * @group Core
  */
 export const createStore = <
   TState extends object,

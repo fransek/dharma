@@ -34,7 +34,6 @@ import { StateModifier } from "./createStore";
  *   },
  * });
  * ```
- * @group Utilities
  */
 export const merge = <T extends object>(
   currentState: T,

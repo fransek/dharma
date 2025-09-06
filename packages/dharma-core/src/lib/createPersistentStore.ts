@@ -68,7 +68,6 @@ export type PersistentStoreConfiguration<
  *   },
  * );
  * ```
- * @group Core
  */
 export const createPersistentStore = <
   TState extends object,

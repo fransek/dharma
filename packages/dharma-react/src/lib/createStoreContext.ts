@@ -48,7 +48,6 @@ export type StoreContext<
  *   );
  * }
  * ```
- * @group Utilities
  */
 export const createStoreContext = <
   TArgs extends unknown[],
