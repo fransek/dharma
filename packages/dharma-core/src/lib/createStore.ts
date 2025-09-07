@@ -1,3 +1,4 @@
+import { getPersistenceHandlers } from "./getPersistenceHandlers";
 import { merge } from "./merge";
 
 type Listener<TState extends object> = (state: TState) => void;
@@ -49,10 +50,7 @@ export type DefineActions<TState extends object, TActions> = (
   stateFunctions: StateFunctions<TState>,
 ) => TActions;
 
-export type StoreConfiguration<
-  TState extends object,
-  TActions extends object,
-> = {
+type BaseConfig<TState extends object, TActions extends object> = {
   /** The initial state of the store. */
   initialState: TState;
   /** A function that defines actions that can modify the state. */
@@ -67,10 +65,42 @@ export type StoreConfiguration<
   onChange?: StoreEventHandler<TState>;
 };
 
+export type StorageAPI = {
+  getItem: (key: string) => string | null;
+  setItem: (key: string, value: string) => void;
+  removeItem: (key: string) => void;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Serializer<T = any> = {
+  stringify: (value: T) => string;
+  parse: (value: string) => T;
+};
+
+type NonPersistentConfig = {
+  persist?: false;
+};
+
+type PersistentConfig<TState extends object> = {
+  persist: true;
+  /** The unique key used to identify this store in storage. */
+  key: string;
+  /** The storage to use for persisting the state. Defaults to local storage if available. */
+  storage?: StorageAPI;
+  /** The serializer to use for storing the state. Defaults to JSON. */
+  serializer?: Serializer<TState>;
+};
+
+export type StoreConfig<
+  TState extends object,
+  TActions extends object,
+> = BaseConfig<TState, TActions> &
+  (NonPersistentConfig | PersistentConfig<TState>);
+
 /**
  * Creates a store with an initial state and actions that can modify the state.
  *
- * @param {StoreConfiguration<TState>} [config] - The configuration for the store.
+ * @param {StoreConfig<TState, TActions>} [config] - The configuration for the store.
  *
  * @returns {Store<TState, TActions>} The created store with state management methods.
  *
@@ -91,7 +121,7 @@ export const createStore = <
   TState extends object,
   TActions extends object = Record<never, never>,
 >(
-  config: StoreConfiguration<TState, TActions>,
+  config: StoreConfig<TState, TActions>,
 ): Store<TState, TActions> => {
   const { initialState, defineActions, onLoad, onAttach, onDetach, onChange } =
     config;
@@ -110,6 +140,7 @@ export const createStore = <
 
   const dispatch = () => {
     onChange?.({ state, set: setSilently, reset: resetSilently });
+    persistenceHandlers?.updateSnapshot(state);
     listeners.forEach((listener) => listener(state));
   };
 
@@ -128,6 +159,11 @@ export const createStore = <
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       onAttach?.({ state, set, reset });
+      persistenceHandlers?.updateState();
+
+      if (IS_BROWSER && persistenceHandlers?.updateState) {
+        window.addEventListener("focus", persistenceHandlers.updateState);
+      }
     }
 
     listener(state);
@@ -138,6 +174,10 @@ export const createStore = <
 
       if (listeners.size === 0) {
         onDetach?.({ state, set, reset });
+
+        if (IS_BROWSER && persistenceHandlers?.updateState) {
+          window.removeEventListener("focus", persistenceHandlers.updateState);
+        }
       }
     };
   };
@@ -146,7 +186,16 @@ export const createStore = <
     ? defineActions({ set, get, reset })
     : ({} as TActions);
 
+  const IS_BROWSER = typeof window !== "undefined";
+  const persistenceHandlers = getPersistenceHandlers<TState, TActions>(
+    config,
+    IS_BROWSER,
+    get,
+    set,
+  );
+
   onLoad?.({ state, set, reset });
+  persistenceHandlers?.initializeSnapshots();
 
   return {
     get,
