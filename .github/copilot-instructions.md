@@ -105,6 +105,16 @@ After making changes to the state management logic:
 - Check build outputs in `packages/*/dist/` directories
 - Verify TypeScript compilation: `pnpm tsc --noEmit`
 
+## Release Management
+
+### Changesets for Version Bumps
+- When making changes that warrant a version bump to one or more of the packages, run `pnpm changeset` and create changesets with one-line descriptions
+- Follow semantic versioning principles when creating changesets
+
+### Pull Request Conventions
+- Use semantic pull request titles: `<type>: <summary>`
+- Valid types: feat, fix, docs, style, refactor, test, chore
+
 ## Dependencies and Tools
 
 ### Required Tools
