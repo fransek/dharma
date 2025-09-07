@@ -78,10 +78,12 @@ export type Serializer<T = any> = {
 };
 
 type NonPersistentConfig = {
+  /** Whether to persist the state of the store. */
   persist?: false;
 };
 
 type PersistentConfig<TState extends object> = {
+  /** Whether to persist the state of the store. */
   persist: true;
   /** The unique key used to identify this store in storage. */
   key: string;
