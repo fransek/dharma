@@ -1,5 +1,11 @@
 # dharma-core
 
+## 0.6.0
+
+### Minor Changes
+
+- [#24](https://github.com/fransek/dharma/pull/24) [`e906944`](https://github.com/fransek/dharma/commit/e90694435d35b2805b564af2318f3d43e454c88e) Thanks [@fransek](https://github.com/fransek)! - Removed createPersistentStore and extended createStore to handle persistent state
+
 ## 0.5.0
 
 ### Minor Changes
