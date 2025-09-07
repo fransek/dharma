@@ -52,3 +52,5 @@ function Counter() {
   );
 }
 ```
+
+[Read the documentation](https://fransek.github.io/dharma/modules/dharma-react.html)

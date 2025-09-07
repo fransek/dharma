@@ -6,6 +6,8 @@
 
 A simple and lightweight state management solution for JavaScript and TypeScript applications.
 
+[Read the full documentation 📄](https://fransek.github.io/dharma)
+
 ## Basic usage
 
 ```ts
@@ -30,8 +32,6 @@ decrement();
 // { count: 0 }
 unsubscribe();
 ```
-
-[Read the dharma-core documentation](https://fransek.github.io/dharma/modules/dharma-core.html)
 
 ## With React
 
@@ -87,5 +87,3 @@ function Counter() {
   );
 }
 ```
-
-[Read the dharma-react documentation](https://fransek.github.io/dharma/modules/dharma-react.html)
