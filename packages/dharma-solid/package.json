@@ -1,0 +1,46 @@
+{
+  "name": "dharma-solid",
+  "version": "0.4.1",
+  "author": "Frans Ekman <fransedvinekman@gmail.com>",
+  "license": "MIT",
+  "description": "My package description",
+  "keywords": [],
+  "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-solid#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fransek/dharma/tree/main/packages/dharma-solid"
+  },
+  "bugs": {
+    "url": "https://github.com/fransek/dharma/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rm -rf dist && rollup -c",
+    "dev": "rollup -c -w",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "coverage": "vitest --run --coverage --passWithNoTests",
+    "lint": "eslint"
+  },
+  "publishConfig": {
+    "provenance": true
+  },
+  "devDependencies": {
+    "@testing-library/user-event": "^14.6.1",
+    "dharma-core": "workspace:*",
+    "solid-js": "^1.9.9"
+  }
+}
