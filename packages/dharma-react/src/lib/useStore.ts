@@ -50,7 +50,7 @@ export const useStore = <
 ): TSelection => {
   const snapshotRef = useRef<TSelection | null>(null);
 
-  const getState = () => {
+  const getSelection = () => {
     if (select) {
       const newState = select(get());
       if (!deeplyEquals(snapshotRef.current, newState)) {
@@ -61,5 +61,9 @@ export const useStore = <
     return get();
   };
 
-  return useSyncExternalStore(subscribe, getState, getState) as TSelection;
+  return useSyncExternalStore(
+    subscribe,
+    getSelection,
+    getSelection,
+  ) as TSelection;
 };
