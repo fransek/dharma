@@ -1,12 +1,13 @@
-import { createPersistentStore } from "dharma-core";
+import { createStore } from "dharma-core";
 import { useStore } from "dharma-react";
 import { ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 
 // Create the store
-const store = createPersistentStore({
+const store = createStore({
   // Provide a unique key to identify the store in storage
   key: "count",
+  persist: true,
   initialState: { count: 0 },
   defineActions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
