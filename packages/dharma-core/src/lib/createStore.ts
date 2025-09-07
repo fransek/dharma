@@ -161,7 +161,7 @@ export const createStore = <
       onAttach?.({ state, set, reset });
       persistenceHandlers?.updateState();
 
-      if (IS_BROWSER && persistenceHandlers?.updateState) {
+      if (IS_BROWSER && persistenceHandlers) {
         window.addEventListener("focus", persistenceHandlers.updateState);
       }
     }
@@ -175,7 +175,7 @@ export const createStore = <
       if (listeners.size === 0) {
         onDetach?.({ state, set, reset });
 
-        if (IS_BROWSER && persistenceHandlers?.updateState) {
+        if (IS_BROWSER && persistenceHandlers) {
           window.removeEventListener("focus", persistenceHandlers.updateState);
         }
       }
