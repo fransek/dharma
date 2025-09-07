@@ -30,3 +30,5 @@ decrement();
 // { count: 0 }
 unsubscribe();
 ```
+
+[Read the documentation](https://fransek.github.io/dharma/modules/dharma-core.html)
