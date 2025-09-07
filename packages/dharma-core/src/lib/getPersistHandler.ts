@@ -1,6 +1,6 @@
 import { SetState, StoreConfig } from "./createStore";
 
-export const getPersistenceHandlers = <
+export const getPersistHandler = <
   TState extends object,
   TActions extends object = Record<never, never>,
 >(

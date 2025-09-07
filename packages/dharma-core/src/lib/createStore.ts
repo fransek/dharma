@@ -1,4 +1,4 @@
-import { getPersistenceHandlers } from "./getPersistenceHandlers";
+import { getPersistHandler } from "./getPersistHandler";
 import { merge } from "./merge";
 
 type Listener<TState extends object> = (state: TState) => void;
@@ -20,7 +20,7 @@ export type Store<TState extends object, TActions extends object> = {
   subscribe: (listener: Listener<TState>) => () => void;
 };
 
-export type EventHandlerContext<TState extends object> = {
+export type StoreEventContext<TState extends object> = {
   /** The current state of the store. */
   state: TState;
   /** Sets the state of the store. */
@@ -30,14 +30,14 @@ export type EventHandlerContext<TState extends object> = {
 };
 
 export type StoreEventHandler<TState extends object> = (
-  context: EventHandlerContext<TState>,
+  context: StoreEventContext<TState>,
 ) => void;
 
 export type StateModifier<TState extends object> =
   | Partial<TState>
   | ((state: TState) => Partial<TState>);
 
-export type StateFunctions<TState extends object> = {
+export type StateHandler<TState extends object> = {
   /** Returns the current state of the store. */
   get: () => TState;
   /** Sets the state of the store. */
@@ -47,7 +47,7 @@ export type StateFunctions<TState extends object> = {
 };
 
 export type DefineActions<TState extends object, TActions> = (
-  stateFunctions: StateFunctions<TState>,
+  stateHandler: StateHandler<TState>,
 ) => TActions;
 
 type BaseConfig<TState extends object, TActions extends object> = {
@@ -191,7 +191,6 @@ export const createStore = <
     config;
 
   let state = initialState;
-  const listeners = new Set<Listener<TState>>();
 
   const get = () => state;
 
@@ -200,19 +199,13 @@ export const createStore = <
     return state;
   };
 
-  const resetSilently = () => setSilently(initialState);
-
-  const dispatch = () => {
-    onChange?.({ state, set: setSilently, reset: resetSilently });
-    persistenceHandlers?.updateSnapshot(state);
-    listeners.forEach((listener) => listener(state));
-  };
-
   const set = (stateModifier: StateModifier<TState>) => {
     setSilently(stateModifier);
     dispatch();
     return state;
   };
+
+  const resetSilently = () => setSilently(initialState);
 
   const reset = () => {
     resetSilently();
@@ -220,13 +213,20 @@ export const createStore = <
     return state;
   };
 
+  const listeners = new Set<Listener<TState>>();
+  const actions = defineActions
+    ? defineActions({ set, get, reset })
+    : ({} as TActions);
+  const IS_BROWSER = typeof window !== "undefined";
+  const persistHandler = getPersistHandler(config, IS_BROWSER, get, set);
+
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       onAttach?.({ state, set, reset });
-      persistenceHandlers?.updateState();
+      persistHandler?.updateState();
 
-      if (IS_BROWSER && persistenceHandlers) {
-        window.addEventListener("focus", persistenceHandlers.updateState);
+      if (IS_BROWSER && persistHandler) {
+        window.addEventListener("focus", persistHandler.updateState);
       }
     }
 
@@ -239,27 +239,25 @@ export const createStore = <
       if (listeners.size === 0) {
         onDetach?.({ state, set, reset });
 
-        if (IS_BROWSER && persistenceHandlers) {
-          window.removeEventListener("focus", persistenceHandlers.updateState);
+        if (IS_BROWSER && persistHandler) {
+          window.removeEventListener("focus", persistHandler.updateState);
         }
       }
     };
   };
 
-  const actions = defineActions
-    ? defineActions({ set, get, reset })
-    : ({} as TActions);
-
-  const IS_BROWSER = typeof window !== "undefined";
-  const persistenceHandlers = getPersistenceHandlers<TState, TActions>(
-    config,
-    IS_BROWSER,
-    get,
-    set,
-  );
+  const dispatch = () => {
+    onChange?.({
+      state,
+      set: setSilently,
+      reset: resetSilently,
+    });
+    persistHandler?.updateSnapshot(state);
+    listeners.forEach((listener) => listener(state));
+  };
 
   onLoad?.({ state, set, reset });
-  persistenceHandlers?.initializeSnapshots();
+  persistHandler?.initializeSnapshots();
 
   return {
     get,
