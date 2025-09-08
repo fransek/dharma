@@ -1,5 +1,15 @@
 # dharma-core
 
+## 0.7.0
+
+### Minor Changes
+
+- [#40](https://github.com/fransek/dharma/pull/40) [`df3f121`](https://github.com/fransek/dharma/commit/df3f121c839dcfb4236be3e6c61de368f9bee03b) Thanks [@fransek](https://github.com/fransek)! - createStore now supports async storage
+
+### Patch Changes
+
+- [#36](https://github.com/fransek/dharma/pull/36) [`375f232`](https://github.com/fransek/dharma/commit/375f2329793b7993b5ac960fbc4583c798e0f060) Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - Update JSDoc examples to use current createStore API
+
 ## 0.6.1
 
 ### Patch Changes
