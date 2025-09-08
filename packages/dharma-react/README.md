@@ -31,14 +31,14 @@ export const store = createStore({
   }),
 });
 
-export const { increment, decrement, reset } = store.actions;
+export const { increment, decrement } = store.actions;
 ```
 
 3. Use the store:
 
 ```tsx
 import { useStore } from "dharma-react";
-import { decrement, increment, reset, store } from "./store";
+import { decrement, increment, store } from "./store";
 
 function Counter() {
   const { count } = useStore(store);
