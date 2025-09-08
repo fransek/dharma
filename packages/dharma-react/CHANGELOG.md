@@ -1,5 +1,11 @@
 # dharma-react
 
+## 0.4.2
+
+### Patch Changes
+
+- [#32](https://github.com/fransek/dharma/pull/32) [`5f2988b`](https://github.com/fransek/dharma/commit/5f2988bdacd3841f6810eeebb21c2004b3d36378) Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - Refactor useStore: rename getState to getSelection and change parameter destructuring for better readability
+
 ## 0.4.1
 
 ### Patch Changes
