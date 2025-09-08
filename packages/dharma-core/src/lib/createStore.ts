@@ -1,7 +1,7 @@
 import { getPersistHandler } from "./getPersistHandler";
 import { merge } from "./merge";
 
-type Listener<TState extends object> = (state: TState) => void;
+export type Listener<TState extends object> = (state: TState) => void;
 
 export type SetState<TState extends object> = (
   stateModifier: StateModifier<TState>,
@@ -50,7 +50,7 @@ export type DefineActions<TState extends object, TActions> = (
   stateHandler: StateHandler<TState>,
 ) => TActions;
 
-type BaseConfig<TState extends object, TActions extends object> = {
+export type BaseConfig<TState extends object, TActions extends object> = {
   /** The initial state of the store. */
   initialState: TState;
   /** A function that defines actions that can modify the state. */
@@ -65,7 +65,7 @@ type BaseConfig<TState extends object, TActions extends object> = {
   onChange?: StoreEventHandler<TState>;
 };
 
-type MaybePromise<T> = T | Promise<T>;
+export type MaybePromise<T> = T | Promise<T>;
 
 export type StorageAPI = {
   getItem: (key: string) => MaybePromise<string | null>;
@@ -79,12 +79,12 @@ export type Serializer<T = any> = {
   parse: (value: string) => T;
 };
 
-type NonPersistentConfig = {
+export type NoPersistConfig = {
   /** Whether to persist the state of the store. */
   persist?: false;
 };
 
-type PersistentConfig<TState extends object> = {
+export type PersistConfig<TState extends object> = {
   /** Whether to persist the state of the store. */
   persist: true;
   /** The unique key used to identify this store in storage. */
@@ -98,8 +98,7 @@ type PersistentConfig<TState extends object> = {
 export type StoreConfig<
   TState extends object,
   TActions extends object,
-> = BaseConfig<TState, TActions> &
-  (NonPersistentConfig | PersistentConfig<TState>);
+> = BaseConfig<TState, TActions> & (PersistConfig<TState> | NoPersistConfig);
 
 /**
  * Creates a store with an initial state and actions that can modify the state.
