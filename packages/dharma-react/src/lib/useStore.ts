@@ -45,21 +45,25 @@ export const useStore = <
   TActions extends object,
   TSelection = TState,
 >(
-  { get, subscribe }: Store<TState, TActions>,
+  store: Store<TState, TActions>,
   select?: (state: TState) => TSelection,
 ): TSelection => {
   const snapshotRef = useRef<TSelection | null>(null);
 
-  const getState = () => {
+  const getSelection = () => {
     if (select) {
-      const newState = select(get());
+      const newState = select(store.get());
       if (!deeplyEquals(snapshotRef.current, newState)) {
         snapshotRef.current = newState;
       }
       return snapshotRef.current;
     }
-    return get();
+    return store.get();
   };
 
-  return useSyncExternalStore(subscribe, getState, getState) as TSelection;
+  return useSyncExternalStore(
+    store.subscribe,
+    getSelection,
+    getSelection,
+  ) as TSelection;
 };
