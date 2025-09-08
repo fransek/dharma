@@ -28,7 +28,7 @@ export const PersistentAsync = () => {
         <Button onClick={increment}>+</Button>
       </div>
       <Button asChild variant="link">
-        <a target="_blank" href="/persistent">
+        <a target="_blank" href="/async-storage">
           Duplicate this tab
           <ExternalLink />
         </a>
