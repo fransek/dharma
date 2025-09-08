@@ -1,4 +1,4 @@
-import { getPersistHandler } from "./getPersistHandler";
+import { createStorageAdapter } from "./createStorageAdapter";
 import { merge } from "./merge";
 
 export type Listener<TState extends object> = (state: TState) => void;
@@ -219,15 +219,15 @@ export const createStore = <
     ? defineActions({ set, get, reset })
     : ({} as TActions);
   const IS_BROWSER = typeof window !== "undefined";
-  const persistHandler = getPersistHandler(config, IS_BROWSER, get, set);
+  const storageAdapter = createStorageAdapter(config, IS_BROWSER, get, set);
 
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       onAttach?.({ state, set, reset });
-      persistHandler?.updateState();
+      storageAdapter?.updateState();
 
-      if (IS_BROWSER && persistHandler) {
-        window.addEventListener("focus", persistHandler.updateState);
+      if (IS_BROWSER && storageAdapter) {
+        window.addEventListener("focus", storageAdapter.updateState);
       }
     }
 
@@ -240,8 +240,8 @@ export const createStore = <
       if (listeners.size === 0) {
         onDetach?.({ state, set, reset });
 
-        if (IS_BROWSER && persistHandler) {
-          window.removeEventListener("focus", persistHandler.updateState);
+        if (IS_BROWSER && storageAdapter) {
+          window.removeEventListener("focus", storageAdapter.updateState);
         }
       }
     };
@@ -253,12 +253,12 @@ export const createStore = <
       set: setSilently,
       reset: resetSilently,
     });
-    persistHandler?.updateSnapshot(state);
+    storageAdapter?.updateSnapshot(state);
     listeners.forEach((listener) => listener(state));
   };
 
   onLoad?.({ state, set, reset });
-  persistHandler?.initializeSnapshots();
+  storageAdapter?.initializeSnapshots();
 
   return {
     get,

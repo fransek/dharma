@@ -1,7 +1,7 @@
 import { SetState, StorageAPI, StoreConfig } from "./createStore";
 import { warn } from "./warn";
 
-export const getPersistHandler = <
+export const createStorageAdapter = <
   TState extends object,
   TActions extends object = Record<never, never>,
 >(
