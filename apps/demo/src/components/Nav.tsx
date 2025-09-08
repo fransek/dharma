@@ -15,6 +15,7 @@ const links: NavLink[] = [
   { href: "/context", label: "Context" },
   { href: "/shared", label: "Shared" },
   { href: "/persistent", label: "Persistent" },
+  { href: "/async-storage", label: "Async Storage" },
   { href: "/async", label: "Async" },
 ];
 

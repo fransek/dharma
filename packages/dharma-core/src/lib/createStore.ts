@@ -65,10 +65,12 @@ type BaseConfig<TState extends object, TActions extends object> = {
   onChange?: StoreEventHandler<TState>;
 };
 
+type MaybePromise<T> = T | Promise<T>;
+
 export type StorageAPI = {
-  getItem: (key: string) => string | null;
-  setItem: (key: string, value: string) => void;
-  removeItem: (key: string) => void;
+  getItem: (key: string) => MaybePromise<string | null>;
+  setItem: (key: string, value: string) => MaybePromise<void>;
+  removeItem: (key: string) => MaybePromise<void>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,4 +1,4 @@
-import { SetState, StoreConfig } from "./createStore";
+import { SetState, StorageAPI, StoreConfig } from "./createStore";
 
 export const getPersistHandler = <
   TState extends object,
@@ -13,7 +13,8 @@ export const getPersistHandler = <
     return null;
   }
 
-  const storage = config.storage ?? (isBrowser ? localStorage : undefined);
+  const storage =
+    config.storage ?? (isBrowser ? (localStorage as StorageAPI) : undefined);
 
   if (!storage) {
     return null;
@@ -22,31 +23,49 @@ export const getPersistHandler = <
   const { key, serializer = JSON, initialState } = config;
   const initKey = `init_${key}`;
 
-  const initializeSnapshots = () => {
-    const initialStateSnapshot = storage.getItem(initKey);
-    const initialStateString = serializer.stringify(initialState);
+  const initializeSnapshots = async () => {
+    try {
+      let initialStateSnapshot = storage.getItem(initKey);
+      const initialStateString = serializer.stringify(initialState);
 
-    if (initialStateSnapshot !== initialStateString) {
-      storage.setItem(initKey, initialStateString);
-      storage.removeItem(key);
-    }
+      if (initialStateSnapshot instanceof Promise) {
+        initialStateSnapshot = await initialStateSnapshot;
+      }
+
+      if (initialStateSnapshot !== initialStateString) {
+        storage.setItem(initKey, initialStateString);
+        storage.removeItem(key);
+      }
+    } catch {}
   };
 
-  const updateSnapshot = (newState: TState) => {
-    const currentSnapshot = storage.getItem(key);
-    const newSnapshot = serializer.stringify(newState);
+  const updateSnapshot = async (newState: TState) => {
+    try {
+      let currentSnapshot = storage.getItem(key);
+      const newSnapshot = serializer.stringify(newState);
 
-    if (newSnapshot !== currentSnapshot) {
-      storage.setItem(key, newSnapshot);
-    }
+      if (currentSnapshot instanceof Promise) {
+        currentSnapshot = await currentSnapshot;
+      }
+
+      if (newSnapshot !== currentSnapshot) {
+        storage.setItem(key, newSnapshot);
+      }
+    } catch {}
   };
 
-  const updateState = () => {
-    const currentSnapshot = storage.getItem(key);
+  const updateState = async () => {
+    try {
+      let currentSnapshot = storage.getItem(key);
 
-    if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
-      set(serializer.parse(currentSnapshot));
-    }
+      if (currentSnapshot instanceof Promise) {
+        currentSnapshot = await currentSnapshot;
+      }
+
+      if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
+        set(serializer.parse(currentSnapshot));
+      }
+    } catch {}
   };
 
   return {
