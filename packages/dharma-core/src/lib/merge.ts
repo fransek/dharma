@@ -1,4 +1,4 @@
-import { StateModifier } from "./createStore";
+import type { StateModifier } from "./types";
 
 /**
  * Merges the current state with a state modifier.

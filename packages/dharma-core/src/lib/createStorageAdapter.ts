@@ -1,4 +1,4 @@
-import { SetState, StorageAPI, StoreConfig } from "./createStore";
+import type { SetState, StorageAPI, StoreConfig } from "./types";
 import { warn } from "./warn";
 
 export const createStorageAdapter = <

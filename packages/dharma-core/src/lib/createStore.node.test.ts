@@ -1,7 +1,8 @@
 // @vitest-environment node
 
 import { describe, expect, it, vi } from "vitest";
-import { createStore, StorageAPI } from "./createStore";
+import { createStore } from "./createStore";
+import type { StorageAPI } from "./types";
 
 describe("createStore (node)", () => {
   const baseConfig = {
