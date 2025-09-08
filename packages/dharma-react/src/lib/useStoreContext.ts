@@ -29,7 +29,7 @@ export type BoundStore<
  * function Counter() {
  *   const {
  *     state: { count },
- *     actions: { increment, decrement, reset },
+ *     actions: { increment, decrement },
  *   } = useStoreContext(StoreContext);
  *
  *   return (
@@ -37,7 +37,6 @@ export type BoundStore<
  *       <div>{count}</div>
  *       <button onClick={decrement}>-</button>
  *       <button onClick={increment}>+</button>
- *       <button onClick={reset}>Reset</button>
  *     </div>
  *   );
  * }
