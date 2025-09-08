@@ -10,10 +10,9 @@ body {
 }
 
 code,
-pre {
-  font-family: "Geist Mono", sans-serif;
-}
-
+pre,
 .tsd-signature {
   font-family: "Geist Mono", sans-serif;
+  overflow: auto;
+  white-space: pre;
 }
