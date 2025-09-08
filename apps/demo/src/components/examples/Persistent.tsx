@@ -1,19 +1,25 @@
-import { createPersistentStore } from "dharma-core";
+import { createStore } from "dharma-core";
 import { useStore } from "dharma-react";
 import { ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 
-// Create the store
-const store = createPersistentStore({
-  // Provide a unique key to identify the store in storage
-  key: "count",
+// Create the store with persistence (if localStorage is available)
+const store = createStore({
   initialState: { count: 0 },
   defineActions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),
-  // storage: sessionStorage,
-  // serializer: superjson,
+  // Only add persistence if we're in the browser
+  ...(typeof window !== 'undefined' && {
+    persistence: {
+      // Provide a unique key to identify the store in storage
+      key: "count",
+      // Use localStorage for persistence
+      storage: localStorage,
+      // serializer: superjson, // Optional custom serializer
+    },
+  }),
 });
 
 const { increment, decrement } = store.actions;
