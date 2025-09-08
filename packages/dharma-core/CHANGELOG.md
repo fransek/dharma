@@ -1,5 +1,11 @@
 # dharma-core
 
+## 0.6.1
+
+### Patch Changes
+
+- [#26](https://github.com/fransek/dharma/pull/26) [`8a0b22e`](https://github.com/fransek/dharma/commit/8a0b22e3464841bf66b405df9aaf05acdf381673) Thanks [@fransek](https://github.com/fransek)! - Refactored createStore for better readability
+
 ## 0.6.0
 
 ### Minor Changes
