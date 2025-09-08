@@ -39,6 +39,9 @@ jobs:
       - name: Build packages
         run: pnpm build
 
+      - name: Update documentation
+        run: pnpm run docs
+
       - name: Create release PR or publish packages
         uses: changesets/action@v1
         with:
