@@ -15,7 +15,7 @@ import { deeplyEquals } from "./deeplyEquals";
  * import { useStore } from "dharma-react";
  * import { store } from "./store";
  *
- * const { increment, decrement, reset } = store.actions;
+ * const { increment, decrement } = store.actions;
  *
  * function Counter() {
  *   const { count } = useStore(store);
@@ -25,7 +25,6 @@ import { deeplyEquals } from "./deeplyEquals";
  *       <div>{count}</div>
  *       <button onClick={decrement}>-</button>
  *       <button onClick={increment}>+</button>
- *       <button onClick={reset}>Reset</button>
  *     </div>
  *   );
  * }

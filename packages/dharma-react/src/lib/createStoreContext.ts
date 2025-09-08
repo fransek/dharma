@@ -24,11 +24,13 @@ export type StoreContext<
  * import { useMemo } from "react";
  *
  * const StoreContext = createStoreContext((initialCount: number) =>
- *   createStore({ count: initialCount }, ({ set }) => ({
- *     increment: () => set((state) => ({ count: state.count + 1 })),
- *     decrement: () => set((state) => ({ count: state.count - 1 })),
- *     reset: () => set({ count: 0 }),
- *   })),
+ *   createStore({
+ *     initialState: { count: initialCount },
+ *     defineActions: ({ set }) => ({
+ *       increment: () => set((state) => ({ count: state.count + 1 })),
+ *       decrement: () => set((state) => ({ count: state.count - 1 })),
+ *     }),
+ *   }),
  * );
  *
  * function StoreProvider({
