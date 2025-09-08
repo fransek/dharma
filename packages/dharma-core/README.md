@@ -22,7 +22,7 @@ const store = createStore({
 const { increment, decrement } = store.actions;
 
 // Subscribe to state changes
-const unsubscribe = store.subscribe((state) => console.log(state.count));
+const unsubscribe = store.subscribe((state) => console.log(state));
 // Update the state
 increment();
 // { count: 1 }
