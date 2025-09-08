@@ -1,5 +1,11 @@
 # dharma-react
 
+## 0.4.3
+
+### Patch Changes
+
+- [#36](https://github.com/fransek/dharma/pull/36) [`375f232`](https://github.com/fransek/dharma/commit/375f2329793b7993b5ac960fbc4583c798e0f060) Thanks [@copilot-swe-agent](https://github.com/apps/copilot-swe-agent)! - Update JSDoc examples to use current createStore API and remove reset actions
+
 ## 0.4.2
 
 ### Patch Changes
