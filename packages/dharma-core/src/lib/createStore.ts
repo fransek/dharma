@@ -1,4 +1,4 @@
-import { getPersistHandler } from "./getPersistHandler";
+import { getStorageAdapter } from "./getStorageAdapter";
 import { merge } from "./merge";
 
 export type Listener<TState extends object> = (state: TState) => void;
@@ -219,7 +219,7 @@ export const createStore = <
     ? defineActions({ set, get, reset })
     : ({} as TActions);
   const IS_BROWSER = typeof window !== "undefined";
-  const persistHandler = getPersistHandler(config, IS_BROWSER, get, set);
+  const persistHandler = getStorageAdapter(config, IS_BROWSER, get, set);
 
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
