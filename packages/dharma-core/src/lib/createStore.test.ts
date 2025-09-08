@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createStore, Serializer, StorageAPI } from "./createStore";
 
@@ -210,6 +211,24 @@ describe("createStore", () => {
         key,
         JSON.stringify({ count: 1 }),
       );
+    });
+
+    it("should use async storage", async () => {
+      vi.spyOn(AsyncStorage, "setItem");
+
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        defineActions,
+        storage: AsyncStorage,
+      });
+
+      await Promise.resolve(store.set({ count: 1 }));
+      const expectedSnapshot = JSON.stringify({ count: 1 });
+      const snapshot = await AsyncStorage.getItem(key);
+      expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, expectedSnapshot);
+      expect(snapshot).toBe(expectedSnapshot);
     });
   });
 });
