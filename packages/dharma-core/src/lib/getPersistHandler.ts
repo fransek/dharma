@@ -1,4 +1,5 @@
 import { SetState, StorageAPI, StoreConfig } from "./createStore";
+import { warn } from "./warn";
 
 export const getPersistHandler = <
   TState extends object,
@@ -17,6 +18,9 @@ export const getPersistHandler = <
     config.storage ?? (isBrowser ? (localStorage as StorageAPI) : undefined);
 
   if (!storage) {
+    warn(
+      "No storage provider found. If this happened during SSR, you can safely ignore this warning.",
+    );
     return null;
   }
 
@@ -36,7 +40,11 @@ export const getPersistHandler = <
         storage.setItem(initKey, initialStateString);
         storage.removeItem(key);
       }
-    } catch {}
+    } catch {
+      warn(
+        "Failed to initialize snapshots. If this happened during SSR, you can safely ignore this warning.",
+      );
+    }
   };
 
   const updateSnapshot = async (newState: TState) => {
@@ -51,7 +59,9 @@ export const getPersistHandler = <
       if (newSnapshot !== currentSnapshot) {
         storage.setItem(key, newSnapshot);
       }
-    } catch {}
+    } catch {
+      warn("Failed to update snapshot");
+    }
   };
 
   const updateState = async () => {
@@ -65,7 +75,9 @@ export const getPersistHandler = <
       if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
         set(serializer.parse(currentSnapshot));
       }
-    } catch {}
+    } catch {
+      warn("Failed to update state from snapshot");
+    }
   };
 
   return {
