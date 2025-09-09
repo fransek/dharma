@@ -177,6 +177,23 @@ describe("createStore", () => {
       expect(store.get()).toEqual({ count: 2 });
     });
 
+    it("should add and remove focus event listener once", () => {
+      const addEventListenerSpy = vi.spyOn(window, "addEventListener");
+      const removeEventListenerSpy = vi.spyOn(window, "removeEventListener");
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        defineActions,
+      });
+      const unsubscribe = store.subscribe(vi.fn());
+      const unsubscribe2 = store.subscribe(vi.fn());
+      expect(addEventListenerSpy).toHaveBeenCalledOnce();
+      unsubscribe();
+      unsubscribe2();
+      expect(removeEventListenerSpy).toHaveBeenCalledOnce();
+    });
+
     it("should use custom serializer", () => {
       const customSerializer: Serializer = {
         stringify: vi.fn(),
