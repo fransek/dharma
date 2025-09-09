@@ -218,17 +218,12 @@ export const createStore = <
   const actions = defineActions
     ? defineActions({ set, get, reset })
     : ({} as TActions);
-  const IS_BROWSER = typeof window !== "undefined";
-  const storageAdapter = createStorageAdapter(config, IS_BROWSER, get, set);
+  const storageAdapter = createStorageAdapter(config, get, set);
 
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       onAttach?.({ state, set, reset });
-      storageAdapter?.updateState();
-
-      if (IS_BROWSER && storageAdapter) {
-        window.addEventListener("focus", storageAdapter.updateState);
-      }
+      storageAdapter?.onAttach();
     }
 
     listener(state);
@@ -239,10 +234,7 @@ export const createStore = <
 
       if (listeners.size === 0) {
         onDetach?.({ state, set, reset });
-
-        if (IS_BROWSER && storageAdapter) {
-          window.removeEventListener("focus", storageAdapter.updateState);
-        }
+        storageAdapter?.onDetach();
       }
     };
   };
@@ -253,12 +245,12 @@ export const createStore = <
       set: setSilently,
       reset: resetSilently,
     });
-    storageAdapter?.updateSnapshot(state);
+    storageAdapter?.onChange(state);
     listeners.forEach((listener) => listener(state));
   };
 
   onLoad?.({ state, set, reset });
-  storageAdapter?.initializeSnapshots();
+  storageAdapter?.onLoad();
 
   return {
     get,
