@@ -28,6 +28,22 @@ export const createStorageAdapter = <
   const { key, serializer = JSON, initialState } = config;
   const initKey = `init_${key}`;
 
+  const syncWithSnapshot = async () => {
+    try {
+      let currentSnapshot = storage.getItem(key);
+
+      if (currentSnapshot instanceof Promise) {
+        currentSnapshot = await currentSnapshot;
+      }
+
+      if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
+        set(serializer.parse(currentSnapshot));
+      }
+    } catch {
+      warn("Failed to update state from snapshot");
+    }
+  };
+
   const onLoad = async () => {
     try {
       let initialStateSnapshot = storage.getItem(initKey);
@@ -41,14 +57,18 @@ export const createStorageAdapter = <
         storage.setItem(initKey, initialStateString);
         storage.removeItem(key);
       }
-
-      if (IS_BROWSER) {
-        window.addEventListener("focus", onAttach);
-      }
     } catch {
       warn(
         "Failed to initialize snapshots. If this happened during SSR, you can safely ignore this warning.",
       );
+    }
+  };
+
+  const onAttach = async () => {
+    syncWithSnapshot();
+
+    if (IS_BROWSER) {
+      window.addEventListener("focus", syncWithSnapshot);
     }
   };
 
@@ -69,25 +89,9 @@ export const createStorageAdapter = <
     }
   };
 
-  const onAttach = async () => {
-    try {
-      let currentSnapshot = storage.getItem(key);
-
-      if (currentSnapshot instanceof Promise) {
-        currentSnapshot = await currentSnapshot;
-      }
-
-      if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
-        set(serializer.parse(currentSnapshot));
-      }
-    } catch {
-      warn("Failed to update state from snapshot");
-    }
-  };
-
   const onDetach = () => {
     if (IS_BROWSER) {
-      window.removeEventListener("focus", onAttach);
+      window.removeEventListener("focus", syncWithSnapshot);
     }
   };
 
