@@ -29,7 +29,7 @@ export type StoreEventContext<TState extends object> = {
   reset: () => TState;
 };
 
-export type StoreEventHandler<TState extends object> = (
+export type StoreEventListener<TState extends object> = (
   context: StoreEventContext<TState>,
 ) => void;
 
@@ -56,13 +56,13 @@ export type BaseConfig<TState extends object, TActions extends object> = {
   /** A function that defines actions that can modify the state. */
   defineActions?: DefineActions<TState, TActions>;
   /** Invoked when the store is created. */
-  onLoad?: StoreEventHandler<TState>;
+  onLoad?: StoreEventListener<TState>;
   /** Invoked when the store is subscribed to. */
-  onAttach?: StoreEventHandler<TState>;
+  onAttach?: StoreEventListener<TState>;
   /** Invoked when the store is unsubscribed from. */
-  onDetach?: StoreEventHandler<TState>;
+  onDetach?: StoreEventListener<TState>;
   /** Invoked whenever the state changes. */
-  onChange?: StoreEventHandler<TState>;
+  onChange?: StoreEventListener<TState>;
 };
 
 export type MaybePromise<T> = T | Promise<T>;
@@ -122,7 +122,7 @@ export type StoreConfig<
  * ```
  *
  * @example
- * With event handlers:
+ * With event listeners:
  * ```ts
  * import { createStore } from "dharma-core";
  * import { State } from "./types";
