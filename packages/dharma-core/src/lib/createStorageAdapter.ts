@@ -28,22 +28,6 @@ export const createStorageAdapter = <
   const { key, serializer = JSON, initialState } = config;
   const initKey = `init_${key}`;
 
-  const syncWithSnapshot = async () => {
-    try {
-      let currentSnapshot = storage.getItem(key);
-
-      if (currentSnapshot instanceof Promise) {
-        currentSnapshot = await currentSnapshot;
-      }
-
-      if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
-        set(serializer.parse(currentSnapshot));
-      }
-    } catch {
-      warn("Failed to update state from snapshot");
-    }
-  };
-
   const onLoad = async () => {
     try {
       let initialStateSnapshot = storage.getItem(initKey);
@@ -64,7 +48,23 @@ export const createStorageAdapter = <
     }
   };
 
-  const onAttach = async () => {
+  const syncWithSnapshot = async () => {
+    try {
+      let currentSnapshot = storage.getItem(key);
+
+      if (currentSnapshot instanceof Promise) {
+        currentSnapshot = await currentSnapshot;
+      }
+
+      if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
+        set(serializer.parse(currentSnapshot));
+      }
+    } catch {
+      warn("Failed to update state from snapshot");
+    }
+  };
+
+  const onAttach = () => {
     syncWithSnapshot();
 
     if (IS_BROWSER) {
