@@ -6,7 +6,6 @@ export const createStorageAdapter = <
   TActions extends object = Record<never, never>,
 >(
   config: StoreConfig<TState, TActions>,
-  isBrowser: boolean,
   get: () => TState,
   set: SetState<TState>,
 ) => {
@@ -14,8 +13,10 @@ export const createStorageAdapter = <
     return null;
   }
 
+  const IS_BROWSER = typeof window !== "undefined";
+
   const storage =
-    config.storage ?? (isBrowser ? (localStorage as StorageAPI) : undefined);
+    config.storage ?? (IS_BROWSER ? (localStorage as StorageAPI) : undefined);
 
   if (!storage) {
     warn(
@@ -27,7 +28,7 @@ export const createStorageAdapter = <
   const { key, serializer = JSON, initialState } = config;
   const initKey = `init_${key}`;
 
-  const initializeSnapshots = async () => {
+  const onLoad = async () => {
     try {
       let initialStateSnapshot = storage.getItem(initKey);
       const initialStateString = serializer.stringify(initialState);
@@ -47,7 +48,31 @@ export const createStorageAdapter = <
     }
   };
 
-  const updateSnapshot = async (newState: TState) => {
+  const syncWithSnapshot = async () => {
+    try {
+      let currentSnapshot = storage.getItem(key);
+
+      if (currentSnapshot instanceof Promise) {
+        currentSnapshot = await currentSnapshot;
+      }
+
+      if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
+        set(serializer.parse(currentSnapshot));
+      }
+    } catch {
+      warn("Failed to update state from snapshot");
+    }
+  };
+
+  const onAttach = () => {
+    syncWithSnapshot();
+
+    if (IS_BROWSER) {
+      window.addEventListener("focus", syncWithSnapshot);
+    }
+  };
+
+  const onChange = async (newState: TState) => {
     try {
       let currentSnapshot = storage.getItem(key);
       const newSnapshot = serializer.stringify(newState);
@@ -64,25 +89,16 @@ export const createStorageAdapter = <
     }
   };
 
-  const updateState = async () => {
-    try {
-      let currentSnapshot = storage.getItem(key);
-
-      if (currentSnapshot instanceof Promise) {
-        currentSnapshot = await currentSnapshot;
-      }
-
-      if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
-        set(serializer.parse(currentSnapshot));
-      }
-    } catch {
-      warn("Failed to update state from snapshot");
+  const onDetach = () => {
+    if (IS_BROWSER) {
+      window.removeEventListener("focus", syncWithSnapshot);
     }
   };
 
   return {
-    initializeSnapshots,
-    updateSnapshot,
-    updateState,
+    onLoad,
+    onChange,
+    onAttach,
+    onDetach,
   };
 };
