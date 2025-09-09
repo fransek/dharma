@@ -14,5 +14,10 @@ pre,
 .tsd-signature {
   font-family: "Geist Mono", sans-serif;
   overflow: auto;
+  position: static;
   white-space: pre;
+}
+
+.pre-wrapper {
+  position: relative;
 }
