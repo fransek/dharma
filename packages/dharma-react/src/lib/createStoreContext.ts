@@ -1,14 +1,6 @@
 import { Store } from "dharma-core";
 import { createContext } from "react";
-
-export type StoreContext<
-  TArgs extends unknown[],
-  TState extends object,
-  TActions extends object,
-> = React.Context<Store<TState, TActions> | null> & {
-  /** Returns a new instance of the store. */
-  createStore: (...args: TArgs) => Store<TState, TActions>;
-};
+import { StoreContext } from "./types";
 
 /**
  * Creates a store context with an instantiation function.

@@ -1,17 +1,6 @@
-import { StateModifier } from "dharma-core";
 import { useContext } from "react";
-import { StoreContext } from "./createStoreContext";
+import { BoundStore, StoreContext } from "./types";
 import { useStore } from "./useStore";
-
-export type BoundStore<
-  TState extends object,
-  TActions extends object,
-  TSelection = TState,
-> = {
-  state: TSelection;
-  actions: TActions;
-  set: (stateModifier: StateModifier<TState>) => TState;
-};
 
 /**
  * A hook used to access a store context created with `createStoreContext`.

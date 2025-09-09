@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createStore, Serializer, StorageAPI } from "./createStore";
+import { createStore } from "./createStore";
+import { Serializer, StorageAPI } from "./types";
 
 describe("createStore", () => {
   const defineActions = vi.fn();
