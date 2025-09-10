@@ -30,6 +30,10 @@ export type StoreEventListener<TState extends object> = (
   context: StoreEventContext<TState>,
 ) => void;
 
+export type DefineActions<TState extends object, TActions> = (
+  stateHandler: StateHandler<TState>,
+) => TActions;
+
 export type StateModifier<TState extends object> =
   | Partial<TState>
   | ((state: TState) => Partial<TState>);
@@ -43,15 +47,21 @@ export type StateHandler<TState extends object> = {
   reset: () => TState;
 };
 
-export type DefineActions<TState extends object, TActions> = (
-  stateHandler: StateHandler<TState>,
-) => TActions;
+export type DerivedValue<TState extends object, TValue> = (
+  state: TState,
+) => TValue;
+
+export type DefineDerivedValues<TState extends object> = (
+  state: TState,
+) => Record<string, unknown>;
 
 export type BaseConfig<TState extends object, TActions extends object> = {
   /** The initial state of the store. */
   initialState: TState;
   /** A function that defines actions that can modify the state. */
   defineActions?: DefineActions<TState, TActions>;
+  /** A function that defines derived values computed from the state. */
+  defineDerivedValues?: DefineDerivedValues<TState>;
   /** Invoked when the store is created. */
   onLoad?: StoreEventListener<TState>;
   /** Invoked when the store is subscribed to. */

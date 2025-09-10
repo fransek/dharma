@@ -4,6 +4,7 @@ import { CodeToggle } from "./CodeToggle";
 import { Async } from "./examples/Async";
 import { Context } from "./examples/Context";
 import { Counter } from "./examples/Counter";
+import { DerivedValues } from "./examples/DerivedValues";
 import { Persistent } from "./examples/Persistent";
 import { PersistentAsync } from "./examples/PersistentAsync";
 import { Shared } from "./examples/Shared";
@@ -20,6 +21,9 @@ export const ContextExample: FC<Props> = ({ children }) => (
 );
 export const CounterExample: FC<Props> = ({ children }) => (
   <CodeToggle component={<Counter />}>{children}</CodeToggle>
+);
+export const DerivedValuesExample: FC<Props> = ({ children }) => (
+  <CodeToggle component={<DerivedValues />}>{children}</CodeToggle>
 );
 export const PersistentExample: FC<Props> = ({ children }) => (
   <CodeToggle component={<Persistent />}>{children}</CodeToggle>

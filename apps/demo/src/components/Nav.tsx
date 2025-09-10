@@ -12,6 +12,7 @@ interface NavLink {
 const links: NavLink[] = [
   { href: "/counter", label: "Counter" },
   { href: "/todo", label: "Todo" },
+  { href: "/derived-values", label: "Derived Values" },
   { href: "/context", label: "Context" },
   { href: "/shared", label: "Shared" },
   { href: "/persistent", label: "Persistent" },
