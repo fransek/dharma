@@ -50,14 +50,17 @@ export const useStore = <
   const snapshotRef = useRef<TSelection | null>(null);
 
   const getSelection = () => {
-    if (select) {
-      const newState = select(store.get());
-      if (!deeplyEquals(snapshotRef.current, newState)) {
-        snapshotRef.current = newState;
-      }
-      return snapshotRef.current;
+    if (!select) {
+      return store.get();
     }
-    return store.get();
+
+    const newState = select(store.get());
+
+    if (!deeplyEquals(snapshotRef.current, newState)) {
+      snapshotRef.current = newState;
+    }
+
+    return snapshotRef.current;
   };
 
   return useSyncExternalStore(
