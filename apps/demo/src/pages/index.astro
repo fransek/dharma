@@ -1,12 +1,15 @@
 ---
 import { Code } from 'astro/components';
-import code from '../components/examples/Simple?raw';
+import code from '../components/react/Simple?raw';
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <h1 class='text-3xl font-bold'>dharma-react</h1>
-  <p>A simple state management library for React.</p>
+  <h1 class='text-3xl font-bold'>dharma</h1>
+  <p class='max-w-lg text-center'>
+    A simple and lightweight state management solution for JavaScript and
+    TypeScript applications.
+  </p>
   <Code
     code={code}
     lang='tsx'

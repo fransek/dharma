@@ -28,7 +28,7 @@ export default function Nav() {
       <div className="flex items-center justify-between">
         <Button asChild variant="link" size="sm">
           <a href="/" className="font-bold text-sm">
-            dharma-react
+            dharma
           </a>
         </Button>
 

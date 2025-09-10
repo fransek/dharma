@@ -1,13 +1,34 @@
 import { Store } from "dharma-core";
-import { computed, onUnmounted, ref, type ComputedRef } from "vue";
+import {
+  DeepReadonly,
+  onUnmounted,
+  readonly,
+  ref,
+  UnwrapNestedRefs,
+} from "vue";
 import { deeplyEquals } from "./deeplyEquals";
+
+// Overload for when no select function is provided
+export function useStore<TState extends object, TActions extends object>(
+  store: Store<TState, TActions>,
+): DeepReadonly<UnwrapNestedRefs<TState>>;
+
+// Overload for when a select function is provided
+export function useStore<
+  TState extends object,
+  TActions extends object,
+  TSelection,
+>(
+  store: Store<TState, TActions>,
+  select: (state: TState) => TSelection,
+): DeepReadonly<UnwrapNestedRefs<TSelection>>;
 
 /**
  * A composable used to access a store created with `createStore` and bind it to a Vue component.
  *
  * @param {Store<TState, TActions>} store - The store created with `createStore`.
  * @param {(state: TState) => TSelection} [select] - A function to select a subset of the state. Can prevent unnecessary re-renders.
- * @returns {ComputedRef<TSelection>} A reactive computed reference to the selected state from the store.
+ * @returns {DeepReadonly<UnwrapNestedRefs<TSelection>>} A reactive, readonly reference to the selected state from the store.
  *
  * @example
  * Basic usage:
@@ -40,37 +61,28 @@ import { deeplyEquals } from "./deeplyEquals";
  * - For optimal performance, return a direct reference to the state. (e.g. `state.count`)
  * - If you return an object literal, it should only contain direct references to the state. (e.g. `{ count: state.count }`)
  */
-export const useStore = <
+export function useStore<
   TState extends object,
   TActions extends object,
-  TSelection = TState,
+  TSelection,
 >(
   store: Store<TState, TActions>,
   select?: (state: TState) => TSelection,
-): ComputedRef<TSelection> => {
-  // Create a reactive reference to hold the current state
-  const currentState = ref<TSelection>(
-    select ? select(store.get()) : (store.get() as unknown as TSelection),
-  );
+): DeepReadonly<UnwrapNestedRefs<TSelection>> {
+  const getSelection = () =>
+    (select ? select(store.get()) : store.get()) as TSelection;
 
-  // Subscribe to store changes
+  const currentState = ref(getSelection());
+
   const unsubscribe = store.subscribe(() => {
-    const newState = store.get();
-    const newSelection = select
-      ? select(newState)
-      : (newState as unknown as TSelection);
+    const newSelection = getSelection();
 
-    // Only update if the selection has actually changed
     if (!deeplyEquals(currentState.value, newSelection)) {
       currentState.value = newSelection;
     }
   });
 
-  // Clean up subscription when component unmounts
-  onUnmounted(() => {
-    unsubscribe();
-  });
+  onUnmounted(unsubscribe);
 
-  // Return a computed reference for reactivity
-  return computed(() => currentState.value);
-};
+  return readonly(currentState) as DeepReadonly<UnwrapNestedRefs<TSelection>>;
+}
