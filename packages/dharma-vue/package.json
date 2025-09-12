@@ -1,0 +1,50 @@
+{
+  "name": "dharma-vue",
+  "version": "0.1.0",
+  "author": "Frans Ekman <fransedvinekman@gmail.com>",
+  "license": "MIT",
+  "description": "Vue.js bindings for dharma state management",
+  "keywords": [],
+  "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-vue#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fransek/dharma/tree/main/packages/dharma-vue"
+  },
+  "bugs": {
+    "url": "https://github.com/fransek/dharma/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rm -rf dist && rollup -c",
+    "dev": "rollup -c -w",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "coverage": "vitest --run --coverage --passWithNoTests",
+    "lint": "eslint"
+  },
+  "publishConfig": {
+    "provenance": true
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.0",
+    "@vue/test-utils": "^2.4.6",
+    "dharma-core": "workspace:*",
+    "vue": "^3.5.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  }
+}

@@ -1,13 +1,13 @@
 import type React from "react";
 import type { FC } from "react";
 import { CodeToggle } from "./CodeToggle";
-import { Async } from "./examples/Async";
-import { Context } from "./examples/Context";
-import { Counter } from "./examples/Counter";
-import { Persistent } from "./examples/Persistent";
-import { PersistentAsync } from "./examples/PersistentAsync";
-import { Shared } from "./examples/Shared";
-import { Todo } from "./examples/Todo";
+import { Async } from "./react/Async";
+import { Context } from "./react/Context";
+import { Counter } from "./react/Counter";
+import { Persistent } from "./react/Persistent";
+import { PersistentAsync } from "./react/PersistentAsync";
+import { Shared } from "./react/Shared";
+import { Todo } from "./react/Todo";
 
 interface Props {
   children: React.ReactNode;
