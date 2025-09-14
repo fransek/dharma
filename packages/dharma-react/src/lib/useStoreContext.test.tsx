@@ -12,7 +12,6 @@ describe("useStoreContext", () => {
       defineActions: ({ set }) => ({
         increment: () => set((state) => ({ count: state.count + 1 })),
         decrement: () => set((state) => ({ count: state.count - 1 })),
-        reset: () => set({ count: 0 }),
       }),
     }),
   );
@@ -42,10 +41,10 @@ describe("useStoreContext", () => {
     expect(result.current).toStrictEqual({
       state: { count: 0 },
       set: expect.any(Function),
+      reset: expect.any(Function),
       actions: {
         increment: expect.any(Function),
         decrement: expect.any(Function),
-        reset: expect.any(Function),
       },
     });
   });

@@ -1,0 +1,49 @@
+---
+title: Quick Start
+description: Get started with dharma-react.
+---
+
+import PackageManager from '../../../components/PackageManager.astro'
+
+1. Install the packages:
+
+<PackageManager 
+  npm="npm install dharma-core dharma-react" 
+  pnpm="pnpm add dharma-core dharma-react" 
+  yarn="yarn add dharma-core dharma-react"
+/>
+
+2. Create a store:
+
+```ts
+import { createStore } from "dharma-core";
+
+export const store = createStore({
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }),
+});
+
+export const { increment, decrement } = store.actions;
+```
+
+3. Use the store:
+
+```tsx
+import { useStore } from "dharma-react";
+import { decrement, increment, store } from "./store";
+
+function Counter() {
+  const { count } = useStore(store);
+
+  return (
+    <div>
+      <div>{count}</div>
+      <button onClick={decrement}>-</button>
+      <button onClick={increment}>+</button>
+    </div>
+  );
+}
+```

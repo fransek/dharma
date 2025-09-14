@@ -15,5 +15,6 @@
       "@apps/*": ["./apps/*"],
       "@packages/*": ["./packages/*"]
     }
-  }
+  },
+  "exclude": ["apps"]
 }

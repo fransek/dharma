@@ -1,0 +1,119 @@
+---
+title: createStore
+---
+
+Creates a store with an initial state and actions that can modify the state.
+
+```ts
+const store = createStore(config);
+```
+
+## Parameters
+
+- `config` - The configuration for the store.
+
+## Returns
+
+The created store with state management methods.
+
+- `get` - Returns the current state of the store.
+- `set` - Sets the state of the store.
+- `reset` - Resets the state of the store to its initial value.
+- `actions` - Actions that can modify the state of the store.
+- `subscribe` - Subscribes to changes in the state of the store. Returns an unsubscribe function.
+
+## Configuration
+
+The `config` object can contain the following properties:
+
+**Setup**
+
+- `initialState` - The initial state of the store.
+- `defineActions` - A function that defines actions that can modify the state.
+
+**Lifecycle hooks**
+
+- `onLoad?` - Invoked when the store is created.
+- `onAttach?` - Invoked when the store is subscribed to.
+- `onDetach?` - Invoked when the store is unsubscribed from.
+- `onChange?` - Invoked whenever the state changes.
+
+**Persistence**
+
+- `persist?` - Whether to persist the state of the store.
+- `key?` - The unique key used to identify this store in storage. Required if `persist` is true.
+- `storage?` - The storage to use for persisting the state. Defaults to local storage if available.
+- `serializer?` - The serializer to use for storing the state. Defaults to JSON.
+
+## Usage
+
+### Basic example
+
+```ts
+import { createStore } from "dharma-core";
+
+const store = createStore({
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }),
+});
+```
+
+### Lifecycle hooks
+
+```ts
+import { createStore } from "dharma-core";
+import { State } from "./types";
+
+const initialState: State = { data: null, loading: true, error: null };
+const store = createStore({
+  initialState,
+  onAttach: async ({ set }) => {
+    try {
+      const response = await fetch("https://api.example.com/data");
+      const data = await response.json();
+      set({ data, loading: false });
+    } catch (error) {
+      set({ error, loading: false });
+    }
+  },
+  onDetach: ({ reset }) => reset(),
+});
+```
+
+### Persisting state
+
+```ts
+import { createStore } from "dharma-core";
+
+const store = createStore({
+  persist: true,
+  key: "count",
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }),
+});
+```
+
+### Custom storage and serializer
+
+```ts
+import { createStore } from "dharma-core";
+import superjson from "superjson";
+
+const store = createStore({
+  persist: true,
+  key: "count",
+  storage: sessionStorage,
+  serializer: superjson,
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }),
+});
+```

@@ -84,7 +84,7 @@ export type NoPersistConfig = {
 export type PersistConfig<TState extends object> = {
   /** Whether to persist the state of the store. */
   persist: true;
-  /** The unique key used to identify this store in storage. */
+  /** The unique key used to identify this store in storage. Required if `persist` is true. */
   key: string;
   /** The storage to use for persisting the state. Defaults to local storage if available. */
   storage?: StorageAPI;

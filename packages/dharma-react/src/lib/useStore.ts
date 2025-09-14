@@ -32,7 +32,7 @@ import { deeplyEquals } from "./deeplyEquals";
  * @example
  * With a select function:
  * ```tsx
- * const { count } = useStore(globalStore, (state) => state.counter);
+ * const count = useStore(store, (state) => state.count);
  * ```
  * @remarks
  * If the `select` function is provided, an equality check is performed. This has some caveats:
