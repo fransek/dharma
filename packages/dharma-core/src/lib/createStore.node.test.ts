@@ -1,15 +1,15 @@
 // @vitest-environment node
 
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { createStore } from "./createStore";
-import { StorageAPI } from "./types";
+import { StateHandler, StorageAPI } from "./types";
 
 describe("createStore (node)", () => {
   const baseConfig = {
     persist: true,
     key: "test",
     initialState: { count: 0 },
-    defineActions: vi.fn(),
+    defineActions: (handler: StateHandler<{ count: number }>) => handler,
   };
 
   it("should not throw in a node environment", () => {
@@ -20,7 +20,7 @@ describe("createStore (node)", () => {
     const storage = new CustomStorage();
     const store = createStore({ ...baseConfig, storage });
     expect(storage.getItem("init_test")).toBe(JSON.stringify({ count: 0 }));
-    store.set({ count: 1 });
+    store.actions.set({ count: 1 });
     expect(storage.getItem("test")).toBe(JSON.stringify({ count: 1 }));
   });
 });

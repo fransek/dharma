@@ -7,10 +7,6 @@ export type SetState<TState extends object> = (
 export type Store<TState extends object, TActions extends object> = {
   /** Returns the current state of the store. */
   get: () => TState;
-  /** Sets the state of the store. */
-  set: SetState<TState>;
-  /** Resets the state of the store to its initial value. */
-  reset: () => TState;
   /** Actions that can modify the state of the store. */
   actions: TActions;
   /** Subscribes to changes in the state of the store. Returns an unsubscribe function. */

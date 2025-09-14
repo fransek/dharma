@@ -57,7 +57,8 @@ export const useStoreContext = <
       "Store context not found. Make sure you are using the store context within a provider.",
     );
   }
-  const state = useStore(store, select);
-  const { actions, set, reset } = store;
-  return { state, actions, set, reset };
+  return {
+    state: useStore(store, select),
+    actions: store.actions,
+  };
 };

@@ -156,8 +156,6 @@ export const createStore = <
 
   return {
     get,
-    set,
-    reset,
     subscribe,
     actions,
   };

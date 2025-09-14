@@ -1,4 +1,4 @@
-import { StateModifier, Store } from "dharma-core";
+import { Store } from "dharma-core";
 
 export type StoreContext<
   TArgs extends unknown[],
@@ -16,6 +16,4 @@ export type BoundStore<
 > = {
   state: TSelection;
   actions: TActions;
-  set: (stateModifier: StateModifier<TState>) => TState;
-  reset: () => TState;
 };

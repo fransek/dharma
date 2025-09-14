@@ -19,8 +19,6 @@ The store instance.
 
 - `state` - The current state of the store.
 - `actions` - The actions that can modify the state of the store.
-- `set` - Sets the state of the store.
-- `reset` - Resets the state of the store to its initial value.
 
 ## Usage
 
