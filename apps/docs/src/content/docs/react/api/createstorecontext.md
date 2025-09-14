@@ -1,0 +1,51 @@
+---
+title: createStoreContext
+---
+
+Creates a store context with an instantiation function.
+Useful if you need to initialize a store with dynamic data like props, or if you need to create multiple instances of the same store.
+
+```ts
+const StoreContext = createStoreContext(createStore);
+```
+
+## Parameters
+
+- `createStore` - A function that returns a new store instance.
+
+## Returns
+
+A store context object with the given instantiation function.
+
+## Usage
+
+```tsx
+import { createStore } from "dharma-core";
+import { createStoreContext } from "dharma-react";
+import { useMemo } from "react";
+
+const StoreContext = createStoreContext((initialCount: number) =>
+  createStore({
+    initialState: { count: initialCount },
+    defineActions: ({ set }) => ({
+      increment: () => set((state) => ({ count: state.count + 1 })),
+      decrement: () => set((state) => ({ count: state.count - 1 })),
+    }),
+  }),
+);
+
+function StoreProvider({
+  children,
+  initialCount,
+}: {
+  children: React.ReactNode;
+  initialCount: number;
+}) {
+  const store = useMemo(
+    () => StoreContext.createStore(initialCount),
+    [initialCount],
+  );
+
+  return <StoreContext value={store}>{children}</StoreContext>;
+}
+```

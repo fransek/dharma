@@ -2,7 +2,6 @@ import { StateModifier } from "./types";
 
 /**
  * Merges the current state with a state modifier.
- * Useful for creating custom set functions.
  *
  * @param {T} currentState - The current state object.
  * @param {StateModifier<T>} stateModifier - A function or object that modifies the state.
@@ -28,7 +27,6 @@ import { StateModifier } from "./types";
  *     return {
  *       increment: () => setCounter((state) => ({ count: state.count + 1 })),
  *       decrement: () => setCounter((state) => ({ count: state.count - 1 })),
- *       reset: () => setCounter({ count: 0 }),
  *       // ...
  *     };
  *   },

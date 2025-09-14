@@ -24,7 +24,7 @@ import { Listener, StateModifier, Store, StoreConfig } from "./types";
  * ```
  *
  * @example
- * With event listeners:
+ * Lifecycle hooks:
  * ```ts
  * import { createStore } from "dharma-core";
  * import { State } from "./types";
@@ -47,7 +47,7 @@ import { Listener, StateModifier, Store, StoreConfig } from "./types";
  * ```
  *
  * @example
- * Persistent store (uses local storage by default):
+ * Persisting state:
  * ```ts
  * import { createStore } from "dharma-core";
  *
@@ -66,7 +66,7 @@ import { Listener, StateModifier, Store, StoreConfig } from "./types";
  * If you need something more versatile I would recommend using a library like [superjson](https://github.com/flightcontrolhq/superjson).
  *
  * @example
- * With superjson serialization and session storage:
+ * Custom storage and serializer:
  * ```ts
  * import { createStore } from "dharma-core";
  * import superjson from "superjson";
@@ -74,8 +74,8 @@ import { Listener, StateModifier, Store, StoreConfig } from "./types";
  * const store = createStore({
  *   persist: true,
  *   key: "count",
- *   serializer: superjson,
  *   storage: sessionStorage,
+ *   serializer: superjson,
  *   initialState: { count: 0 },
  *   defineActions: ({ set }) => ({
  *     increment: () => set((state) => ({ count: state.count + 1 })),

@@ -1,56 +1,51 @@
 import { createStore } from "dharma-core";
-import { createStoreContext, useStore, useStoreContext } from "dharma-react";
+import { createStoreContext, useStoreContext } from "dharma-react";
 import { useMemo } from "react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 
 // Create the store context
 const CounterStoreContext = createStoreContext((initialCount: number) =>
   createStore({
-    initialState: { count: initialCount, input: "" },
+    initialState: { count: initialCount },
     defineActions: ({ set }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
-      setInput: (input: string) => set({ input }),
     }),
   }),
 );
 
-const Example = ({ initialCount }: { initialCount: number }) => {
+const CounterStoreProvider = ({
+  initialCount,
+  children,
+}: {
+  initialCount: number;
+  children: React.ReactNode;
+}) => {
   // Create an instance of the store. Make sure the store is not recreated on every render.
   const store = useMemo(
     () => CounterStoreContext.createStore(initialCount),
     [initialCount],
   );
-  const { increment, decrement } = store.actions;
-  // Use the store
-  const count = useStore(store, (state) => state.count);
 
   return (
     // Provide the store to the context
-    <CounterStoreContext value={store}>
-      <div className="grid grid-cols-3 text-center items-center w-fit">
-        <Button onClick={decrement}>-</Button>
-        <div aria-label="count">{count}</div>
-        <Button onClick={increment}>+</Button>
-      </div>
-      <TextInput />
-    </CounterStoreContext>
+    <CounterStoreContext value={store}>{children}</CounterStoreContext>
   );
 };
 
-const TextInput = () => {
+const Counter = () => {
+  // Use the store from the context
   const {
-    state: input,
-    actions: { setInput },
-  } = useStoreContext(CounterStoreContext, (state) => state.input);
+    state: { count },
+    actions: { increment, decrement },
+  } = useStoreContext(CounterStoreContext);
 
   return (
-    <Input
-      value={input}
-      onChange={(e) => setInput(e.target.value)}
-      placeholder="Type something..."
-    />
+    <div className="grid grid-cols-3 text-center items-center w-fit">
+      <Button onClick={decrement}>-</Button>
+      <div aria-label="count">{count}</div>
+      <Button onClick={increment}>+</Button>
+    </div>
   );
 };
 
@@ -58,11 +53,15 @@ export const Context = () => (
   <div className="container-full w-fit">
     <div className="container-full card">
       <h2 className="font-bold">Context 1</h2>
-      <Example initialCount={0} />
+      <CounterStoreProvider initialCount={0}>
+        <Counter />
+      </CounterStoreProvider>
     </div>
     <div className="container-full card">
       <h2 className="font-bold">Context 2</h2>
-      <Example initialCount={5} />
+      <CounterStoreProvider initialCount={5}>
+        <Counter />
+      </CounterStoreProvider>
     </div>
   </div>
 );

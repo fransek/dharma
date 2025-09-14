@@ -11,6 +11,8 @@
     "build": "pnpm -F \"./packages/*\" build",
     "demo:dev": "pnpm -F demo dev",
     "demo:build": "pnpm -F demo build",
+    "docs:dev": "pnpm -F docs dev",
+    "docs:build": "pnpm -F docs build",
     "ci:publish": "changeset publish",
     "test": "vitest --run",
     "test:watch": "vitest",

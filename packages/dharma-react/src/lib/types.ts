@@ -17,4 +17,5 @@ export type BoundStore<
   state: TSelection;
   actions: TActions;
   set: (stateModifier: StateModifier<TState>) => TState;
+  reset: () => TState;
 };
