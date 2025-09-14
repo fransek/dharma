@@ -19,6 +19,9 @@ export default defineConfig({
           slug: "getting-started",
         },
         {
+          slug: "core-concepts",
+        },
+        {
           label: "Core API",
           items: ["core/createstore", "core/merge"],
         },
