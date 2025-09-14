@@ -1,5 +1,15 @@
 # dharma-react
 
+## 0.5.0
+
+### Minor Changes
+
+- [#59](https://github.com/fransek/dharma/pull/59) [`c41cc6b`](https://github.com/fransek/dharma/commit/c41cc6b23e713b8ede38e7a8d6db209431d6ed23) Thanks [@fransek](https://github.com/fransek)! - useStoreContext returns reset function
+
+### Patch Changes
+
+- [#59](https://github.com/fransek/dharma/pull/59) [`c41cc6b`](https://github.com/fransek/dharma/commit/c41cc6b23e713b8ede38e7a8d6db209431d6ed23) Thanks [@fransek](https://github.com/fransek)! - jsdoc updates
+
 ## 0.4.3
 
 ### Patch Changes

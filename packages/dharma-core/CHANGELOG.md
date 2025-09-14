@@ -1,5 +1,13 @@
 # dharma-core
 
+## 0.7.1
+
+### Patch Changes
+
+- [#59](https://github.com/fransek/dharma/pull/59) [`c41cc6b`](https://github.com/fransek/dharma/commit/c41cc6b23e713b8ede38e7a8d6db209431d6ed23) Thanks [@fransek](https://github.com/fransek)! - jsdoc updates
+
+- [#48](https://github.com/fransek/dharma/pull/48) [`f176a98`](https://github.com/fransek/dharma/commit/f176a98a041b1496b4818515cf7214d3fc32b431) Thanks [@fransek](https://github.com/fransek)! - Renamed StoreEventHandler to StoreEventListener
+
 ## 0.7.0
 
 ### Minor Changes
