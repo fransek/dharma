@@ -19,8 +19,7 @@
     "test:ui": "vitest --ui --coverage",
     "test:coverage": "vitest --run --coverage --passWithNoTests",
     "lint": "eslint",
-    "prepare": "husky",
-    "docs": "typedoc"
+    "prepare": "husky"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",

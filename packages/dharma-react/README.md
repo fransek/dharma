@@ -53,4 +53,4 @@ function Counter() {
 }
 ```
 
-[Read the documentation](https://fransek.github.io/dharma/modules/dharma-react.html)
+[Read the documentation](https://dharma.fransek.dev/)

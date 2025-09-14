@@ -31,4 +31,4 @@ decrement();
 unsubscribe();
 ```
 
-[Read the documentation](https://fransek.github.io/dharma/modules/dharma-core.html)
+[Read the documentation](https://dharma.fransek.dev/)
