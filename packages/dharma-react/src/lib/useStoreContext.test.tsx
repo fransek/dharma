@@ -40,8 +40,6 @@ describe("useStoreContext", () => {
     const { result } = renderUseStoreContext();
     expect(result.current).toStrictEqual({
       state: { count: 0 },
-      set: expect.any(Function),
-      reset: expect.any(Function),
       actions: {
         increment: expect.any(Function),
         decrement: expect.any(Function),

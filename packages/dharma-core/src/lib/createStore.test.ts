@@ -1,42 +1,44 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createStore } from "./createStore";
-import { Serializer, StorageAPI } from "./types";
+import { Serializer, StateHandler, StorageAPI } from "./types";
 
 describe("createStore", () => {
-  const defineActions = vi.fn();
+  interface State {
+    count: number;
+  }
+  const initialState = { count: 0 };
+  const defineActions = (handler: StateHandler<State>) => handler;
+  const store = createStore({
+    initialState,
+    defineActions,
+  });
+
+  afterEach(store.actions.reset);
 
   it("should initialize with the given state", () => {
-    const initialState = { count: 0 };
-    const store = createStore({ initialState, defineActions });
     expect(store.get()).toEqual(initialState);
   });
 
   it("should update the state using set and reset", () => {
-    const initialState = { count: 0 };
-    const store = createStore({ initialState, defineActions });
-    store.set({ count: 1 });
+    store.actions.set({ count: 1 });
     expect(store.get().count).toBe(1);
-    store.reset();
+    store.actions.reset();
     expect(store.get().count).toBe(0);
   });
 
   it("should notify subscribers on state change", () => {
-    const initialState = { count: 0 };
-    const store = createStore({ initialState, defineActions });
     const listener = vi.fn();
     store.subscribe(listener);
-    store.set({ count: 1 });
+    store.actions.set({ count: 1 });
     expect(listener).toHaveBeenCalledTimes(2);
   });
 
   it("should unsubscribe listeners correctly", () => {
-    const initialState = { count: 0 };
-    const store = createStore({ initialState, defineActions });
     const listener = vi.fn();
     const unsubscribe = store.subscribe(listener);
     unsubscribe();
-    store.set({ count: 1 });
+    store.actions.set({ count: 1 });
     expect(listener).toHaveBeenCalledOnce();
   });
 
@@ -62,7 +64,7 @@ describe("createStore", () => {
       defineActions,
       onChange: ({ state, set }) => set({ other: state.other + "bar" }),
     });
-    store.set({ count: 1 });
+    store.actions.set({ count: 1 });
     expect(store.get()).toEqual({ count: 1, other: "foobar" });
   });
 
@@ -106,7 +108,6 @@ describe("createStore", () => {
     const initKey = `init_${key}`;
     const initialState = { count: 0 };
     const listener = vi.fn();
-    const defineActions = vi.fn();
 
     beforeEach(() => {
       localStorage.clear();
@@ -131,7 +132,7 @@ describe("createStore", () => {
         defineActions,
       });
       store.subscribe(listener);
-      store.set({ count: 1 });
+      store.actions.set({ count: 1 });
       const storedState = localStorage.getItem(key);
       expect(storedState).toBe(JSON.stringify({ count: 1 }));
     });
@@ -172,7 +173,7 @@ describe("createStore", () => {
         defineActions,
       });
       store.subscribe(listener);
-      store.set({ count: 1 });
+      store.actions.set({ count: 1 });
       localStorage.setItem(key, JSON.stringify({ count: 2 }));
       window.dispatchEvent(new Event("focus"));
       expect(store.get()).toEqual({ count: 2 });
@@ -207,7 +208,7 @@ describe("createStore", () => {
         defineActions,
         serializer: customSerializer,
       });
-      store.set({ count: 1 });
+      store.actions.set({ count: 1 });
       expect(customSerializer.stringify).toHaveBeenCalledWith({ count: 1 });
     });
 
@@ -224,7 +225,7 @@ describe("createStore", () => {
         defineActions,
         storage: customStorage,
       });
-      store.set({ count: 1 });
+      store.actions.set({ count: 1 });
       expect(customStorage.setItem).toHaveBeenCalledWith(
         key,
         JSON.stringify({ count: 1 }),
@@ -242,7 +243,7 @@ describe("createStore", () => {
         storage: AsyncStorage,
       });
 
-      await Promise.resolve(store.set({ count: 1 }));
+      await Promise.resolve(store.actions.set({ count: 1 }));
       const expectedSnapshot = JSON.stringify({ count: 1 });
       const snapshot = await AsyncStorage.getItem(key);
       expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, expectedSnapshot);
