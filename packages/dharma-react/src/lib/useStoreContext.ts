@@ -58,5 +58,6 @@ export const useStoreContext = <
     );
   }
   const state = useStore(store, select);
-  return { state, actions: store.actions, set: store.set };
+  const { actions, set, reset } = store;
+  return { state, actions, set, reset };
 };
