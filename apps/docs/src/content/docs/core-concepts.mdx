@@ -1,0 +1,276 @@
+---
+title: Core Concepts
+description: Understanding stores and the mental model behind Dharma's state management.
+---
+
+Dharma is built around a simple yet powerful mental model for state management. Understanding these core concepts will help you use the library effectively and build maintainable applications.
+
+## What is a Store?
+
+A **store** is the central unit of state management in Dharma. Think of it as a container that holds your application's state and provides a controlled way to read and update that state.
+
+```ts
+import { createStore } from "dharma-core";
+
+const counterStore = createStore({
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    reset: () => set({ count: 0 }),
+  }),
+});
+```
+
+Each store is:
+
+- **Self-contained**: It manages its own state and actions
+- **Predictable**: State changes only happen through defined actions
+- **Observable**: Components can subscribe to state changes
+
+## The Mental Model
+
+### State as a Single Source of Truth
+
+Your store's state is immutable and represents the current snapshot of your data. When you need to update the state, you don't modify it directly—instead, you create a new state object.
+
+```ts
+// ❌ Don't do this - mutating state directly
+store.get().count++;
+
+// ✅ Do this - create new state through actions
+store.actions.increment();
+```
+
+### Actions as State Transitions
+
+Actions are pure functions that describe how your state should change. They receive the current state and return a new state object.
+
+```ts
+const todoStore = createStore({
+  initialState: { todos: [], filter: "all" },
+  defineActions: ({ set }) => ({
+    addTodo: (text: string) =>
+      set((state) => ({
+        ...state,
+        todos: [...state.todos, { id: Date.now(), text, completed: false }],
+      })),
+    toggleTodo: (id: number) =>
+      set((state) => ({
+        ...state,
+        todos: state.todos.map((todo) =>
+          todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+        ),
+      })),
+  }),
+});
+```
+
+### Subscriptions for Reactivity
+
+Components subscribe to stores to automatically re-render when state changes. This creates a reactive system where your UI stays in sync with your data.
+
+```ts
+// Subscribe to state changes
+const unsubscribe = store.subscribe((state) => {
+  console.log("State updated:", state);
+});
+
+// When an action is called, subscribers are notified
+store.actions.increment(); // Triggers subscription callback
+```
+
+## Key Principles
+
+### 1. Immutability
+
+State objects are never modified in place. Every state change creates a new object, ensuring predictable updates and easier debugging.
+
+### 2. Unidirectional Data Flow
+
+Data flows in one direction: from stores to components. Components can trigger actions, but they don't directly modify state.
+
+```
+Component → Action → Store → New State → Component Update
+```
+
+### 3. Composition Over Inheritance
+
+Instead of one large store, create multiple smaller stores that handle specific domains of your application.
+
+```ts
+// Good: Separate concerns
+const userStore = createStore({
+  /* user state */
+});
+const cartStore = createStore({
+  /* shopping cart state */
+});
+const notificationStore = createStore({
+  /* notifications state */
+});
+
+// Less ideal: Everything in one store
+const appStore = createStore({
+  user: {
+    /* ... */
+  },
+  cart: {
+    /* ... */
+  },
+  notifications: {
+    /* ... */
+  },
+});
+```
+
+## Store Lifecycle
+
+Understanding when stores are created, attached, and cleaned up helps you manage resources effectively.
+
+### Creation and Initialization
+
+Stores are created when you call `createStore()`. The `onLoad` hook runs immediately after creation.
+
+```ts
+const store = createStore({
+  initialState: { data: null, loading: false },
+  onLoad: ({ set }) => {
+    console.log("Store created");
+    // Initial setup logic
+  },
+  // ... other config
+});
+```
+
+### Attachment and Detachment
+
+When components subscribe to a store, the `onAttach` hook runs. When the last subscription is removed, `onDetach` runs.
+
+```ts
+const store = createStore({
+  initialState: { data: null, loading: false },
+  onAttach: async ({ set }) => {
+    // Start loading data when first component subscribes
+    set({ loading: true });
+    const data = await fetchData();
+    set({ data, loading: false });
+  },
+  onDetach: ({ reset }) => {
+    // Clean up when no components are subscribed
+    reset();
+  },
+  // ... other config
+});
+```
+
+## State Updates and Merging
+
+The `set` function intelligently merges your updates with the existing state, so you only need to specify what changes.
+
+```ts
+const store = createStore({
+  initialState: { user: null, theme: "dark", notifications: [] },
+  defineActions: ({ set }) => ({
+    setUser: (user) => set({ user }), // Only updates user, preserves theme and notifications
+    toggleTheme: () =>
+      set((state) => ({
+        theme: state.theme === "dark" ? "light" : "dark",
+      })),
+  }),
+});
+```
+
+## Error Handling
+
+Actions can be async and should handle errors gracefully. Use the state to track loading and error states.
+
+```ts
+const apiStore = createStore({
+  initialState: { data: null, loading: false, error: null },
+  defineActions: ({ set, get }) => ({
+    fetchData: async () => {
+      set({ loading: true, error: null });
+      try {
+        const data = await api.getData();
+        set({ data, loading: false });
+      } catch (error) {
+        set({ error: error.message, loading: false });
+      }
+    },
+  }),
+});
+```
+
+## Best Practices
+
+### Keep Actions Simple
+
+Actions should be focused on a single responsibility. Complex logic should be broken down into multiple actions.
+
+```ts
+// ✅ Good: Focused actions
+const actions = {
+  startLoading: () => set({ loading: true }),
+  setData: (data) => set({ data, loading: false }),
+  setError: (error) => set({ error, loading: false }),
+};
+
+// ❌ Less ideal: Complex action doing multiple things
+const actions = {
+  fetchDataAndUpdateUIAndLogAnalytics: async () => {
+    // Too much responsibility in one action
+  },
+};
+```
+
+### Use TypeScript
+
+TypeScript provides excellent type safety for your stores, making your code more maintainable.
+
+```ts
+interface CounterState {
+  count: number;
+  lastUpdated: Date;
+}
+
+const store = createStore<CounterState>({
+  initialState: { count: 0, lastUpdated: new Date() },
+  defineActions: ({ set }) => ({
+    increment: () =>
+      set((state) => ({
+        count: state.count + 1,
+        lastUpdated: new Date(),
+      })),
+  }),
+});
+```
+
+### Test Your Stores
+
+Stores are easy to test since they're pure functions with predictable behavior.
+
+```ts
+import { describe, it, expect } from "vitest";
+
+describe("counterStore", () => {
+  it("should increment count", () => {
+    const store = createStore({
+      initialState: { count: 0 },
+      defineActions: ({ set }) => ({
+        increment: () => set((state) => ({ count: state.count + 1 })),
+      }),
+    });
+
+    store.actions.increment();
+    expect(store.get().count).toBe(1);
+  });
+});
+```
+
+## Next Steps
+
+Now that you understand the core concepts, explore the specific APIs:
+
+- [createStore](/core/createstore) - Learn about all store configuration options
+- [React Integration](/react/quick-start) - See how to use stores in React components
+- [Persistence](/core/createstore#persisting-state) - Learn about persisting state across sessions
