@@ -1,5 +1,11 @@
 # dharma-core
 
+## 0.8.0
+
+### Minor Changes
+
+- [#62](https://github.com/fransek/dharma/pull/62) [`a1e8b17`](https://github.com/fransek/dharma/commit/a1e8b1774716e9a581a0f65f2695479c5ed4df76) Thanks [@fransek](https://github.com/fransek)! - stores no longer expose set and reset methods
+
 ## 0.7.1
 
 ### Patch Changes
