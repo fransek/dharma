@@ -43,6 +43,9 @@ jobs:
         uses: changesets/action@v1
         with:
           publish: pnpm ci:publish
+          title: "release: version packages"
+          commit: "release: version packages"
+          branch: "release/main"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
