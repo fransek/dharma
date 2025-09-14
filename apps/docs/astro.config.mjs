@@ -25,6 +25,10 @@ export default defineConfig({
           slug: "getting-started",
         },
         {
+          label: "Guides",
+          items: ["guides/todo-app"],
+        },
+        {
           label: "Core",
           items: ["core/createstore", "core/merge"],
         },
