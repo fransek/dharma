@@ -6,7 +6,7 @@
 
 A simple and lightweight state management solution for JavaScript and TypeScript applications.
 
-[Read the full documentation 📄](https://fransek.github.io/dharma)
+[Read the full documentation 📄](https://dharma.fransek.dev/)
 
 ## Basic usage
 
