@@ -7,6 +7,12 @@ export default defineConfig({
   integrations: [
     starlight({
       title: "Dharma",
+      logo: {
+        src: "./src/assets/dharma.svg",
+        alt: "Dharma Logo",
+      },
+      favicon: "./src/assets/dharma.svg",
+      customCss: ["./src/styles/custom.css"],
       social: [
         {
           icon: "github",
@@ -19,21 +25,16 @@ export default defineConfig({
           slug: "getting-started",
         },
         {
-          label: "Core API",
+          label: "Core",
           items: ["core/createstore", "core/merge"],
         },
         {
           label: "React",
           items: [
             "react/quick-start",
-            {
-              label: "API",
-              items: [
-                "react/api/usestore",
-                "react/api/createstorecontext",
-                "react/api/usestorecontext",
-              ],
-            },
+            "react/usestore",
+            "react/createstorecontext",
+            "react/usestorecontext",
           ],
         },
       ],
