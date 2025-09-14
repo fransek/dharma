@@ -4,11 +4,11 @@
 
 ## Checklist before merge
 
-_check for yes or N/A_
+_Check for yes or N/A_
 
-- [ ] PR title has format `type: summary`*
+- [ ] PR title has format `type: summary`\*
 - [ ] Changeset created if type is `feat` or `fix`
 - [ ] New code is covered by unit tests
 - [ ] Documentation updated
 
-*Valid types: feat, fix, chore, test, refactor, docs
+\*Valid types: feat, fix, chore, test, refactor, docs
