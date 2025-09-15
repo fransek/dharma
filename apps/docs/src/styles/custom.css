@@ -1,3 +1,6 @@
 :root {
   --sl-color-text-accent: #8a7ae2;
 }
+:root[data-theme="light"] {
+  --sl-color-text-accent: #4d43a3;
+}
