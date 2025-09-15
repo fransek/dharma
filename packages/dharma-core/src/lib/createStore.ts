@@ -90,22 +90,49 @@ export const createStore = <
 >(
   config: StoreConfig<TState, TActions>,
 ): Store<TState, TActions> => {
-  const { initialState, defineActions, onLoad, onAttach, onDetach, onChange } =
-    config;
+  const {
+    initialState,
+    defineActions,
+    defineDerivedValues,
+    onLoad,
+    onAttach,
+    onDetach,
+    onChange,
+  } = config;
 
-  let state = initialState;
+  let baseState = initialState;
+  let derivedValues: Record<string, unknown> = {};
+  let computedState: TState = initialState;
+  let isStateStale = true;
 
-  const get = () => state;
+  const computeDerivedValues = () => {
+    if (!isStateStale) return computedState;
+
+    if (defineDerivedValues) {
+      derivedValues = defineDerivedValues(baseState);
+      computedState = { ...baseState, ...derivedValues } as TState;
+    } else {
+      computedState = baseState as TState;
+    }
+
+    isStateStale = false;
+    return computedState;
+  };
+
+  const get = () => {
+    return computeDerivedValues();
+  };
 
   const setSilently = (stateModifier: StateModifier<TState>) => {
-    state = merge(state, stateModifier);
-    return state;
+    baseState = merge(baseState, stateModifier);
+    isStateStale = true;
+    return computeDerivedValues();
   };
 
   const set = (stateModifier: StateModifier<TState>) => {
     setSilently(stateModifier);
     dispatch();
-    return state;
+    return computedState;
   };
 
   const resetSilently = () => setSilently(initialState);
@@ -113,7 +140,7 @@ export const createStore = <
   const reset = () => {
     resetSilently();
     dispatch();
-    return state;
+    return computedState;
   };
 
   const listeners = new Set<Listener<TState>>();
@@ -124,34 +151,37 @@ export const createStore = <
 
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
-      onAttach?.({ state, set, reset });
+      const currentState = get();
+      onAttach?.({ state: currentState, set, reset });
       storageAdapter?.onAttach();
     }
 
-    listener(state);
+    listener(get());
     listeners.add(listener);
 
     return () => {
       listeners.delete(listener);
 
       if (listeners.size === 0) {
-        onDetach?.({ state, set, reset });
+        const currentState = get();
+        onDetach?.({ state: currentState, set, reset });
         storageAdapter?.onDetach();
       }
     };
   };
 
   const dispatch = () => {
+    const currentState = get();
     onChange?.({
-      state,
+      state: currentState,
       set: setSilently,
       reset: resetSilently,
     });
-    storageAdapter?.onChange(state);
-    listeners.forEach((listener) => listener(state));
+    storageAdapter?.onChange(currentState);
+    listeners.forEach((listener) => listener(currentState));
   };
 
-  onLoad?.({ state, set, reset });
+  onLoad?.({ state: get(), set, reset });
   storageAdapter?.onLoad();
 
   return {
