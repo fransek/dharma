@@ -103,6 +103,123 @@ describe("createStore", () => {
     expect(store.get().count).toBe(1);
   });
 
+  it("should call onSubscribe for each subscription", () => {
+    const initialState = { count: 0 };
+    const onSubscribe = vi.fn();
+    const store = createStore({
+      initialState,
+      defineActions,
+      onSubscribe,
+    });
+
+    const listener1 = vi.fn();
+    const listener2 = vi.fn();
+
+    store.subscribe(listener1);
+    expect(onSubscribe).toHaveBeenCalledTimes(1);
+    expect(onSubscribe).toHaveBeenCalledWith({
+      state: initialState,
+      set: expect.any(Function),
+      reset: expect.any(Function),
+    });
+
+    store.subscribe(listener2);
+    expect(onSubscribe).toHaveBeenCalledTimes(2);
+  });
+
+  it("should call onUnsubscribe for each unsubscription", () => {
+    const initialState = { count: 0 };
+    const onUnsubscribe = vi.fn();
+    const store = createStore({
+      initialState,
+      defineActions,
+      onUnsubscribe,
+    });
+
+    const listener1 = vi.fn();
+    const listener2 = vi.fn();
+
+    const unsubscribe1 = store.subscribe(listener1);
+    const unsubscribe2 = store.subscribe(listener2);
+
+    unsubscribe1();
+    expect(onUnsubscribe).toHaveBeenCalledTimes(1);
+    expect(onUnsubscribe).toHaveBeenCalledWith({
+      state: initialState,
+      set: expect.any(Function),
+      reset: expect.any(Function),
+    });
+
+    unsubscribe2();
+    expect(onUnsubscribe).toHaveBeenCalledTimes(2);
+  });
+
+  it("should call onSubscribe and onUnsubscribe independently of onAttach and onDetach", () => {
+    const initialState = { count: 0 };
+    const onAttach = vi.fn();
+    const onDetach = vi.fn();
+    const onSubscribe = vi.fn();
+    const onUnsubscribe = vi.fn();
+
+    const store = createStore({
+      initialState,
+      defineActions,
+      onAttach,
+      onDetach,
+      onSubscribe,
+      onUnsubscribe,
+    });
+
+    const listener1 = vi.fn();
+    const listener2 = vi.fn();
+
+    // First subscription should trigger both onAttach and onSubscribe
+    const unsubscribe1 = store.subscribe(listener1);
+    expect(onAttach).toHaveBeenCalledTimes(1);
+    expect(onSubscribe).toHaveBeenCalledTimes(1);
+
+    // Second subscription should only trigger onSubscribe
+    const unsubscribe2 = store.subscribe(listener2);
+    expect(onAttach).toHaveBeenCalledTimes(1); // Still 1
+    expect(onSubscribe).toHaveBeenCalledTimes(2); // Now 2
+
+    // First unsubscription should only trigger onUnsubscribe
+    unsubscribe1();
+    expect(onDetach).toHaveBeenCalledTimes(0); // Still 0
+    expect(onUnsubscribe).toHaveBeenCalledTimes(1); // Now 1
+
+    // Last unsubscription should trigger both onDetach and onUnsubscribe
+    unsubscribe2();
+    expect(onDetach).toHaveBeenCalledTimes(1); // Now 1
+    expect(onUnsubscribe).toHaveBeenCalledTimes(2); // Now 2
+  });
+
+  it("should allow onSubscribe and onUnsubscribe to modify state", () => {
+    const initialState = { count: 0, subscriptionCount: 0 };
+    const store = createStore({
+      initialState,
+      defineActions,
+      onSubscribe: ({ state, set }) =>
+        set({ subscriptionCount: state.subscriptionCount + 1 }),
+      onUnsubscribe: ({ state, set }) =>
+        set({ subscriptionCount: state.subscriptionCount - 1 }),
+    });
+
+    expect(store.get().subscriptionCount).toBe(0);
+
+    const unsubscribe1 = store.subscribe(vi.fn());
+    expect(store.get().subscriptionCount).toBe(1);
+
+    const unsubscribe2 = store.subscribe(vi.fn());
+    expect(store.get().subscriptionCount).toBe(2);
+
+    unsubscribe1();
+    expect(store.get().subscriptionCount).toBe(1);
+
+    unsubscribe2();
+    expect(store.get().subscriptionCount).toBe(0);
+  });
+
   describe("persist", () => {
     const key = "test";
     const initKey = `init_${key}`;
