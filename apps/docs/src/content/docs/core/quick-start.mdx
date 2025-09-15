@@ -1,0 +1,48 @@
+---
+title: Quick Start
+description: Get started with dharma.
+---
+
+import { Steps } from "@astrojs/starlight/components";
+import PackageManager from "../../../components/PackageManager.astro";
+
+<Steps>
+
+1. Install the package:
+
+   <PackageManager
+     npm="npm install dharma-core"
+     pnpm="pnpm add dharma-core"
+     yarn="yarn add dharma-core"
+   />
+
+2. Create a store:
+
+   ```ts
+   import { createStore } from "dharma-core";
+
+   const store = createStore({
+     initialState: { count: 0 },
+     defineActions: ({ set }) => ({
+       increment: () => set((state) => ({ count: state.count + 1 })),
+       decrement: () => set((state) => ({ count: state.count - 1 })),
+     }),
+   });
+
+   const { increment, decrement } = store.actions;
+   ```
+
+3. Subscribe to the store and update its state by calling actions:
+
+   ```ts
+   // Subscribe to state changes
+   const unsubscribe = store.subscribe((state) => console.log(state));
+   // Update the state
+   increment();
+   // { count: 1 }
+   decrement();
+   // { count: 0 }
+   unsubscribe();
+   ```
+
+</Steps>

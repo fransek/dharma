@@ -26,7 +26,7 @@ export default defineConfig({
         },
         {
           label: "Core",
-          items: ["core/createstore", "core/merge"],
+          items: ["core/quick-start", "core/createstore", "core/merge"],
         },
         {
           label: "React",
