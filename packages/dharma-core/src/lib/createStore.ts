@@ -47,6 +47,24 @@ import { Listener, StateModifier, Store, StoreConfig } from "./types";
  * ```
  *
  * @example
+ * Subscription lifecycle hooks:
+ * ```ts
+ * import { createStore } from "dharma-core";
+ *
+ * const store = createStore({
+ *   initialState: { count: 0, activeSubscribers: 0 },
+ *   onSubscribe: ({ state, set }) => {
+ *     console.log("New subscription");
+ *     set({ activeSubscribers: state.activeSubscribers + 1 });
+ *   },
+ *   onUnsubscribe: ({ state, set }) => {
+ *     console.log("Subscription removed");
+ *     set({ activeSubscribers: state.activeSubscribers - 1 });
+ *   },
+ * });
+ * ```
+ *
+ * @example
  * Persisting state:
  * ```ts
  * import { createStore } from "dharma-core";
@@ -90,8 +108,16 @@ export const createStore = <
 >(
   config: StoreConfig<TState, TActions>,
 ): Store<TState, TActions> => {
-  const { initialState, defineActions, onLoad, onAttach, onDetach, onChange } =
-    config;
+  const {
+    initialState,
+    defineActions,
+    onLoad,
+    onAttach,
+    onDetach,
+    onChange,
+    onSubscribe,
+    onUnsubscribe,
+  } = config;
 
   let state = initialState;
 
@@ -131,8 +157,12 @@ export const createStore = <
     listener(state);
     listeners.add(listener);
 
+    onSubscribe?.({ state, set, reset });
+
     return () => {
       listeners.delete(listener);
+
+      onUnsubscribe?.({ state, set, reset });
 
       if (listeners.size === 0) {
         onDetach?.({ state, set, reset });

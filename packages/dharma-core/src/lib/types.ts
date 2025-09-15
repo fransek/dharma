@@ -56,6 +56,10 @@ export type BaseConfig<TState extends object, TActions extends object> = {
   onDetach?: StoreEventListener<TState>;
   /** Invoked whenever the state changes. */
   onChange?: StoreEventListener<TState>;
+  /** Invoked for each subscription to the store. */
+  onSubscribe?: StoreEventListener<TState>;
+  /** Invoked for each unsubscription from the store. */
+  onUnsubscribe?: StoreEventListener<TState>;
 };
 
 export type MaybePromise<T> = T | Promise<T>;
