@@ -8,10 +8,10 @@ export default defineConfig({
     starlight({
       title: "Dharma",
       logo: {
-        src: "./src/assets/dharma.svg",
+        src: "./src/assets/logo.svg",
         alt: "Dharma Logo",
       },
-      favicon: "/dharma.svg",
+      favicon: "/favicon.svg",
       customCss: ["./src/styles/custom.css"],
       social: [
         {
