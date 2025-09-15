@@ -12,7 +12,6 @@ export default defineConfig({
         alt: "Dharma Logo",
       },
       favicon: "/favicon.svg",
-      customCss: ["./src/styles/custom.css"],
       social: [
         {
           icon: "github",
@@ -36,6 +35,17 @@ export default defineConfig({
             "react/createstorecontext",
             "react/usestorecontext",
           ],
+        },
+      ],
+      customCss: ["./src/styles/custom.css"],
+      head: [
+        {
+          tag: "meta",
+          attrs: {
+            name: "keywords",
+            content:
+              "Dharma, code, JavaScript, js, TypeScript, ts, web development, frontend development, node, bun, deno, state management, store, Redux, Flux, Zustand, MobX, Recoil, Jotai, XState, React",
+          },
         },
       ],
     }),
