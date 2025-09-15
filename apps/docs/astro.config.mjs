@@ -11,7 +11,7 @@ export default defineConfig({
         src: "./src/assets/dharma.svg",
         alt: "Dharma Logo",
       },
-      favicon: "./src/assets/dharma.ico",
+      favicon: "/dharma.svg",
       customCss: ["./src/styles/custom.css"],
       social: [
         {
