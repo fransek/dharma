@@ -84,10 +84,7 @@ import { Listener, StateModifier, Store, StoreConfig } from "./types";
  * });
  * ```
  */
-export const createStore = <
-  TState extends object,
-  TActions extends object = Record<never, never>,
->(
+export const createStore = <TState, TActions>(
   config: StoreConfig<TState, TActions>,
 ): Store<TState, TActions> => {
   const { initialState, defineActions, onLoad, onAttach, onDetach, onChange } =

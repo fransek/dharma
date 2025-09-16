@@ -2,18 +2,14 @@ import { Store } from "dharma-core";
 
 export type StoreContext<
   TArgs extends unknown[],
-  TState extends object,
-  TActions extends object,
+  TState,
+  TActions,
 > = React.Context<Store<TState, TActions> | null> & {
   /** Returns a new instance of the store. */
   createStore: (...args: TArgs) => Store<TState, TActions>;
 };
 
-export type BoundStore<
-  TState extends object,
-  TActions extends object,
-  TSelection = TState,
-> = {
+export type BoundStore<TState, TActions, TSelection = TState> = {
   state: TSelection;
   actions: TActions;
 };

@@ -1,10 +1,8 @@
-export type Listener<TState extends object> = (state: TState) => void;
+export type Listener<TState> = (state: TState) => void;
 
-export type SetState<TState extends object> = (
-  stateModifier: StateModifier<TState>,
-) => TState;
+export type SetState<TState> = (stateModifier: StateModifier<TState>) => TState;
 
-export type Store<TState extends object, TActions extends object> = {
+export type Store<TState, TActions> = {
   /** Returns the current state of the store. */
   get: () => TState;
   /** Actions that can modify the state of the store. */
@@ -13,7 +11,7 @@ export type Store<TState extends object, TActions extends object> = {
   subscribe: (listener: Listener<TState>) => () => void;
 };
 
-export type StoreEventContext<TState extends object> = {
+export type StoreEventContext<TState> = {
   /** The current state of the store. */
   state: TState;
   /** Sets the state of the store. */
@@ -22,15 +20,15 @@ export type StoreEventContext<TState extends object> = {
   reset: () => TState;
 };
 
-export type StoreEventListener<TState extends object> = (
+export type StoreEventListener<TState> = (
   context: StoreEventContext<TState>,
 ) => void;
 
-export type StateModifier<TState extends object> =
+export type StateModifier<TState> =
   | Partial<TState>
   | ((state: TState) => Partial<TState>);
 
-export type StateHandler<TState extends object> = {
+export type StateHandler<TState> = {
   /** Returns the current state of the store. */
   get: () => TState;
   /** Sets the state of the store. */
@@ -39,11 +37,11 @@ export type StateHandler<TState extends object> = {
   reset: () => TState;
 };
 
-export type DefineActions<TState extends object, TActions> = (
+export type DefineActions<TState, TActions> = (
   stateHandler: StateHandler<TState>,
 ) => TActions;
 
-export type BaseConfig<TState extends object, TActions extends object> = {
+export type BaseConfig<TState, TActions> = {
   /** The initial state of the store. */
   initialState: TState;
   /** A function that defines actions that can modify the state. */
@@ -77,7 +75,7 @@ export type NoPersistConfig = {
   persist?: false;
 };
 
-export type PersistConfig<TState extends object> = {
+export type PersistConfig<TState> = {
   /** Whether to persist the state of the store. */
   persist: true;
   /** The unique key used to identify this store in storage. Required if `persist` is true. */
@@ -88,7 +86,5 @@ export type PersistConfig<TState extends object> = {
   serializer?: Serializer<TState>;
 };
 
-export type StoreConfig<
-  TState extends object,
-  TActions extends object,
-> = BaseConfig<TState, TActions> & (PersistConfig<TState> | NoPersistConfig);
+export type StoreConfig<TState, TActions> = BaseConfig<TState, TActions> &
+  (PersistConfig<TState> | NoPersistConfig);
