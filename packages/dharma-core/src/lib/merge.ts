@@ -1,5 +1,9 @@
 import { StateModifier } from "./types";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isObject = (value: unknown): value is Record<keyof any, unknown> =>
+  !!value && typeof value === "object" && !Array.isArray(value);
+
 /**
  * Merges the current state with a state modifier.
  *
@@ -37,14 +41,14 @@ export const merge = <T>(
   currentState: T,
   stateModifier: StateModifier<T>,
 ): T => {
-  if (typeof stateModifier === "object") {
+  if (isObject(stateModifier)) {
     return { ...currentState, ...stateModifier };
   }
 
   if (typeof stateModifier === "function") {
     const modifiedState = stateModifier(currentState);
 
-    if (typeof modifiedState === "object") {
+    if (isObject(modifiedState)) {
       return { ...currentState, ...modifiedState };
     }
 
