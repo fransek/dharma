@@ -43,11 +43,7 @@ import { StoreContext } from "./types";
  * }
  * ```
  */
-export const createStoreContext = <
-  TArgs extends unknown[],
-  TState extends object,
-  TActions extends object,
->(
+export const createStoreContext = <TArgs extends unknown[], TState, TActions>(
   createStore: (...args: TArgs) => Store<TState, TActions>,
 ): StoreContext<TArgs, TState, TActions> => {
   const context = createContext<Store<TState, TActions> | null>(null);

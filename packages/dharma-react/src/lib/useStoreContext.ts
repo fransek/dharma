@@ -44,8 +44,8 @@ import { useStore } from "./useStore";
  */
 export const useStoreContext = <
   TArgs extends unknown[],
-  TState extends object,
-  TActions extends object,
+  TState,
+  TActions,
   TSelection = TState,
 >(
   StoreContext: StoreContext<TArgs, TState, TActions>,

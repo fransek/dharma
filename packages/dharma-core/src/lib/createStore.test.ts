@@ -4,11 +4,8 @@ import { createStore } from "./createStore";
 import { Serializer, StateHandler, StorageAPI } from "./types";
 
 describe("createStore", () => {
-  interface State {
-    count: number;
-  }
   const initialState = { count: 0 };
-  const defineActions = (handler: StateHandler<State>) => handler;
+  const defineActions = <T>(handler: StateHandler<T>) => handler;
   const store = createStore({
     initialState,
     defineActions,
@@ -101,6 +98,26 @@ describe("createStore", () => {
       onLoad: ({ state, set }) => set({ count: state.count + 1 }),
     });
     expect(store.get().count).toBe(1);
+  });
+
+  describe("atomic stores", () => {
+    it("should update the state", () => {
+      const store = createStore({
+        initialState: 0,
+        defineActions,
+      });
+      store.actions.set(1);
+      expect(store.get()).toBe(1);
+    });
+
+    it("should update the state with a function", () => {
+      const store = createStore({
+        initialState: 0,
+        defineActions,
+      });
+      store.actions.set((state) => state + 1);
+      expect(store.get()).toBe(1);
+    });
   });
 
   describe("persist", () => {

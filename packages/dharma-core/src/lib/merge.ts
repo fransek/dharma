@@ -33,13 +33,23 @@ import { StateModifier } from "./types";
  * });
  * ```
  */
-export const merge = <T extends object>(
+export const merge = <T>(
   currentState: T,
   stateModifier: StateModifier<T>,
 ): T => {
-  const newState =
-    typeof stateModifier === "function"
-      ? stateModifier(currentState)
-      : stateModifier;
-  return { ...currentState, ...newState };
+  if (typeof stateModifier === "object") {
+    return { ...currentState, ...stateModifier };
+  }
+
+  if (typeof stateModifier === "function") {
+    const modifiedState = stateModifier(currentState);
+
+    if (typeof modifiedState === "object") {
+      return { ...currentState, ...modifiedState };
+    }
+
+    return modifiedState;
+  }
+
+  return stateModifier;
 };

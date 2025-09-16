@@ -1,10 +1,7 @@
 import { SetState, StorageAPI, StoreConfig } from "./types";
 import { warn } from "./warn";
 
-export const createStorageAdapter = <
-  TState extends object,
-  TActions extends object = Record<never, never>,
->(
+export const createStorageAdapter = <TState, TActions>(
   config: StoreConfig<TState, TActions>,
   get: () => TState,
   set: SetState<TState>,

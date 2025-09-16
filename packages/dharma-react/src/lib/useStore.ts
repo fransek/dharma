@@ -39,11 +39,7 @@ import { deeplyEquals } from "./deeplyEquals";
  * - For optimal performance, return a direct reference to the state. (e.g. `state.count`)
  * - If you return an object literal, it should only contain direct references to the state. (e.g. `{ count: state.count }`)
  */
-export const useStore = <
-  TState extends object,
-  TActions extends object,
-  TSelection = TState,
->(
+export const useStore = <TState, TActions, TSelection = TState>(
   store: Store<TState, TActions>,
   select?: (state: TState) => TSelection,
 ): TSelection => {
