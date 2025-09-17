@@ -1,0 +1,36 @@
+---
+title: derive
+description: derive API reference.
+---
+
+Creates a derived store from an existing store.
+
+A derived store computes its state based on the original store's state using a derive function.
+The derived store's value is memoized and only recomputed when requested.
+
+```ts
+const derivedStore = derive(store, deriveFn, dependencyFn?);
+```
+
+## Parameters
+
+- `store` - The original store to derive from
+- `deriveFn` - A function that computes the derived state from the original state
+- `dependencyFn` - Optional function that returns an array of dependencies. If provided, the derived state will only be recomputed when these dependencies change
+
+## Returns
+
+A new store containing the derived state. This store is read-only (no actions).
+
+## Usage
+
+```ts
+import { derive } from "dharma-core";
+import { counterStore } from "./counterStore";
+
+export const doubleCounterStore = derive(
+  counterStore,
+  (state) => state.count * 2,
+  (state) => [state.count],
+);
+```
