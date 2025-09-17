@@ -38,14 +38,15 @@ export const derive = <TState, TActions, TDerived>(
       return memo as TDerived;
     }
 
-    const next = dependencyFn?.(store.get());
+    const next = dependencyFn(store.get());
+    isStale &&= !deeplyEquals(prev, next);
 
-    if (!isStale || deeplyEquals(prev, next)) {
-      return memo as TDerived;
+    if (isStale) {
+      prev = next;
+      return compute();
     }
 
-    prev = next;
-    return compute();
+    return memo as TDerived;
   };
 
   store.subscribe(() => {
