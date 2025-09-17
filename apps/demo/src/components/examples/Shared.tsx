@@ -1,4 +1,4 @@
-import { createStore, derive, merge, type StateModifier } from "dharma-core";
+import { createStore, merge, type StateModifier } from "dharma-core";
 import { useStore } from "dharma-react";
 import { useRef } from "react";
 import { cn } from "../../lib/utils";
@@ -37,8 +37,6 @@ const useRenderCount = () => {
 };
 
 const sharedStore = createStore({
-  persist: true,
-  key: "shared-store",
   initialState,
   defineActions: ({ set, get }) => {
     const setCountState = (countState: StateModifier<CountState>) =>
@@ -81,17 +79,6 @@ const sharedStore = createStore({
   },
 });
 
-const calculateSquare = (count: number) => {
-  console.log("Calculating square!");
-  return Math.pow(count, 2);
-};
-
-const derived = derive(
-  sharedStore,
-  (state) => calculateSquare(state.countState.count),
-  (state) => [state.countState],
-);
-
 const { decrement, increment } = sharedStore.actions.count;
 const { addTodo, setInput, toggleTodo } = sharedStore.actions.todo;
 
@@ -99,10 +86,7 @@ const useSharedStore = <T = SharedState,>(select?: (state: SharedState) => T) =>
   useStore(sharedStore, select);
 
 const Counter = () => {
-  const {
-    countState: { count },
-  } = useSharedStore();
-  const squared = useStore(derived);
+  const count = useSharedStore((state) => state.countState.count);
 
   const renderCount = useRenderCount();
 
@@ -114,7 +98,6 @@ const Counter = () => {
         <div aria-label="count">{count}</div>
         <Button onClick={increment}>+</Button>
       </div>
-      <div>Squared: {squared}</div>
       <div className="text-sm" data-testid="counterRenderCount">
         Render count: {renderCount}
       </div>
@@ -124,13 +107,12 @@ const Counter = () => {
 
 const Todo = () => {
   const { input, todos } = useSharedStore((state) => state.todoState);
-  const squared = useStore(derived);
 
   const renderCount = useRenderCount();
 
   return (
     <div className="container-full card" id="todo">
-      <h2 className="font-bold">To do {squared}</h2>
+      <h2 className="font-bold">To do</h2>
       <form
         onSubmit={(e) => {
           e.preventDefault();
