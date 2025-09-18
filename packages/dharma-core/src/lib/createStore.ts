@@ -84,7 +84,7 @@ import { Listener, StateModifier, Store, StoreConfig } from "./types";
  * });
  * ```
  */
-export const createStore = <TState, TActions>(
+export const createStore = <TState, TActions = undefined>(
   config: StoreConfig<TState, TActions>,
 ): Store<TState, TActions> => {
   const { initialState, defineActions, onLoad, onAttach, onDetach, onChange } =
@@ -114,9 +114,7 @@ export const createStore = <TState, TActions>(
   };
 
   const listeners = new Set<Listener<TState>>();
-  const actions = defineActions
-    ? defineActions({ set, get, reset })
-    : ({} as TActions);
+  const actions = defineActions?.({ set, get, reset }) as TActions;
   const storageAdapter = createStorageAdapter(config, get, set);
 
   const subscribe = (listener: Listener<TState>) => {

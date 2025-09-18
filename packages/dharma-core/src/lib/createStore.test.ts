@@ -54,6 +54,13 @@ describe("createStore", () => {
     expect(store.actions.getCount()).toBe(0);
   });
 
+  it("should create actions if provided", () => {
+    const store = createStore({
+      initialState: { count: 0 },
+    });
+    expect(store.actions).toEqual(undefined);
+  });
+
   it("should call onChange if provided", () => {
     const initialState = { count: 0, other: "foo" };
     const store = createStore({
@@ -250,6 +257,7 @@ describe("createStore", () => {
     });
 
     it("should use async storage", async () => {
+      const listener = vi.fn();
       vi.spyOn(AsyncStorage, "setItem");
 
       const store = createStore({
@@ -259,7 +267,8 @@ describe("createStore", () => {
         defineActions,
         storage: AsyncStorage,
       });
-
+      store.subscribe(listener);
+      expect(listener).toHaveBeenCalledExactlyOnceWith(initialState);
       await Promise.resolve(store.actions.set({ count: 1 }));
       const expectedSnapshot = JSON.stringify({ count: 1 });
       const snapshot = await AsyncStorage.getItem(key);
