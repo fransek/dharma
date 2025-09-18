@@ -3,4 +3,4 @@
 "dharma-core": patch
 ---
 
-replaces most jsdoc content with links to the external documentation.
+replaced most jsdoc content with links to the external documentation.
