@@ -28,7 +28,10 @@ const derived = derive(
     computeCounter.actions.increment();
     return squared;
   },
-  (state) => [state.count],
+  (state) => {
+    console.log("checking dependencies");
+    return [state.count];
+  },
 );
 
 export const Derived = () => {

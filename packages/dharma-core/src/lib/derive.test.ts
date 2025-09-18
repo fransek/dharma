@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createStore } from "./createStore";
+import * as deeplyEquals from "./deeplyEquals";
 import { derive } from "./derive";
 
 describe("derive", () => {
@@ -74,5 +75,21 @@ describe("derive", () => {
 
     unsubscribe1();
     unsubscribe2();
+  });
+
+  it("should only check dependencies when stale", () => {
+    const deeplyEqualsSpy = vi.spyOn(deeplyEquals, "deeplyEquals");
+    const derived = derive(
+      store,
+      (state) => calculate(state.count),
+      (state) => [state.count],
+    );
+    derived.get(); // Stale, but no previous dependency snapshot
+    expect(deeplyEqualsSpy).toHaveBeenCalledTimes(0);
+    derived.get(); // Not stale, not checking dependencies
+    expect(deeplyEqualsSpy).toHaveBeenCalledTimes(0);
+    increment();
+    derived.get(); // Stale, checking dependencies
+    expect(deeplyEqualsSpy).toHaveBeenCalledTimes(1);
   });
 });

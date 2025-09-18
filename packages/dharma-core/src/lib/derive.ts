@@ -39,7 +39,7 @@ export const derive = <TState, TActions, TDerived>(
     }
 
     const next = dependencyFn(store.get());
-    isStale &&= !deeplyEquals(prev, next);
+    isStale &&= !prev || !deeplyEquals(prev, next);
 
     if (isStale) {
       prev = next;
