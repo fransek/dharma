@@ -11,6 +11,15 @@ export type Store<TState, TActions> = {
   subscribe: (listener: Listener<TState>) => () => void;
 };
 
+export type DerivedStoreActions = {
+  /** Start listening to changes in the original store. Called automatically on the first subscription. */
+  mount: () => void;
+  /** Stop listening to changes in the original store. Called automatically when there are no more subscribers. */
+  unmount: () => void;
+};
+
+export type DerivedStore<TState> = Store<TState, DerivedStoreActions>;
+
 export type StoreEventContext<TState> = {
   /** The current state of the store. */
   state: TState;

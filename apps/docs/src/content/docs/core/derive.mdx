@@ -1,0 +1,49 @@
+---
+title: derive
+description: derive API reference.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Creates a derived store from an existing store.
+
+A derived store computes its state based on the original store's state using a derive function.
+The derived store's value is memoized and only recomputed when necessary.
+
+```ts
+const derivedStore = derive(store, deriveFn, dependencyFn?);
+```
+
+## Parameters
+
+- `store` - The original store to derive from
+- `deriveFn` - A function that computes the derived state from the original state
+- `dependencyFn?` - Optional function that returns an array of dependencies. If provided, the derived state will only be recomputed when these dependencies change
+
+<Aside>
+  The `dependencyFn` introduces overhead and is only necessary for heavy
+  computations and/or if you need granular control over when the derived state
+  is recomputed. It is provided in the code example for demonstration purposes.
+</Aside>
+
+## Returns
+
+A new store containing the derived state.
+
+**Actions**
+
+- `mount` - Start listening to changes in the original store. Called automatically on the first subscription.
+- `unmount` - Stop listening to changes in the original store. Called automatically when there are no more subscribers.
+
+## Usage
+
+```ts
+import { derive } from "dharma-core";
+import { counterStore } from "./counterStore";
+
+export const doubleCounterStore = derive(
+  counterStore,
+  (state) => state.count * 2,
+  (state) => [state.count],
+);
+```

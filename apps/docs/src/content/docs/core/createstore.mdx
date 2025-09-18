@@ -3,6 +3,8 @@ title: createStore
 description: createStore API reference.
 ---
 
+import { Aside } from "@astrojs/starlight/components";
+
 Creates a store with an initial state and actions that can modify the state.
 
 ```ts
@@ -43,6 +45,12 @@ The `config` object can contain the following properties:
 - `key?` - The unique key used to identify this store in storage. Required if `persist` is true.
 - `storage?` - The storage to use for persisting the state. Defaults to local storage if available.
 - `serializer?` - The serializer to use for storing the state. Defaults to JSON.
+
+<Aside>
+  When persisting state it must be serializable. The default serializer is JSON
+  which has some limitations. If you need more versatility
+  [superjson](https://github.com/flightcontrolhq/superjson) is recommended.
+</Aside>
 
 ## Usage
 

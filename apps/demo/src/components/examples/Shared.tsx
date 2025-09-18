@@ -86,7 +86,7 @@ const useSharedStore = <T = SharedState,>(select?: (state: SharedState) => T) =>
   useStore(sharedStore, select);
 
 const Counter = () => {
-  const { count } = useSharedStore((state) => state.countState);
+  const count = useSharedStore((state) => state.countState.count);
 
   const renderCount = useRenderCount();
 
