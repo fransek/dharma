@@ -1,6 +1,6 @@
-import { createStorageAdapter } from "./createStorageAdapter";
+import { createStorageAdapter } from "../internal/createStorageAdapter";
+import { Listener, StateModifier, Store, StoreConfig } from "../types/types";
 import { merge } from "./merge";
-import { Listener, StateModifier, Store, StoreConfig } from "./types";
 
 /**
  * Creates a store with an initial state and actions that can modify the state.

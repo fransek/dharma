@@ -1,6 +1,6 @@
 import { Store } from "dharma-core";
 import { createContext } from "react";
-import { StoreContext } from "./types";
+import { StoreContext } from "../types/types";
 
 /**
  * Creates a store context with an instantiation function.

@@ -1,4 +1,4 @@
-import { SetState, StorageAPI, StoreConfig } from "./types";
+import { SetState, StorageAPI, StoreConfig } from "../types/types";
 import { warn } from "./warn";
 
 export const createStorageAdapter = <TState, TActions>(

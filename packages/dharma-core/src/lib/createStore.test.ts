@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { Serializer, StateHandler, StorageAPI } from "../types/types";
 import { createStore } from "./createStore";
-import { Serializer, StateHandler, StorageAPI } from "./types";
 
 describe("createStore", () => {
   const initialState = { count: 0 };
