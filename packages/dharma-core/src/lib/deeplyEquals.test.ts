@@ -64,6 +64,26 @@ describe("deeplyEquals", () => {
     expect(b).toBe(false);
   });
 
+  it("should return false for different object lengths", () => {
+    const b = deeplyEquals({ foo: "bar" }, { foo: "bar", bar: "foo" });
+    expect(b).toBe(false);
+  });
+
+  it("should return false for different object keys", () => {
+    const b = deeplyEquals({ foo: "bar" }, { bar: "foo" });
+    expect(b).toBe(false);
+  });
+
+  it("should return false for different array lengths", () => {
+    const b = deeplyEquals([1, 2, 3], [1, 2, 3, 4]);
+    expect(b).toBe(false);
+  });
+
+  it("should return false for different prototypes", () => {
+    const b = deeplyEquals({ foo: "bar" }, [1, 2, 4]);
+    expect(b).toBe(false);
+  });
+
   it("should return false for everything else", () => {
     const a = deeplyEquals(new Date(2021, 1, 1), new Date(2021, 1, 1));
     expect(a).toBe(false);
