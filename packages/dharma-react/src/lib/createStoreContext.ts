@@ -9,39 +9,7 @@ import { StoreContext } from "./types";
  * @param {(...args: TArgs) => Store<TState, TActions>} createStore - A function that returns a new store instance.
  * @returns {StoreContext<TArgs, TState, TActions>} A store context object with the given instantiation function.
  *
- * @example
- * ```tsx
- * import { createStore } from "dharma-core";
- * import { createStoreContext } from "dharma-react";
- * import { useMemo } from "react";
- *
- * const StoreContext = createStoreContext((initialCount: number) =>
- *   createStore({
- *     initialState: { count: initialCount },
- *     defineActions: ({ set }) => ({
- *       increment: () => set((state) => ({ count: state.count + 1 })),
- *       decrement: () => set((state) => ({ count: state.count - 1 })),
- *     }),
- *   }),
- * );
- *
- * function StoreProvider({
- *   children,
- *   initialCount,
- * }: {
- *   children: React.ReactNode;
- *   initialCount: number;
- * }) {
- *   const store = useMemo(
- *     () => StoreContext.createStore(initialCount),
- *     [initialCount],
- *   );
- *
- *   return (
- *     <StoreContext value={store}>{children}</StoreContext>
- *   );
- * }
- * ```
+ * @see {@link https://dharma.fransek.dev/react/createstorecontext/}
  */
 export const createStoreContext = <TArgs extends unknown[], TState, TActions>(
   createStore: (...args: TArgs) => Store<TState, TActions>,

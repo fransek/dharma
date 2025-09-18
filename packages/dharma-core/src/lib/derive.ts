@@ -12,6 +12,8 @@ import { DerivedStore, Listener, Store } from "./types";
  * @param dependencyFn - Optional function that returns an array of dependencies. If provided, the derived state will only be recomputed when these dependencies change
  *
  * @returns A new store containing the derived state
+ *
+ * @see {@link https://dharma.fransek.dev/core/derive/}
  */
 export const derive = <TState, TActions, TDerived>(
   store: Store<TState, TActions>,
