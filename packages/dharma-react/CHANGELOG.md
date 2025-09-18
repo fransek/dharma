@@ -1,5 +1,17 @@
 # dharma-react
 
+## 0.7.0
+
+### Minor Changes
+
+- [#79](https://github.com/fransek/dharma/pull/79) [`c9d0a43`](https://github.com/fransek/dharma/commit/c9d0a4301dcad416fbe8080c1209b919a917af73) Thanks [@fransek](https://github.com/fransek)! - support for atomic states (non-object states)
+
+- [#81](https://github.com/fransek/dharma/pull/81) [`d57ef7e`](https://github.com/fransek/dharma/commit/d57ef7e90983ec515927e032e4a7ede07bc7bff7) Thanks [@fransek](https://github.com/fransek)! - deep equality checker moved to dharma-core
+
+### Patch Changes
+
+- [#85](https://github.com/fransek/dharma/pull/85) [`d524cd3`](https://github.com/fransek/dharma/commit/d524cd38b4ce4a5fc009b60826e543a4ff7a4ebc) Thanks [@fransek](https://github.com/fransek)! - replaced most jsdoc content with links to the external documentation.
+
 ## 0.6.0
 
 ### Minor Changes
