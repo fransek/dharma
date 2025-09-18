@@ -1,5 +1,11 @@
 # dharma-core
 
+## 0.9.1
+
+### Patch Changes
+
+- [#86](https://github.com/fransek/dharma/pull/86) [`6bd5dfc`](https://github.com/fransek/dharma/commit/6bd5dfc977d2385569ea119fe650a45f30ded8fc) Thanks [@fransek](https://github.com/fransek)! - modified package structure
+
 ## 0.9.0
 
 ### Minor Changes
