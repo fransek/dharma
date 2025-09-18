@@ -23,12 +23,17 @@ const derivedStore = derive(store, deriveFn, dependencyFn?);
 <Aside>
   The `dependencyFn` introduces overhead and is only necessary for heavy
   computations and/or if you need granular control over when the derived state
-  is re-evaluated. It is provided in the example for demonstration purposes.
+  is recomputed. It is provided in the code example for demonstration purposes.
 </Aside>
 
 ## Returns
 
-A new store containing the derived state. This store is read-only (no actions).
+A new store containing the derived state.
+
+**Actions**
+
+- `mount` - Start listening to changes in the original store. Called automatically on the first subscription.
+- `unmount` - Stop listening to changes in the original store. Called automatically when there are no more subscribers.
 
 ## Usage
 

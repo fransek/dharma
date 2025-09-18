@@ -1,5 +1,5 @@
 import { deeplyEquals } from "./deeplyEquals";
-import { Listener, Store } from "./types";
+import { DerivedStore, Listener, Store } from "./types";
 
 /**
  * Creates a derived store from an existing store.
@@ -11,16 +11,17 @@ import { Listener, Store } from "./types";
  * @param deriveFn - A function that computes the derived state from the original state
  * @param dependencyFn - Optional function that returns an array of dependencies. If provided, the derived state will only be recomputed when these dependencies change
  *
- * @returns A new store containing the derived state. This store is read-only (no actions).
+ * @returns A new store containing the derived state
  */
 export const derive = <TState, TActions, TDerived>(
   store: Store<TState, TActions>,
   deriveFn: (state: TState) => TDerived,
   dependencyFn?: (state: TState) => unknown[],
-): Store<TDerived, never> => {
+): DerivedStore<TDerived> => {
   let memo: TDerived | undefined;
   let prev: unknown[] | undefined;
   let isStale = true;
+  let unsubscribe: (() => void) | undefined;
   const listeners = new Set<Listener<TDerived>>();
 
   const compute = () => {
@@ -49,22 +50,43 @@ export const derive = <TState, TActions, TDerived>(
     return memo as TDerived;
   };
 
-  store.subscribe(() => {
-    isStale = true;
-    listeners.forEach((listener) => listener(get()));
-  });
-
   const subscribe = (listener: Listener<TDerived>) => {
+    if (listeners.size === 0) {
+      mount();
+    }
+
     listener(get());
     listeners.add(listener);
+
     return () => {
       listeners.delete(listener);
+
+      if (listeners.size === 0) {
+        unmount();
+      }
     };
+  };
+
+  const mount = () => {
+    if (!unsubscribe) {
+      unsubscribe = store.subscribe(() => {
+        isStale = true;
+        listeners.forEach((listener) => listener(get()));
+      });
+    }
+  };
+
+  const unmount = () => {
+    unsubscribe?.();
+    unsubscribe = undefined;
   };
 
   return {
     get,
     subscribe,
-    actions: null as never,
+    actions: {
+      mount,
+      unmount,
+    },
   };
 };
