@@ -1,5 +1,5 @@
+import { DerivedStore, Listener, Store } from "../types/types";
 import { deeplyEquals } from "./deeplyEquals";
-import { DerivedStore, Listener, Store } from "./types";
 
 /**
  * Creates a derived store from an existing store.

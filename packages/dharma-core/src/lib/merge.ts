@@ -1,4 +1,4 @@
-import { StateModifier } from "./types";
+import { StateModifier } from "../types/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isObject = (value: unknown): value is Record<keyof any, unknown> =>

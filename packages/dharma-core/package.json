@@ -18,27 +18,26 @@
   ],
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
     },
-    "./createStore": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/esm/lib/createStore.js",
-      "require": "./dist/cjs/lib/createStore.js"
-    },
-    "./merge": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/esm/lib/merge.js",
-      "require": "./dist/cjs/lib/merge.js"
-    },
-    "./deeplyEquals": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/esm/lib/deeplyEquals.js",
-      "require": "./dist/cjs/lib/deeplyEquals.js"
+    "./*": {
+      "import": {
+        "types": "./dist/esm/lib/*.d.ts",
+        "default": "./dist/esm/lib/*.js"
+      },
+      "require": {
+        "types": "./dist/cjs/lib/*.d.ts",
+        "default": "./dist/cjs/lib/*.js"
+      }
     }
   },
   "sideEffects": false,

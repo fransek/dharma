@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { BoundStore, StoreContext } from "./types";
+import { BoundStore, StoreContext } from "../types/types";
 import { useStore } from "./useStore";
 
 /**
