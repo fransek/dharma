@@ -9,35 +9,7 @@ import { useRef, useSyncExternalStore } from "react";
  * @param {(state: TState) => TSelection} [select] - A function to select a subset of the state. Can prevent unnecessary re-renders.
  * @returns {TSelection} The selected state from the store.
  *
- * @example
- * Basic usage:
- * ```tsx
- * import { useStore } from "dharma-react";
- * import { store } from "./store";
- *
- * const { increment, decrement } = store.actions;
- *
- * function Counter() {
- *   const { count } = useStore(store);
- *
- *   return (
- *     <div>
- *       <div>{count}</div>
- *       <button onClick={decrement}>-</button>
- *       <button onClick={increment}>+</button>
- *     </div>
- *   );
- * }
- * ```
- * @example
- * With a select function:
- * ```tsx
- * const count = useStore(store, (state) => state.count);
- * ```
- * @remarks
- * If the `select` function is provided, an equality check is performed. This has some caveats:
- * - For optimal performance, return a direct reference to the state. (e.g. `state.count`)
- * - If you return an object literal, it should only contain direct references to the state. (e.g. `{ count: state.count }`)
+ * @see {@link https://dharma.fransek.dev/react/usestore/}
  */
 export const useStore = <TState, TActions, TSelection = TState>(
   store: Store<TState, TActions>,
