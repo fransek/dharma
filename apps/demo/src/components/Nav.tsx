@@ -17,6 +17,7 @@ const links: NavLink[] = [
   { href: "/persistent", label: "Persistent" },
   { href: "/async-storage", label: "Async Storage" },
   { href: "/async", label: "Async" },
+  { href: "/derived", label: "Derived" },
 ];
 
 export default function Nav() {

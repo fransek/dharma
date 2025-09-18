@@ -1,6 +1,6 @@
 import { Store } from "dharma-core";
+import { deeplyEquals } from "dharma-core/deeplyEquals";
 import { useRef, useSyncExternalStore } from "react";
-import { deeplyEquals } from "./deeplyEquals";
 
 /**
  * A hook used to access a store created with `createStore` and bind it to a component.
