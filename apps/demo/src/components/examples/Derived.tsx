@@ -12,21 +12,29 @@ const store = createStore({
   }),
 });
 
+const { increment, decrement, setInput } = store.actions;
+
+const computeCounter = createStore({
+  initialState: 0,
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => state + 1),
+  }),
+});
+
 const derived = derive(
   store,
   (state) => {
     const squared = state.count * state.count;
-    console.log(`Computing squared: ${squared}`);
+    computeCounter.actions.increment();
     return squared;
   },
   (state) => [state.count],
 );
 
-const { increment, decrement, setInput } = store.actions;
-
 export const Derived = () => {
   const { count, input } = useStore(store);
   const squared = useStore(derived);
+  const computeCount = useStore(computeCounter);
 
   return (
     <div className="grid grid-cols-3 text-center items-center w-fit gap-y-2">
@@ -34,6 +42,7 @@ export const Derived = () => {
       <div aria-label="count">{count}</div>
       <Button onClick={increment}>+</Button>
       <div className="col-span-3 text-sm">Squared: {squared}</div>
+      <div className="col-span-3 text-sm">Computed {computeCount} time(s)</div>
       <Input
         className="col-span-3"
         value={input}
