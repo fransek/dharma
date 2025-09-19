@@ -1,5 +1,11 @@
 # dharma-react
 
+## 0.7.2
+
+### Patch Changes
+
+- [#90](https://github.com/fransek/dharma/pull/90) [`7d53888`](https://github.com/fransek/dharma/commit/7d53888c7e04e55ab919a7fa4f25eb5611337b95) Thanks [@fransek](https://github.com/fransek)! - improved types for dharma-react context api
+
 ## 0.7.1
 
 ### Patch Changes
