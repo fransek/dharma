@@ -1,0 +1,352 @@
+---
+title: Building a Todo App
+description: Learn how to build a complete todo application using React and dharma state management.
+---
+
+import { Steps } from '@astrojs/starlight/components';
+import PackageManager from '../../../components/PackageManager.astro';
+
+This guide will walk you through building a complete todo application using React and dharma for state management. You'll learn how to manage application state, handle user interactions, and create a responsive UI.
+
+## What You'll Build
+
+By the end of this guide, you'll have a fully functional todo app that can:
+
+- Add new todo items
+- Mark todos as complete/incomplete
+- Display the current list of todos
+- Handle form submissions and user input
+
+## Prerequisites
+
+This guide assumes you have:
+- Basic knowledge of React and TypeScript
+- A React project set up (using Vite, Create React App, or Next.js)
+- Node.js and a package manager installed
+
+<Steps>
+
+1. **Install the required packages**
+
+    First, install both dharma-core and dharma-react packages:
+
+    <PackageManager 
+      npm="npm install dharma-core dharma-react" 
+      pnpm="pnpm add dharma-core dharma-react" 
+      yarn="yarn add dharma-core dharma-react"
+    />
+
+2. **Define the state interface**
+
+    Create a new file `todo-store.ts` and define the shape of your todo state:
+
+    ```typescript
+    // todo-store.ts
+    interface TodoState {
+      input: string;
+      todos: { title: string; complete: boolean }[];
+    }
+    ```
+
+    This interface defines:
+    - `input`: The current value of the input field
+    - `todos`: An array of todo items with title and completion status
+
+3. **Create the initial state**
+
+    Define the initial state for your todo app:
+
+    ```typescript
+    // todo-store.ts
+    const initialState: TodoState = {
+      input: "",
+      todos: [],
+    };
+    ```
+
+4. **Create the store with actions**
+
+    Import `createStore` from dharma-core and create your store with all the necessary actions:
+
+    ```typescript
+    // todo-store.ts
+    import { createStore } from "dharma-core";
+
+    interface TodoState {
+      input: string;
+      todos: { title: string; complete: boolean }[];
+    }
+
+    const initialState: TodoState = {
+      input: "",
+      todos: [],
+    };
+
+    export const todoStore = createStore({
+      initialState,
+      defineActions: ({ set, get }) => ({
+        // Update the input field value
+        setInput: (input: string) => set({ input }),
+        
+        // Add a new todo item
+        addTodo: () => {
+          const currentState = get();
+          if (!currentState.input.trim()) {
+            return; // Don't add empty todos
+          }
+          set((state) => ({
+            todos: [
+              ...state.todos, 
+              { title: state.input, complete: false }
+            ],
+            input: "", // Clear input after adding
+          }));
+        },
+        
+        // Toggle completion status of a todo
+        toggleTodo: (index: number) =>
+          set((state) => ({
+            todos: state.todos.map((todo, i) => {
+              if (index === i) {
+                return { ...todo, complete: !todo.complete };
+              }
+              return todo;
+            }),
+          })),
+      }),
+    });
+
+    // Export actions for easy use in components
+    export const { setInput, addTodo, toggleTodo } = todoStore.actions;
+    ```
+
+    The actions defined are:
+    - `setInput`: Updates the input field value
+    - `addTodo`: Adds a new todo and clears the input
+    - `toggleTodo`: Toggles the completion status of a specific todo
+
+5. **Create the Todo component**
+
+    Now create a React component that uses the store:
+
+    ```tsx
+    // Todo.tsx
+    import { useStore } from "dharma-react";
+    import { todoStore, setInput, addTodo, toggleTodo } from "./todo-store";
+
+    export const Todo = () => {
+      // Subscribe to the store state
+      const { input, todos } = useStore(todoStore);
+
+      const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        addTodo();
+      };
+
+      return (
+        <div className="todo-app">
+          <h2>Todo App</h2>
+          
+          {/* Add todo form */}
+          <form onSubmit={handleSubmit} className="todo-form">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Add a new todo..."
+              aria-label="Add a new todo"
+            />
+            <button type="submit">Add</button>
+          </form>
+
+          {/* Todo list */}
+          {todos.length > 0 && (
+            <ul className="todo-list">
+              {todos.map((todo, index) => (
+                <li key={`${todo.title}-${index}`} className="todo-item">
+                  <label className="todo-label">
+                    <input
+                      type="checkbox"
+                      checked={todo.complete}
+                      onChange={() => toggleTodo(index)}
+                    />
+                    <span 
+                      className={todo.complete ? "completed" : ""}
+                    >
+                      {todo.title}
+                    </span>
+                  </label>
+                </li>
+              ))}
+            </ul>
+          )}
+          
+          {todos.length === 0 && (
+            <p className="empty-state">No todos yet. Add one above!</p>
+          )}
+        </div>
+      );
+    };
+    ```
+
+6. **Add some basic styling**
+
+    Add CSS to make your todo app look good:
+
+    ```css
+    /* Todo.css */
+    .todo-app {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    .todo-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .todo-form input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .todo-form button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .todo-form button:hover {
+      background-color: #0056b3;
+    }
+
+    .todo-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .todo-item {
+      margin-bottom: 10px;
+    }
+
+    .todo-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .todo-label:hover {
+      background-color: #f8f9fa;
+    }
+
+    .todo-label input[type="checkbox"] {
+      margin: 0;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: #6c757d;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #6c757d;
+      font-style: italic;
+    }
+    ```
+
+7. **Use the Todo component in your app**
+
+    Finally, import and use your Todo component in your main App component:
+
+    ```tsx
+    // App.tsx
+    import { Todo } from "./Todo";
+    import "./Todo.css";
+
+    function App() {
+      return (
+        <div className="App">
+          <Todo />
+        </div>
+      );
+    }
+
+    export default App;
+    ```
+
+</Steps>
+
+## Key Concepts Explained
+
+### State Management with dharma
+
+The todo app demonstrates several key concepts of dharma state management:
+
+- **Centralized State**: All todo data is stored in a single store
+- **Immutable Updates**: State is updated immutably using the `set` function
+- **Action-Based Changes**: All state changes happen through well-defined actions
+- **Reactive Updates**: Components automatically re-render when state changes
+
+### The `useStore` Hook
+
+The `useStore` hook from dharma-react:
+- Subscribes your component to store changes
+- Returns the current state
+- Automatically triggers re-renders when state updates
+- Handles subscription cleanup when the component unmounts
+
+### Form Handling
+
+The form submission is handled by:
+1. Preventing the default form submission with `preventDefault()`
+2. Calling the `addTodo` action which updates the state
+3. The store automatically clears the input field after adding
+
+### Array State Updates
+
+When updating arrays in the state:
+- Use the spread operator to create new arrays: `[...state.todos, newTodo]`
+- Use `map` to update specific items: `state.todos.map((todo, i) => ...)`
+- Never mutate the original array directly
+
+## Next Steps
+
+You can enhance this todo app by adding:
+
+- **Delete functionality**: Add a delete button for each todo
+- **Edit todos**: Allow users to edit existing todo titles
+- **Filtering**: Show all, completed, or pending todos
+- **Persistence**: Use `createPersistentStore` to save todos to localStorage
+- **Categories**: Group todos by category or priority
+
+For persistence, you can replace `createStore` with `createPersistentStore`:
+
+```typescript
+import { createPersistentStore } from "dharma-core";
+
+export const todoStore = createPersistentStore({
+  key: "my-todos", // localStorage key
+  initialState,
+  defineActions: ({ set, get }) => ({
+    // ... same actions
+  }),
+});
+```
+
+This will automatically save and restore your todos from localStorage!
