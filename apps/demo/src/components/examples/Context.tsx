@@ -1,67 +1,108 @@
 import { createStore } from "dharma-core";
-import { createStoreContext, useStoreContext } from "dharma-react";
-import { useMemo } from "react";
+import { createStoreContext, useStore, useStoreContext } from "dharma-react";
+import { useRef } from "react";
+import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import { Input } from "../ui/input";
 
-// Create the store context
-const CounterStoreContext = createStoreContext((initialCount: number) =>
+interface TodoState {
+  input: string;
+  todos: { title: string; complete: boolean }[];
+}
+
+const createTodoStore = (initialState: TodoState) =>
   createStore({
-    initialState: { count: initialCount },
-    defineActions: ({ set }) => ({
-      increment: () => set((state) => ({ count: state.count + 1 })),
-      decrement: () => set((state) => ({ count: state.count - 1 })),
+    initialState,
+    defineActions: ({ set, get }) => ({
+      setInput: (input: string) => set({ input }),
+      addTodo: () => {
+        if (!get().input) {
+          return;
+        }
+        set((state) => ({
+          todos: [...state.todos, { title: state.input, complete: false }],
+          input: "",
+        }));
+      },
+      toggleTodo: (index: number) =>
+        set((state) => ({
+          todos: state.todos.map((todo, i) => {
+            if (index === i) {
+              return { ...todo, complete: !todo.complete };
+            }
+            return todo;
+          }),
+        })),
     }),
-  }),
-);
+  });
 
-const CounterStoreProvider = ({
-  initialCount,
-  children,
-}: {
-  initialCount: number;
-  children: React.ReactNode;
-}) => {
-  // Create an instance of the store. Make sure the store is not recreated on every render.
-  const store = useMemo(
-    () => CounterStoreContext.createStore(initialCount),
-    [initialCount],
-  );
+const TodoStoreContext = createStoreContext(createTodoStore);
+
+export const Context = () => {
+  const store = useRef(
+    createTodoStore({
+      input: "",
+      todos: [],
+    }),
+  ).current;
+  const { setInput, addTodo } = store.actions;
+  const { input, todos } = useStore(store);
 
   return (
-    // Provide the store to the context
-    <CounterStoreContext value={store}>{children}</CounterStoreContext>
+    <TodoStoreContext.Provider value={store}>
+      <div className="flex flex-col gap-4 container-full w-fit">
+        <h2 className="font-bold">To do</h2>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            addTodo();
+          }}
+          className="flex gap-2 max-w-lg"
+        >
+          <Input
+            aria-label="Add a new todo"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <Button type="submit">Add</Button>
+        </form>
+        {todos.length > 0 && <Todos />}
+      </div>
+    </TodoStoreContext.Provider>
   );
 };
 
-const Counter = () => {
-  // Use the store from the context
+const Todos = () => {
   const {
-    state: { count },
-    actions: { increment, decrement },
-  } = useStoreContext(CounterStoreContext);
+    actions: { toggleTodo },
+    state: { todos },
+  } = useStoreContext(TodoStoreContext);
 
   return (
-    <div className="grid grid-cols-3 text-center items-center w-fit">
-      <Button onClick={decrement}>-</Button>
-      <div aria-label="count">{count}</div>
-      <Button onClick={increment}>+</Button>
-    </div>
+    <ul>
+      {todos.map((todo, index) => (
+        <li
+          key={todo.title}
+          data-testid={`todo-${index}`}
+          className="flex items-center gap-2"
+        >
+          <Checkbox
+            checked={todo.complete}
+            onCheckedChange={() => toggleTodo(index)}
+            id={`todo-${index}`}
+          />
+          <label
+            htmlFor={`todo-${index}`}
+            className={cn(
+              "transition-colors",
+              todo.complete && "line-through text-foreground/60",
+            )}
+          >
+            {todo.title}
+          </label>
+        </li>
+      ))}
+    </ul>
   );
 };
-
-export const Context = () => (
-  <div className="container-full w-fit">
-    <div className="container-full card">
-      <h2 className="font-bold">Context 1</h2>
-      <CounterStoreProvider initialCount={0}>
-        <Counter />
-      </CounterStoreProvider>
-    </div>
-    <div className="container-full card">
-      <h2 className="font-bold">Context 2</h2>
-      <CounterStoreProvider initialCount={5}>
-        <Counter />
-      </CounterStoreProvider>
-    </div>
-  </div>
-);
