@@ -5,6 +5,7 @@ import { Async } from "./examples/Async";
 import { Context } from "./examples/Context";
 import { Counter } from "./examples/Counter";
 import { Derived } from "./examples/Derived";
+import { Effect } from "./examples/Effect";
 import { Persistent } from "./examples/Persistent";
 import { PersistentAsync } from "./examples/PersistentAsync";
 import { Shared } from "./examples/Shared";
@@ -24,6 +25,9 @@ export const CounterExample: FC<Props> = ({ children }) => (
 );
 export const DerivedExample: FC<Props> = ({ children }) => (
   <CodeToggle component={<Derived />}>{children}</CodeToggle>
+);
+export const EffectExample: FC<Props> = ({ children }) => (
+  <CodeToggle component={<Effect />}>{children}</CodeToggle>
 );
 export const PersistentExample: FC<Props> = ({ children }) => (
   <CodeToggle component={<Persistent />}>{children}</CodeToggle>

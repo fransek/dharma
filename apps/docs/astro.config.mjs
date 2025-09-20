@@ -30,6 +30,7 @@ export default defineConfig({
           items: [
             "core/quick-start",
             "core/createstore",
+            "core/createeffect",
             "core/derive",
             "core/merge",
           ],

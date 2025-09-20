@@ -33,15 +33,7 @@ export const derive = <TState, TActions, TDerived>(
   };
 
   const get = () => {
-    if (!dependencyFn) {
-      if (isStale) {
-        return compute();
-      }
-
-      return memo as TDerived;
-    }
-
-    const next = dependencyFn(store.get());
+    const next = dependencyFn?.(store.get());
     isStale &&= !prev || !deeplyEquals(prev, next);
 
     if (isStale) {
@@ -69,13 +61,16 @@ export const derive = <TState, TActions, TDerived>(
     };
   };
 
+  const listener = () => {
+    isStale = true;
+    listeners.forEach((listener) => listener(get()));
+  };
+
   const mount = () => {
     if (!unsubscribe) {
-      unsubscribe = store.subscribe(() => {
-        isStale = true;
-        listeners.forEach((listener) => listener(get()));
-      });
+      unsubscribe = store.subscribe(listener);
     }
+    return unmount;
   };
 
   const unmount = () => {
