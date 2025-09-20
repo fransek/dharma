@@ -1,0 +1,38 @@
+---
+title: createEffect
+description: createEffect API reference.
+---
+
+Creates an effect that runs when the store's state changes.
+
+```ts
+const effect = createEffect(store, effectFn, dependencyFn?);
+```
+
+## Parameters
+
+- `store` - The store instance to subscribe to
+- `effectFn` - The function to run when dependencies change. Receives the current state as argument.
+- `dependencyFn?` - Optional function that returns an array of dependencies. If provided, the effect will only run when these dependencies change.
+
+## Returns
+
+An `Effect` object with the following methods:
+
+- `mount` - Start listening to changes in the original store.
+- `unmount` - Stop listening to changes in the original store.
+
+## Usage
+
+```ts
+import { createEffect } from "dharma-core";
+import { counterStore } from "./counterStore";
+
+const countLogger = createEffect(
+  counterStore,
+  (state) => console.log("count =", state.count),
+  (state) => [state.count],
+);
+
+countLogger.mount();
+```
