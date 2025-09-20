@@ -1,5 +1,15 @@
 # dharma-core
 
+## 0.10.0
+
+### Minor Changes
+
+- [#92](https://github.com/fransek/dharma/pull/92) [`8188815`](https://github.com/fransek/dharma/commit/8188815d8fec850fb46fbc3d5a03dc9f3165bb31) Thanks [@fransek](https://github.com/fransek)! - createEffect: a new utility that creates a side-effect
+
+### Patch Changes
+
+- [#92](https://github.com/fransek/dharma/pull/92) [`8188815`](https://github.com/fransek/dharma/commit/8188815d8fec850fb46fbc3d5a03dc9f3165bb31) Thanks [@fransek](https://github.com/fransek)! - derive: mount returns the unmount function
+
 ## 0.9.1
 
 ### Patch Changes
