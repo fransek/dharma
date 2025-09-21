@@ -1,5 +1,11 @@
 # dharma-react
 
+## 0.8.0
+
+### Minor Changes
+
+- [#93](https://github.com/fransek/dharma/pull/93) [`544d1cc`](https://github.com/fransek/dharma/commit/544d1ccb2ac5e6d9ff8764fa3eaa533c00b9839d) Thanks [@fransek](https://github.com/fransek)! - store context api reworked
+
 ## 0.7.2
 
 ### Patch Changes
