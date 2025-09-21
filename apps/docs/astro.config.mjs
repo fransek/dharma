@@ -26,6 +26,9 @@ export default defineConfig({
           slug: "getting-started",
         },
         {
+          slug: "core-concepts",
+        },
+        {
           label: "Core",
           items: [
             "core/quick-start",
@@ -42,6 +45,20 @@ export default defineConfig({
             "react/usestore",
             "react/createstorecontext",
             "react/usestorecontext",
+          ],
+        },
+        {
+          label: "Changelogs",
+          collapsed: true,
+          items: [
+            {
+              link: "https://github.com/fransek/dharma/blob/main/packages/dharma-core/CHANGELOG.md",
+              label: "dharma-core",
+            },
+            {
+              link: "https://github.com/fransek/dharma/blob/main/packages/dharma-react/CHANGELOG.md",
+              label: "dharma-react",
+            },
           ],
         },
       ],
