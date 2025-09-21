@@ -1,0 +1,153 @@
+---
+title: Core Concepts
+description: Learn the core concepts of dharma.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Stores
+
+Stores model and control the state of your application. Listeners can subscribe to the store and react to changes, e.g. by updating the UI.
+When you create a store you define the initial state and a set of actions. Actions are functions that update the state in a predictable way.
+
+### Example
+
+Here's how you can create a simple counter store using [`createStore`](/core/createstore):
+
+```ts
+import { createStore } from "dharma-core";
+
+const store = createStore({
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }),
+});
+
+// Actions can be destructured for easy use
+const { increment, decrement } = store.actions;
+
+// You can subscribe to state changes
+const unsubscribe = store.subscribe((state) => console.log(state));
+
+// And update the state by calling actions
+increment(); // { count: 1 }
+decrement(); // { count: 0 }
+
+// When you no longer need to listen to state changes you can unsubscribe
+unsubscribe();
+```
+
+## Integration
+
+The core library is designed to work in any JavaScript environment and can be integrated with any UI framework.
+For React applications, Dharma provides a dedicated package, `dharma-react`, with hooks to simplify integration.
+
+### React example
+
+The [`useStore`](/react/usestore) hook lets you subscribe to a store from within a React component.
+The component will re-render automatically whenever the store's state changes.
+
+```tsx
+import { useStore } from "dharma-react";
+import { store, increment, decrement } from "./store";
+
+function Counter() {
+  const { count } = useStore(store);
+
+  return (
+    <div>
+      <div>{count}</div>
+      <button onClick={decrement}>-</button>
+      <button onClick={increment}>+</button>
+    </div>
+  );
+}
+```
+
+## Persisting state
+
+Dharma stores can easily persist their state to a key-value storage, like `localStorage` in the browser or `AsyncStorage` in React Native.
+
+To enable persistence, set `persist: true` and provide a unique `key` when creating the store.
+This `key` is used to identify the store in the storage.
+
+```ts
+import { createStore } from "dharma-core";
+
+const store = createStore({
+  persist: true,
+  key: "counter", // Unique key for storage
+  initialState: { count: 0 },
+  defineActions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+  }),
+});
+```
+
+<Aside>
+  By default, Dharma uses `localStorage` for persistence if available. You can
+  provide a different storage implementation, like `sessionStorage` or a custom
+  storage, using the `storage` option. You can also provide a custom serializer
+  with the `serializer` option (The default is the native JSON serializer).
+</Aside>
+
+## Derived state
+
+Sometimes, you need to compute a value based on the state of a store. Dharma provides the [`derive`](/core/derive) function for this purpose.
+Derived state is memoized, meaning it will only be recomputed when its dependencies change.
+For granular control over dependencies you can provide a `dependencyFn`.
+
+### Example
+
+```ts
+import { derive } from "dharma-core";
+import { store, increment } from "./store";
+
+// This derived store will contain the squared value of 'count'
+const squared = derive(store, (state) => state.count * state.count);
+
+// You can subscribe to derived state just like a regular store
+squared.subscribe((state) => console.log(state));
+
+increment(); // 1
+increment(); // 4
+```
+
+## Effects
+
+Effects allow you to run side effects in response to state changes, such as logging, analytics,
+or interacting with other parts of your application. The [`createEffect`](/core/createeffect) function creates an effect that listens to a store.
+
+### Example
+
+```ts
+import { createEffect } from "dharma-core";
+import { store, increment } from "./store";
+
+// This effect will log the count whenever it changes
+const logger = createEffect(store, (state) => {
+  console.log("count =", state.count);
+});
+
+// Mount the effect to start listening
+logger.mount();
+
+increment(); // count = 1
+increment(); // count = 2
+
+// Unmount the effect to stop listening
+logger.unmount();
+```
+
+## Best practices
+
+Dharma is unopinionated, but here are some recommendations to keep your state management clean and maintainable:
+
+- **Decouple Stores from the UI:** Keep your store logic separate from your UI components.
+  This makes your stores easier to test and allows you to reuse them with different UI frameworks.
+- **Single-Purpose Actions:** Each action should have a single, clear purpose.
+  This makes your state changes predictable and easier to debug.
+- **Domain-Specific Stores:** Avoid creating one giant store for your entire application.
+  Instead, create smaller stores that manage specific domains of your application's state.
