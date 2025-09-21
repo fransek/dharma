@@ -4,6 +4,7 @@ description: useStoreContext API reference.
 ---
 
 A hook used to access a store context created with `createStoreContext`.
+it will throw an error if the context value is null.
 
 ```tsx
 const store = useStoreContext(StoreContext, select?);

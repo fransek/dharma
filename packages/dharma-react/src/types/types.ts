@@ -3,10 +3,8 @@ import { Context } from "react";
 
 export type StoreContext<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TCreateStore extends (...args: any[]) => Store<any, any>,
-> = Context<ReturnType<TCreateStore> | null> & {
-  createStore: TCreateStore;
-};
+  TStoreCreator extends (...args: any[]) => Store<any, any>,
+> = Context<ReturnType<TStoreCreator> | null>;
 
 export type BoundStore<TState, TActions, TSelection = TState> = {
   state: TSelection;

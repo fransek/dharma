@@ -1,6 +1,6 @@
 import { createStore } from "dharma-core";
 import { createStoreContext, useStore, useStoreContext } from "dharma-react";
-import { useRef } from "react";
+import { useMemo } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
@@ -11,8 +11,8 @@ interface TodoState {
   todos: { title: string; complete: boolean }[];
 }
 
-const createTodoStore = (initialState: TodoState) =>
-  createStore({
+const createTodoStore = (initialState: TodoState) => {
+  return createStore({
     initialState,
     defineActions: ({ set, get }) => ({
       setInput: (input: string) => set({ input }),
@@ -36,23 +36,31 @@ const createTodoStore = (initialState: TodoState) =>
         })),
     }),
   });
+};
 
-const TodoStoreContext = createStoreContext(createTodoStore);
+const TodoStoreContext = createStoreContext<typeof createTodoStore>();
 
-export const Context = () => {
-  const store = useRef(
-    createTodoStore({
-      input: "",
-      todos: [],
-    }),
-  ).current;
+interface Props {
+  initialTodos?: { title: string; complete: boolean }[];
+  instanceNumber: number;
+}
+
+export const TodoApp = ({ initialTodos = [], instanceNumber }: Props) => {
+  const store = useMemo(
+    () =>
+      createTodoStore({
+        input: "",
+        todos: initialTodos,
+      }),
+    [initialTodos],
+  );
   const { setInput, addTodo } = store.actions;
   const { input, todos } = useStore(store);
 
   return (
     <TodoStoreContext.Provider value={store}>
-      <div className="flex flex-col gap-4 container-full w-fit">
-        <h2 className="font-bold">To do</h2>
+      <div className="flex flex-col gap-4 container-full w-fit card">
+        <h2 className="font-bold">To do (context {instanceNumber})</h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -67,13 +75,13 @@ export const Context = () => {
           />
           <Button type="submit">Add</Button>
         </form>
-        {todos.length > 0 && <Todos />}
+        {todos.length > 0 && <Todos instanceNumber={instanceNumber} />}
       </div>
     </TodoStoreContext.Provider>
   );
 };
 
-const Todos = () => {
+const Todos = ({ instanceNumber }: { instanceNumber: number }) => {
   const {
     actions: { toggleTodo },
     state: { todos },
@@ -82,18 +90,14 @@ const Todos = () => {
   return (
     <ul>
       {todos.map((todo, index) => (
-        <li
-          key={todo.title}
-          data-testid={`todo-${index}`}
-          className="flex items-center gap-2"
-        >
+        <li key={todo.title} className="flex items-center gap-2">
           <Checkbox
             checked={todo.complete}
             onCheckedChange={() => toggleTodo(index)}
-            id={`todo-${index}`}
+            id={`todo-${instanceNumber}-${index}`}
           />
           <label
-            htmlFor={`todo-${index}`}
+            htmlFor={`todo-${instanceNumber}-${index}`}
             className={cn(
               "transition-colors",
               todo.complete && "line-through text-foreground/60",
@@ -106,3 +110,16 @@ const Todos = () => {
     </ul>
   );
 };
+
+export const Context = () => (
+  <div className="flex flex-col gap-4 ">
+    <TodoApp
+      instanceNumber={1}
+      initialTodos={[{ title: "Learn Dharma", complete: false }]}
+    />
+    <TodoApp
+      instanceNumber={2}
+      initialTodos={[{ title: "Buy milk", complete: false }]}
+    />
+  </div>
+);
