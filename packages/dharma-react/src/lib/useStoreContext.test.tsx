@@ -6,22 +6,23 @@ import { createStoreContext } from "./createStoreContext";
 import { useStoreContext } from "./useStoreContext";
 
 describe("useStoreContext", () => {
-  const StoreContext = createStoreContext((initialCount: number) =>
+  const create = (initialCount: number) =>
     createStore({
       initialState: { count: initialCount },
       defineActions: ({ set }) => ({
         increment: () => set((state) => ({ count: state.count + 1 })),
         decrement: () => set((state) => ({ count: state.count - 1 })),
       }),
-    }),
-  );
+    });
+
+  const StoreContext = createStoreContext<typeof create>();
 
   const renderUseStoreContext = <T,>(
     select?: (state: { count: number }) => T,
   ) =>
     renderHook(() => useStoreContext(StoreContext, select), {
       wrapper: ({ children }) => {
-        const store = useRef(StoreContext.createStore(0)).current;
+        const store = useRef(create(0)).current;
         return (
           <StoreContext.Provider value={store}>
             {children}
@@ -32,7 +33,7 @@ describe("useStoreContext", () => {
 
   it("should throw an error if the store context is not found", () => {
     expect(() => renderHook(() => useStoreContext(StoreContext))).toThrowError(
-      "Store context not found. Make sure you are using the store context within a provider.",
+      "[dharma-react] Store context not found. Make sure you are using the store context within a provider.",
     );
   });
 

@@ -3,20 +3,16 @@ title: createStoreContext
 description: createStoreContext API reference.
 ---
 
-Creates a store context with an instantiation function.
-Useful if you need to initialize a store with dynamic data like props, or if you need to create multiple instances of the same store.
+Creates a store context which is a regular React context with a default value of null.
+The generic type parameter is the type of the store creator function.
 
 ```ts
-const StoreContext = createStoreContext(createStore);
+const StoreContext = createStoreContext<TStoreCreator>();
 ```
-
-## Parameters
-
-- `createStore` - A function that returns a new store instance.
 
 ## Returns
 
-A store context object with the given instantiation function.
+A store context that defaults to null.
 
 ## Usage
 
@@ -25,15 +21,17 @@ import { createStore } from "dharma-core";
 import { createStoreContext } from "dharma-react";
 import { useMemo } from "react";
 
-const StoreContext = createStoreContext((initialCount: number) =>
-  createStore({
+const createCounterStore = (initialCount: number) => {
+  return createStore({
     initialState: { count: initialCount },
     defineActions: ({ set }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
     }),
-  }),
-);
+  });
+};
+
+const StoreContext = createStoreContext<typeof createCounterStore>();
 
 function StoreProvider({
   children,
@@ -42,10 +40,7 @@ function StoreProvider({
   children: React.ReactNode;
   initialCount: number;
 }) {
-  const store = useMemo(
-    () => StoreContext.createStore(initialCount),
-    [initialCount],
-  );
+  const store = useMemo(() => createCounterStore(initialCount), [initialCount]);
 
   return <StoreContext value={store}>{children}</StoreContext>;
 }

@@ -6,7 +6,7 @@ import { useStore } from "./useStore";
 /**
  * A hook used to access a store context created with `createStoreContext`.
  *
- * @param {StoreContext<TCreateStore>} StoreContext - The context of the store.
+ * @param {StoreContext<TStoreCreator>} StoreContext - The context of the store.
  * @param {(state: TState) => TSelection} [select] - A function to select a subset of the state. Can prevent unnecessary re-renders.
  * @returns {BoundStore<TState, TActions, TSelection>} The store instance.
  *
@@ -14,14 +14,14 @@ import { useStore } from "./useStore";
  */
 export const useStoreContext = <
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TCreateStore extends (...args: any[]) => Store<any, any>,
+  TStoreCreator extends (...args: any[]) => Store<any, any>,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TState = ReturnType<TCreateStore> extends Store<infer S, any> ? S : never,
+  TState = ReturnType<TStoreCreator> extends Store<infer S, any> ? S : never,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  TActions = ReturnType<TCreateStore> extends Store<any, infer A> ? A : never,
+  TActions = ReturnType<TStoreCreator> extends Store<any, infer A> ? A : never,
   TSelection = TState,
 >(
-  StoreContext: StoreContext<TCreateStore>,
+  StoreContext: StoreContext<TStoreCreator>,
   select?: (state: TState) => TSelection,
 ): BoundStore<TState, TActions, TSelection> => {
   const store = useContext(StoreContext);
