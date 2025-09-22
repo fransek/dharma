@@ -1,6 +1,6 @@
 {
   "name": "dharma-core",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
   "description": "A simple and lightweight state management solution for JavaScript and TypeScript applications.",
