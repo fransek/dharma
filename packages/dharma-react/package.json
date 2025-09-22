@@ -3,7 +3,7 @@
   "version": "0.8.0",
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
-  "description": "My package description",
+  "description": "React bindings for Dharma",
   "keywords": [],
   "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-react#readme",
   "repository": {

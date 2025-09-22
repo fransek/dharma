@@ -3,7 +3,7 @@
   "version": "0.10.0",
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
-  "description": "My package description",
+  "description": "A simple and lightweight state management solution for JavaScript and TypeScript applications.",
   "keywords": [],
   "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-core#readme",
   "repository": {
