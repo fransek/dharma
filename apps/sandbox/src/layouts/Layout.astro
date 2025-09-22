@@ -1,0 +1,40 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.tsx';
+import { links } from '../lib/constants.ts';
+
+interface Props {
+  hideNav?: boolean;
+}
+
+const { hideNav } = Astro.props;
+const title = links.find((link) => link.href === Astro.url.pathname)?.label;
+---
+
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width' />
+    <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+    <meta name='generator' content={Astro.generator} />
+    <title>Dharma Sandbox</title>
+  </head>
+  <body
+    class='flex min-h-screen flex-col justify-between bg-background text-foreground antialiased dark'
+  >
+    {
+      !hideNav && (
+        <header class='sticky top-0 bg-background'>
+          <Nav client:load />
+        </header>
+      )
+    }
+    <main
+      class='flex flex-1 flex-col items-center gap-8 px-4 py-8 md:px-10 md:py-20'
+    >
+      {title && <h1 class='text-xl font-bold'>{title}</h1>}
+      <slot />
+    </main>
+  </body>
+</html>
