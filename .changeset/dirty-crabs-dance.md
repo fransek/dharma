@@ -3,4 +3,4 @@
 "dharma-core": patch
 ---
 
-added package descriptions
+added package description
