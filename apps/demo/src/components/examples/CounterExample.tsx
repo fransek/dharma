@@ -13,7 +13,7 @@ const store = createStore({
 
 const { increment, decrement } = store.actions;
 
-export const Counter = () => {
+export const CounterExample = () => {
   // Use the store
   const { count } = useStore(store);
 

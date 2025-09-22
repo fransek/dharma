@@ -1,12 +1,8 @@
 ---
-import { Code } from 'astro/components';
-import code from '../components/examples/Shared?raw';
-import { SharedExample } from '../components/Examples';
+import { SharedExample } from '../components/examples/SharedExample';
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <SharedExample client:load>
-    <Code code={code} lang='tsx' class='p-4 rounded-lg' />
-  </SharedExample>
+  <SharedExample client:load />
 </Layout>

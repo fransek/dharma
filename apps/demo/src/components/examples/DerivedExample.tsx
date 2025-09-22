@@ -31,7 +31,7 @@ const derived = derive(
   (state) => [state.count],
 );
 
-export const Derived = () => {
+export const DerivedExample = () => {
   const { count, input } = useStore(store);
   const squared = useStore(derived);
   const computations = useStore(computationCounter);

@@ -43,7 +43,7 @@ const store = createStore({
 
 const { refresh } = store.actions;
 
-export function Async() {
+export function AsyncExample() {
   const { users, loading } = useStore(store);
 
   return (
@@ -56,22 +56,24 @@ export function Async() {
             Refresh
             <RefreshCw />
           </Button>
-          {users.map((user, index) => (
-            <div key={user.id}>
-              <div
-                className="font-bold text-lg mb-2"
-                data-testid={`user-${index}-name`}
-              >
-                {user.name}
+          <div className="grid sm:grid-cols-2 gap-4">
+            {users.map((user, index) => (
+              <div key={user.id}>
+                <div
+                  className="font-bold text-lg mb-2"
+                  data-testid={`user-${index}-name`}
+                >
+                  {user.name}
+                </div>
+                <div className="text-sm font-light">
+                  <span className="font-bold">Email:</span> {user.email}
+                </div>
+                <div className="text-sm font-light">
+                  <span className="font-bold">Username:</span> {user.username}
+                </div>
               </div>
-              <div className="text-sm font-light">
-                <span className="font-bold">Email:</span> {user.email}
-              </div>
-              <div className="text-sm font-light">
-                <span className="font-bold">Username:</span> {user.username}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </>
       )}
     </div>

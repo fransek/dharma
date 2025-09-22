@@ -1,26 +1,23 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createStore } from "dharma-core";
 import { useStore } from "dharma-react";
 import { ExternalLink } from "lucide-react";
 import { Button } from "../ui/button";
 
-// Create the store
 const store = createStore({
-  // Provide a unique key to identify the store in storage
-  key: "count",
+  key: "async-storage",
   persist: true,
   initialState: { count: 0 },
+  storage: AsyncStorage,
   defineActions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),
-  // storage: sessionStorage,
-  // serializer: superjson,
 });
 
 const { increment, decrement } = store.actions;
 
-export const Persistent = () => {
-  // Use the store
+export const PersistentAsyncExample = () => {
   const { count } = useStore(store);
 
   return (
@@ -31,7 +28,7 @@ export const Persistent = () => {
         <Button onClick={increment}>+</Button>
       </div>
       <Button asChild variant="link">
-        <a target="_blank" href="/persistent">
+        <a target="_blank" href="/async-storage">
           Duplicate this tab
           <ExternalLink />
         </a>

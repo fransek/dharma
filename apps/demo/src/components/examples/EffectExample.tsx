@@ -21,12 +21,12 @@ const effect = createEffect(
   (state) => [state.count],
 );
 
-export const Effect = () => {
+export const EffectExample = () => {
   const { count, input } = useStore(store);
   useEffect(effect.mount, []);
 
   return (
-    <div className="grid grid-cols-3 text-center items-center w-fit gap-y-2">
+    <div className="grid grid-cols-3 text-center items-center w-fit gap-y-4 ">
       <Button onClick={decrement}>-</Button>
       <div aria-label="count">{count}</div>
       <Button onClick={increment}>+</Button>

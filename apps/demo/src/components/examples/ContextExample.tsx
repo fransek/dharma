@@ -111,8 +111,8 @@ const Todos = ({ instanceNumber }: { instanceNumber: number }) => {
   );
 };
 
-export const Context = () => (
-  <div className="flex flex-col gap-4 ">
+export const ContextExample = () => (
+  <div className="flex flex-wrap gap-4 justify-center items-start">
     <TodoApp
       instanceNumber={1}
       initialTodos={[{ title: "Learn Dharma", complete: false }]}

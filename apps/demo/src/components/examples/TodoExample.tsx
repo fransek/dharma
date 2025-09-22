@@ -46,7 +46,7 @@ const { setInput, addTodo, toggleTodo } = store.actions;
 
 // Bind the store to the component
 
-export const Todo = () => {
+export const TodoExample = () => {
   const { input, todos } = useStore(store);
 
   return (

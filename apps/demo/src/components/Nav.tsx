@@ -1,25 +1,8 @@
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { links } from "../lib/constants";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
-
-interface NavLink {
-  href: string;
-  label: string;
-  className?: string;
-}
-
-const links: NavLink[] = [
-  { href: "/counter", label: "Counter" },
-  { href: "/todo", label: "Todo" },
-  { href: "/context", label: "Context" },
-  { href: "/shared", label: "Shared" },
-  { href: "/persistent", label: "Persistent" },
-  { href: "/async-storage", label: "Async Storage" },
-  { href: "/async", label: "Async" },
-  { href: "/derived", label: "Derived" },
-  { href: "/effect", label: "Effect" },
-];
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
@@ -30,14 +13,14 @@ export default function Nav() {
       <div className="flex items-center justify-between">
         <Button asChild variant="link" size="sm">
           <a href="/" className="font-bold text-sm">
-            dharma-react
+            Dharma Sandbox
           </a>
         </Button>
 
         {/* Desktop menu */}
         <ul
           id="main-menu"
-          className="hidden md:flex md:flex-row md:items-center md:overflow-x-auto md:[scrollbar-width:none] text-sm"
+          className="hidden lg:flex lg:flex-row lg:items-center lg:overflow-x-auto lg:[scrollbar-width:none] text-sm"
         >
           {links.map((l) => (
             <li key={l.href}>
@@ -53,7 +36,7 @@ export default function Nav() {
           variant="ghost"
           size="sm"
           type="button"
-          className="md:hidden"
+          className="lg:hidden"
           aria-label="Toggle navigation menu"
           aria-controls="mobile-menu"
           aria-expanded={open}
@@ -69,7 +52,7 @@ export default function Nav() {
         aria-label="Close navigation menu"
         onClick={() => setOpen(false)}
         className={cn(
-          "fixed inset-0 z-40 bg-black/40 md:hidden transition-opacity duration-300",
+          "fixed inset-0 z-40 bg-black/40 lg:hidden transition-opacity duration-300",
           open ? "opacity-100" : "pointer-events-none opacity-0",
         )}
       />
@@ -80,7 +63,7 @@ export default function Nav() {
         aria-modal="true"
         aria-hidden={!open}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 w-72 max-w-[80vw] md:hidden border-l bg-background shadow-xl transition-transform duration-300 ease-in-out",
+          "fixed inset-y-0 right-0 z-50 w-72 max-w-[80vw] lg:hidden border-l bg-background shadow-xl transition-transform duration-300 ease-in-out",
           open ? "translate-x-0" : "translate-x-full",
         )}
       >

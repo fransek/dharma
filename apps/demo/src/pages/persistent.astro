@@ -1,12 +1,8 @@
 ---
-import { Code } from 'astro/components';
-import code from '../components/examples/Persistent?raw';
-import { PersistentExample } from '../components/Examples';
+import { PersistentExample } from '../components/examples/PersistentExample';
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <PersistentExample client:load>
-    <Code code={code} lang='tsx' class='p-4 rounded-lg' />
-  </PersistentExample>
+  <PersistentExample client:load />
 </Layout>

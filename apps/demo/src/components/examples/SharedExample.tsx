@@ -111,7 +111,7 @@ const Todo = () => {
   const renderCount = useRenderCount();
 
   return (
-    <div className="container-full card" id="todo">
+    <div className="flex flex-col gap-4 card items-start" id="todo">
       <h2 className="font-bold">To do</h2>
       <form
         onSubmit={(e) => {
@@ -160,11 +160,11 @@ const Todo = () => {
   );
 };
 
-export const Shared = () => {
+export const SharedExample = () => {
   return (
-    <div className="container-full w-fit">
-      <Counter />
+    <div className="flex flex-wrap gap-4 justify-center items-start">
       <Todo />
+      <Counter />
     </div>
   );
 };

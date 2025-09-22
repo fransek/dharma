@@ -1,12 +1,8 @@
 ---
-import { Code } from 'astro/components';
-import code from '../components/examples/Context?raw';
-import { ContextExample } from '../components/Examples';
+import { ContextExample } from '../components/examples/ContextExample';
 import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout>
-  <ContextExample client:load>
-    <Code code={code} lang='tsx' class='p-4 rounded-lg' />
-  </ContextExample>
+  <ContextExample client:load />
 </Layout>
