@@ -7,7 +7,7 @@
     "jsxImportSource": "react",
     "baseUrl": ".",
     "paths": {
-      "@apps/demo/src/*": ["src/*"]
+      "@apps/sandbox/src/*": ["src/*"]
     }
   }
 }

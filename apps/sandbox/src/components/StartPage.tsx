@@ -7,7 +7,7 @@ export const StartPage = () => (
     <nav>
       <ul>
         {links.map((l) => (
-          <li className="text-center">
+          <li className="text-center" key={l.href}>
             <Button asChild variant="link" size="sm">
               <a href={l.href}>{l.label}</a>
             </Button>
