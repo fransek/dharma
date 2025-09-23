@@ -4,7 +4,12 @@
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
   "description": "A simple and lightweight state management solution for JavaScript and TypeScript applications.",
-  "keywords": [],
+  "keywords": [
+    "state",
+    "store",
+    "state management",
+    "redux"
+  ],
   "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-core#readme",
   "repository": {
     "type": "git",

@@ -1,11 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Serializer, StateHandler, StorageAPI } from "../types/types";
+import { ActionContext, Serializer, StorageAPI } from "../types/types";
 import { createStore } from "./createStore";
 
 describe("createStore", () => {
   const initialState = { count: 0 };
-  const defineActions = <T>(handler: StateHandler<T>) => handler;
+  const defineActions = <T>(ctx: ActionContext<T>) => ctx;
   const store = createStore({
     initialState,
     defineActions,
