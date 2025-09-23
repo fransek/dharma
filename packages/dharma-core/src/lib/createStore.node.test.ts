@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { describe, expect, it, vi } from "vitest";
-import { StateHandler, StorageAPI } from "../types/types";
+import { ActionContext, StorageAPI } from "../types/types";
 import { createStore } from "./createStore";
 
 describe("createStore (node)", () => {
@@ -9,7 +9,7 @@ describe("createStore (node)", () => {
     persist: true,
     key: "test",
     initialState: { count: 0 },
-    defineActions: (handler: StateHandler<{ count: number }>) => handler,
+    defineActions: <T>(ctx: ActionContext<T>) => ctx,
   };
 
   it("should not throw in a node environment", () => {

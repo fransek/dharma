@@ -44,7 +44,7 @@ export type StateModifier<TState> =
   | Partial<TState>
   | ((state: TState) => Partial<TState>);
 
-export type StateHandler<TState> = {
+export type ActionContext<TState> = {
   /** Returns the current state of the store. */
   get: () => TState;
   /** Sets the state of the store. */
@@ -54,7 +54,7 @@ export type StateHandler<TState> = {
 };
 
 export type DefineActions<TState, TActions> = (
-  stateHandler: StateHandler<TState>,
+  context: ActionContext<TState>,
 ) => TActions;
 
 export type BaseConfig<TState, TActions> = {
