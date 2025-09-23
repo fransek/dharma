@@ -1,6 +1,6 @@
 {
   "name": "dharma-react",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
   "description": "React bindings for Dharma",
