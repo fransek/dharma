@@ -1,5 +1,11 @@
 # dharma-react
 
+## 0.8.2
+
+### Patch Changes
+
+- [#105](https://github.com/fransek/dharma/pull/105) [`0829d7f`](https://github.com/fransek/dharma/commit/0829d7f8f271759f8ec6709b459ad4adf1354ae7) Thanks [@fransek](https://github.com/fransek)! - added package keywords
+
 ## 0.8.1
 
 ### Patch Changes
