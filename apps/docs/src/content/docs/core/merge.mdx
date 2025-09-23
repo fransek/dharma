@@ -30,7 +30,7 @@ const store = createStore({
     },
     // ...
   },
-  defineActions: ({ set }) => {
+  actions: ({ set }) => {
     const setCounter = (counter: StateModifier<{ count: number }>) =>
       set((state) => ({
         counter: merge(state.counter, counter),

@@ -14,8 +14,14 @@ import { merge } from "./merge";
 export const createStore = <TState, TActions = undefined>(
   config: StoreConfig<TState, TActions>,
 ): Store<TState, TActions> => {
-  const { initialState, defineActions, onLoad, onAttach, onDetach, onChange } =
-    config;
+  const {
+    initialState,
+    actions: createActions,
+    onLoad,
+    onAttach,
+    onDetach,
+    onChange,
+  } = config;
 
   let state = initialState;
 
@@ -41,7 +47,7 @@ export const createStore = <TState, TActions = undefined>(
   };
 
   const listeners = new Set<Listener<TState>>();
-  const actions = defineActions?.({ set, get, reset }) as TActions;
+  const actions = createActions?.({ set, get, reset }) as TActions;
   const storageAdapter = createStorageAdapter(config, get, set);
 
   const subscribe = (listener: Listener<TState>) => {

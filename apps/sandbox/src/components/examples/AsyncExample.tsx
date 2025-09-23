@@ -28,7 +28,7 @@ const initialState: State = {
 
 const store = createStore({
   initialState,
-  defineActions: ({ set }) => ({
+  actions: ({ set }) => ({
     refresh: async () => {
       set({ users: [], loading: true });
       const users = await fetchUsers();

@@ -9,7 +9,7 @@ describe("useStoreContext", () => {
   const create = (initialCount: number) =>
     createStore({
       initialState: { count: initialCount },
-      defineActions: ({ set }) => ({
+      actions: ({ set }) => ({
         increment: () => set((state) => ({ count: state.count + 1 })),
         decrement: () => set((state) => ({ count: state.count - 1 })),
       }),

@@ -9,7 +9,7 @@ describe("createStore (node)", () => {
     persist: true,
     key: "test",
     initialState: { count: 0 },
-    defineActions: <T>(ctx: ActionContext<T>) => ctx,
+    actions: <T>(ctx: ActionContext<T>) => ctx,
   };
 
   it("should not throw in a node environment", () => {

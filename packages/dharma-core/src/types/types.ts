@@ -53,7 +53,7 @@ export type ActionContext<TState> = {
   reset: () => TState;
 };
 
-export type DefineActions<TState, TActions> = (
+export type actions<TState, TActions> = (
   context: ActionContext<TState>,
 ) => TActions;
 
@@ -61,7 +61,7 @@ export type BaseConfig<TState, TActions> = {
   /** The initial state of the store. */
   initialState: TState;
   /** A function that defines actions that can modify the state. */
-  defineActions?: DefineActions<TState, TActions>;
+  actions?: actions<TState, TActions>;
   /** Invoked when the store is created. */
   onLoad?: StoreEventListener<TState>;
   /** Invoked when the store is subscribed to. */

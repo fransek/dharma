@@ -19,7 +19,7 @@ const initialState: TodoState = {
 
 const store = createStore({
   initialState,
-  defineActions: ({ set, get }) => ({
+  actions: ({ set, get }) => ({
     setInput: (input: string) => set({ input }),
     addTodo: () => {
       if (!get().input) {
