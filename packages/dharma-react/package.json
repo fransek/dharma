@@ -4,7 +4,13 @@
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
   "description": "React bindings for Dharma",
-  "keywords": [],
+  "keywords": [
+    "state",
+    "store",
+    "state management",
+    "redux",
+    "react"
+  ],
   "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-react#readme",
   "repository": {
     "type": "git",
