@@ -1,5 +1,15 @@
 # dharma-core
 
+## 0.11.0
+
+### Minor Changes
+
+- [#107](https://github.com/fransek/dharma/pull/107) [`09355e5`](https://github.com/fransek/dharma/commit/09355e5420b6de7ab6e5170f85a39013b70527c5) Thanks [@fransek](https://github.com/fransek)! - renamed defineActions to actions
+
+### Patch Changes
+
+- [#110](https://github.com/fransek/dharma/pull/110) [`f06b47e`](https://github.com/fransek/dharma/commit/f06b47e53cdc1c5f13985b0bf47768362f604d27) Thanks [@fransek](https://github.com/fransek)! - actions type renamed to StoreActions
+
 ## 0.10.2
 
 ### Patch Changes
