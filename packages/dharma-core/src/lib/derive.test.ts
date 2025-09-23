@@ -10,7 +10,7 @@ describe("derive", () => {
 
   const store = createStore({
     initialState: { count: 0, other: "foo" },
-    defineActions: ({ set, reset }) => ({
+    actions: ({ set, reset }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
       reset: () => reset(),

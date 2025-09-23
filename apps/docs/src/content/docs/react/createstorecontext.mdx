@@ -24,7 +24,7 @@ import { useMemo } from "react";
 const createCounterStore = (initialCount: number) => {
   return createStore({
     initialState: { count: initialCount },
-    defineActions: ({ set }) => ({
+    actions: ({ set }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
     }),

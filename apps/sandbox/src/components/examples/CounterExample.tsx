@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 // Create the store
 const store = createStore({
   initialState: { count: 0 },
-  defineActions: ({ set }) => ({
+  actions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),

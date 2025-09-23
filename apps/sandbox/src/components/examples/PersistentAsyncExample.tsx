@@ -9,7 +9,7 @@ const store = createStore({
   persist: true,
   initialState: { count: 0 },
   storage: AsyncStorage,
-  defineActions: ({ set }) => ({
+  actions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),

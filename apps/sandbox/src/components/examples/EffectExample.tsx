@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 
 const store = createStore({
   initialState: { count: 0, input: "" },
-  defineActions: ({ set }) => ({
+  actions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
     setInput: (input: string) => set({ input }),

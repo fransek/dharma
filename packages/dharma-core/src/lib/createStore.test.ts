@@ -5,10 +5,10 @@ import { createStore } from "./createStore";
 
 describe("createStore", () => {
   const initialState = { count: 0 };
-  const defineActions = <T>(ctx: ActionContext<T>) => ctx;
+  const actions = <T>(ctx: ActionContext<T>) => ctx;
   const store = createStore({
     initialState,
-    defineActions,
+    actions,
   });
 
   afterEach(store.actions.reset);
@@ -42,7 +42,7 @@ describe("createStore", () => {
   it("should create actions if provided", () => {
     const store = createStore({
       initialState: { count: 0 },
-      defineActions: ({ set, get, reset }) => ({
+      actions: ({ set, get, reset }) => ({
         increment: () => set((state) => ({ count: state.count + 1 })),
         getCount: () => get().count,
         resetCount: () => reset(),
@@ -65,7 +65,7 @@ describe("createStore", () => {
     const initialState = { count: 0, other: "foo" };
     const store = createStore({
       initialState,
-      defineActions,
+      actions,
       onChange: ({ state, set }) => set({ other: state.other + "bar" }),
     });
     store.actions.set({ count: 1 });
@@ -76,7 +76,7 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      defineActions,
+      actions,
       onAttach: ({ state, set }) => set({ count: state.count + 1 }),
     });
     const listener = vi.fn();
@@ -88,7 +88,7 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      defineActions,
+      actions,
       onDetach: ({ state, set }) => set({ count: state.count + 1 }),
     });
     const listener = vi.fn();
@@ -101,7 +101,7 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      defineActions,
+      actions,
       onLoad: ({ state, set }) => set({ count: state.count + 1 }),
     });
     expect(store.get().count).toBe(1);
@@ -111,7 +111,7 @@ describe("createStore", () => {
     it("should update the state", () => {
       const store = createStore({
         initialState: 0,
-        defineActions,
+        actions,
       });
       store.actions.set(1);
       expect(store.get()).toBe(1);
@@ -120,7 +120,7 @@ describe("createStore", () => {
     it("should update the state with a function", () => {
       const store = createStore({
         initialState: 0,
-        defineActions,
+        actions,
       });
       store.actions.set((state) => state + 1);
       expect(store.get()).toBe(1);
@@ -143,7 +143,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
       });
       expect(store.get()).toEqual(initialState);
     });
@@ -153,7 +153,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
       });
       store.subscribe(listener);
       store.actions.set({ count: 1 });
@@ -168,7 +168,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
       });
       expect(store.get()).toEqual({ count: 0 });
       store.subscribe(listener);
@@ -182,7 +182,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
         storage: sessionStorage,
       });
       store.subscribe(listener);
@@ -194,7 +194,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
       });
       store.subscribe(listener);
       store.actions.set({ count: 1 });
@@ -210,7 +210,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
       });
       const unsubscribe = store.subscribe(vi.fn());
       const unsubscribe2 = store.subscribe(vi.fn());
@@ -229,7 +229,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
         serializer: customSerializer,
       });
       store.actions.set({ count: 1 });
@@ -246,7 +246,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
         storage: customStorage,
       });
       store.actions.set({ count: 1 });
@@ -264,7 +264,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState,
-        defineActions,
+        actions,
         storage: AsyncStorage,
       });
       store.subscribe(listener);

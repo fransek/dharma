@@ -30,7 +30,7 @@ The `config` object can contain the following properties:
 **Setup**
 
 - `initialState` - The initial state of the store.
-- `defineActions` - A function that defines actions that can modify the state.
+- `actions` - A function that defines actions that can modify the state.
 
 **Lifecycle hooks**
 
@@ -61,7 +61,7 @@ import { createStore } from "dharma-core";
 
 const store = createStore({
   initialState: { count: 0 },
-  defineActions: ({ set }) => ({
+  actions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),
@@ -99,7 +99,7 @@ const store = createStore({
   persist: true,
   key: "count",
   initialState: { count: 0 },
-  defineActions: ({ set }) => ({
+  actions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),
@@ -118,7 +118,7 @@ const store = createStore({
   storage: sessionStorage,
   serializer: superjson,
   initialState: { count: 0 },
-  defineActions: ({ set }) => ({
+  actions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),

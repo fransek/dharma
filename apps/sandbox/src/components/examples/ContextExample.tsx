@@ -14,7 +14,7 @@ interface TodoState {
 const createTodoStore = (initialState: TodoState) => {
   return createStore({
     initialState,
-    defineActions: ({ set, get }) => ({
+    actions: ({ set, get }) => ({
       setInput: (input: string) => set({ input }),
       addTodo: () => {
         if (!get().input) {
