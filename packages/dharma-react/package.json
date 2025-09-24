@@ -66,6 +66,19 @@
     "react": "^19.1.1"
   },
   "peerDependencies": {
-    "react": "^19.1.1"
+    "dharma-core": "0.11.0",
+    "react": ">=18.0.0",
+    "@types/react": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "dharma-core": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "@types/react": {
+      "optional": true
+    }
   }
 }
