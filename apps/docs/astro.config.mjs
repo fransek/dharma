@@ -45,6 +45,11 @@ export default defineConfig({
             "react/usestore",
             "react/createstorecontext",
             "react/usestorecontext",
+            {
+              label: "Playground",
+              link: "https://stackblitz.com/~/github.com/fransek/dharma-playground?file=src/App.tsx",
+              attrs: { target: "_blank" },
+            },
           ],
         },
         {
@@ -54,10 +59,12 @@ export default defineConfig({
             {
               link: "https://github.com/fransek/dharma/blob/main/packages/dharma-core/CHANGELOG.md",
               label: "dharma-core",
+              attrs: { target: "_blank" },
             },
             {
               link: "https://github.com/fransek/dharma/blob/main/packages/dharma-react/CHANGELOG.md",
               label: "dharma-react",
+              attrs: { target: "_blank" },
             },
           ],
         },
