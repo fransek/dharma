@@ -1,5 +1,11 @@
 # dharma-react
 
+## 0.8.4
+
+### Patch Changes
+
+- [#111](https://github.com/fransek/dharma/pull/111) [`d5e6697`](https://github.com/fransek/dharma/commit/d5e66979cd504d691cf9f884d9f48ff97e2699c6) Thanks [@fransek](https://github.com/fransek)! - adjusted peer dependencies
+
 ## 0.8.3
 
 ### Patch Changes
