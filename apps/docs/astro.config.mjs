@@ -72,6 +72,13 @@ export default defineConfig({
       customCss: ["./src/styles/custom.css"],
       head: [
         {
+          tag: "link",
+          attrs: {
+            rel: "icon",
+            href: "/favicon.ico",
+          },
+        },
+        {
           tag: "meta",
           attrs: {
             name: "keywords",
