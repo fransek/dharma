@@ -13,7 +13,8 @@
   "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-core#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fransek/dharma/tree/main/packages/dharma-core"
+    "url": "git+https://github.com/fransek/dharma.git",
+    "directory": "packages/dharma-core"
   },
   "bugs": {
     "url": "https://github.com/fransek/dharma/issues"

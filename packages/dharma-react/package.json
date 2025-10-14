@@ -14,7 +14,8 @@
   "homepage": "https://github.com/fransek/dharma/tree/main/packages/dharma-react#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fransek/dharma/tree/main/packages/dharma-react"
+    "url": "git+https://github.com/fransek/dharma.git",
+    "directory": "packages/dharma-react"
   },
   "bugs": {
     "url": "https://github.com/fransek/dharma/issues"
