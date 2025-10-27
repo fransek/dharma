@@ -434,6 +434,11 @@ describe("createStore", () => {
       const onStorageLoad = vi.fn();
       const onStorageChange = vi.fn();
       const onStorageSync = vi.fn();
+
+      // Set up storage with a different state to trigger sync
+      localStorage.setItem(`init_${key}`, JSON.stringify(initialState));
+      localStorage.setItem(key, JSON.stringify({ count: 5 }));
+
       const store = createStore({
         persist: true,
         key,
@@ -445,6 +450,7 @@ describe("createStore", () => {
       });
       expect(onStorageLoad).toHaveBeenCalledOnce();
       store.subscribe(listener);
+      // onStorageSync should be called because storage has different state
       expect(onStorageSync).toHaveBeenCalledOnce();
       store.actions.set({ count: 1 });
       expect(onStorageChange).toHaveBeenCalledOnce();

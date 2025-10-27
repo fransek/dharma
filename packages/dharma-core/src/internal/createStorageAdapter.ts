@@ -64,9 +64,8 @@ export const createStorageAdapter = <TState, TActions>(
 
       if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
         set(serializer.parse(currentSnapshot));
+        config.onStorageSync?.({ state: get(), key });
       }
-
-      config.onStorageSync?.({ state: get(), key });
     } catch (error) {
       warn("Failed to update state from snapshot");
       config.onStorageError?.({ state: get(), key, error });
@@ -92,9 +91,8 @@ export const createStorageAdapter = <TState, TActions>(
 
       if (newSnapshot !== currentSnapshot) {
         storage.setItem(key, newSnapshot);
+        config.onStorageChange?.({ state: newState, key });
       }
-
-      config.onStorageChange?.({ state: newState, key });
     } catch (error) {
       warn("Failed to update snapshot");
       config.onStorageError?.({ state: newState, key, error });
