@@ -22,7 +22,13 @@ export const createStorageAdapter = <TState, TActions>(
     return null;
   }
 
-  const { key, serializer = JSON, initialState } = config;
+  const {
+    key,
+    serializer = JSON,
+    initialState,
+    onStorageLoad,
+    onStorageError,
+  } = config;
   const initKey = `init_${key}`;
 
   const onLoad = async () => {
@@ -38,10 +44,13 @@ export const createStorageAdapter = <TState, TActions>(
         storage.setItem(initKey, initialStateString);
         storage.removeItem(key);
       }
-    } catch {
+
+      onStorageLoad?.({ state: get(), key });
+    } catch (error) {
       warn(
         "Failed to initialize snapshots. If this happened during SSR, you can safely ignore this warning.",
       );
+      onStorageError?.({ state: get(), key, error });
     }
   };
 
@@ -55,9 +64,11 @@ export const createStorageAdapter = <TState, TActions>(
 
       if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
         set(serializer.parse(currentSnapshot));
+        config.onStorageSync?.({ state: get(), key });
       }
-    } catch {
+    } catch (error) {
       warn("Failed to update state from snapshot");
+      config.onStorageError?.({ state: get(), key, error });
     }
   };
 
@@ -80,9 +91,11 @@ export const createStorageAdapter = <TState, TActions>(
 
       if (newSnapshot !== currentSnapshot) {
         storage.setItem(key, newSnapshot);
+        config.onStorageChange?.({ state: newState, key });
       }
-    } catch {
+    } catch (error) {
       warn("Failed to update snapshot");
+      config.onStorageError?.({ state: newState, key, error });
     }
   };
 

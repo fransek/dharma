@@ -86,6 +86,26 @@ export type Serializer<T = any> = {
   parse: (value: string) => T;
 };
 
+export type StorageEventContext<TState> = {
+  /** The current state of the store. */
+  state: TState;
+  /** The storage key. */
+  key: string;
+};
+
+export type StorageEventListener<TState> = (
+  context: StorageEventContext<TState>,
+) => void;
+
+export type StorageErrorEventContext<TState> = StorageEventContext<TState> & {
+  /** The error that occurred. */
+  error: unknown;
+};
+
+export type StorageErrorEventListener<TState> = (
+  context: StorageErrorEventContext<TState>,
+) => void;
+
 export type NoPersistConfig = {
   /** Whether to persist the state of the store. */
   persist?: false;
@@ -100,6 +120,14 @@ export type PersistConfig<TState> = {
   storage?: StorageAPI;
   /** The serializer to use for storing the state. Defaults to JSON. */
   serializer?: Serializer<TState>;
+  /** Called when the storage has successfully updated. */
+  onStorageChange?: StorageEventListener<TState>;
+  /** Called when the state has successfully been initialized from the snapshots. */
+  onStorageLoad?: StorageEventListener<TState>;
+  /** Called when the state is successfully synchronized with the snapshots. */
+  onStorageSync?: StorageEventListener<TState>;
+  /** Called when synchronization or an update fails. */
+  onStorageError?: StorageErrorEventListener<TState>;
 };
 
 export type StoreConfig<TState, TActions> = BaseConfig<TState, TActions> &
