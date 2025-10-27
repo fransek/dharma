@@ -1,5 +1,11 @@
 # dharma-core
 
+## 0.11.1
+
+### Patch Changes
+
+- [#125](https://github.com/fransek/dharma/pull/125) [`02c5547`](https://github.com/fransek/dharma/commit/02c55471184a900bb6956095aafe8ad971971755) Thanks [@fransek](https://github.com/fransek)! - event handlers now fire after storage hooks
+
 ## 0.11.0
 
 ### Minor Changes
