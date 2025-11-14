@@ -260,4 +260,184 @@ describe("createStore", () => {
       expect(snapshot).toBe(expectedSnapshot);
     });
   });
+
+  describe("storage event listeners", () => {
+    const key = "test-storage-events";
+    const initialState = { count: 0 };
+    const listener = vi.fn();
+
+    beforeEach(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+
+    it("should call onStorageLoad when storage is initialized", () => {
+      const onStorageLoad = vi.fn();
+      createStore({
+        persist: true,
+        key,
+        initialState,
+        actions,
+        onStorageLoad,
+      });
+      expect(onStorageLoad).toHaveBeenCalledWith({
+        state: initialState,
+        key,
+      });
+    });
+
+    it("should call onStorageChange when state is persisted", () => {
+      const onStorageChange = vi.fn();
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        actions,
+        onStorageChange,
+      });
+      store.subscribe(listener);
+      store.actions.set({ count: 1 });
+      expect(onStorageChange).toHaveBeenCalledWith({
+        state: { count: 1 },
+        key,
+      });
+    });
+
+    it("should call onStorageSync when state is synchronized from storage", () => {
+      const onStorageSync = vi.fn();
+      localStorage.setItem(`init_${key}`, JSON.stringify({ count: 0 }));
+      localStorage.setItem(key, JSON.stringify({ count: 5 }));
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        actions,
+        onStorageSync,
+      });
+      store.subscribe(listener);
+      expect(onStorageSync).toHaveBeenCalled();
+      expect(store.get().count).toBe(5);
+    });
+
+    it("should call onStorageSync on window focus", () => {
+      const onStorageSync = vi.fn();
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        actions,
+        onStorageSync,
+      });
+      store.subscribe(listener);
+      onStorageSync.mockClear();
+      localStorage.setItem(key, JSON.stringify({ count: 10 }));
+      window.dispatchEvent(new Event("focus"));
+      expect(onStorageSync).toHaveBeenCalledWith({
+        state: { count: 10 },
+        key,
+      });
+    });
+
+    it("should call onStorageError when storage operations fail", () => {
+      const onStorageError = vi.fn();
+      const badStorage: StorageAPI = {
+        getItem: () => {
+          throw new Error("Storage error");
+        },
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+      };
+      createStore({
+        persist: true,
+        key,
+        initialState,
+        actions,
+        storage: badStorage,
+        onStorageError,
+      });
+      expect(onStorageError).toHaveBeenCalled();
+      expect(onStorageError.mock.calls[0][0]).toMatchObject({
+        state: initialState,
+        key,
+      });
+      expect(onStorageError.mock.calls[0][0].error).toBeInstanceOf(Error);
+    });
+
+    it("should call onStorageError when sync fails", () => {
+      const onStorageError = vi.fn();
+      const onStorageSync = vi.fn();
+      const badStorage: StorageAPI = {
+        getItem: () => {
+          throw new Error("Sync error");
+        },
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+      };
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        actions,
+        storage: badStorage,
+        onStorageError,
+        onStorageSync,
+      });
+      onStorageError.mockClear();
+      store.subscribe(listener);
+      expect(onStorageError).toHaveBeenCalled();
+      expect(onStorageSync).not.toHaveBeenCalled();
+    });
+
+    it("should call onStorageError when setItem fails", () => {
+      const onStorageError = vi.fn();
+      const onStorageChange = vi.fn();
+      const badStorage: StorageAPI = {
+        getItem: () => null,
+        setItem: () => {
+          throw new Error("SetItem error");
+        },
+        removeItem: vi.fn(),
+      };
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        actions,
+        storage: badStorage,
+        onStorageError,
+        onStorageChange,
+      });
+      onStorageError.mockClear();
+      store.subscribe(listener);
+      store.actions.set({ count: 1 });
+      expect(onStorageError).toHaveBeenCalled();
+      expect(onStorageChange).not.toHaveBeenCalled();
+    });
+
+    it("should call all storage event listeners when configured", () => {
+      const onStorageLoad = vi.fn();
+      const onStorageChange = vi.fn();
+      const onStorageSync = vi.fn();
+
+      // Set up storage with a different state to trigger sync
+      localStorage.setItem(`init_${key}`, JSON.stringify(initialState));
+      localStorage.setItem(key, JSON.stringify({ count: 5 }));
+
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        actions,
+        onStorageLoad,
+        onStorageChange,
+        onStorageSync,
+      });
+      expect(onStorageLoad).toHaveBeenCalledOnce();
+      store.subscribe(listener);
+      // onStorageSync should be called because storage has different state
+      expect(onStorageSync).toHaveBeenCalledOnce();
+      store.actions.set({ count: 1 });
+      expect(onStorageChange).toHaveBeenCalledOnce();
+    });
+  });
 });
