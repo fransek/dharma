@@ -1,4 +1,4 @@
-import { Store } from "dharma-core";
+import { DerivedStore, Store } from "dharma-core";
 import { deeplyEquals } from "dharma-core/deeplyEquals";
 import { useRef, useSyncExternalStore } from "react";
 
@@ -12,7 +12,7 @@ import { useRef, useSyncExternalStore } from "react";
  * @see {@link https://dharma.fransek.dev/react/usestore/}
  */
 export const useStore = <TState, TActions, TSelection = TState>(
-  store: Store<TState, TActions>,
+  store: Store<TState, TActions> | DerivedStore<TState>,
   select?: (state: TState) => TSelection,
 ): TSelection => {
   const snapshotRef = useRef<TSelection | null>(null);

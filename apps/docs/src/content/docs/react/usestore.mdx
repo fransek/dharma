@@ -11,7 +11,7 @@ const state = useStore(store, select?);
 
 ## Parameters
 
-- `store` - The store created with `createStore`.
+- `store` - The store created with [`createStore`](/core/createstore) or a derived store from [`derive`](/core/derive).
 - `select?` - A function to select a subset of the state. Can prevent unnecessary re-renders.
 
 ## Returns

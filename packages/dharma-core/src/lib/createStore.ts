@@ -40,13 +40,18 @@ export const createStore = <TState, TActions = undefined>(
   };
 
   const listeners = new Set<Listener<TState>>();
-  const actions = config.actions?.({ set, get, reset }) as TActions;
+  const actions = config.actions?.({
+    set,
+    get,
+    reset,
+    initialState,
+  }) as TActions;
   const storageAdapter = createStorageAdapter(config, get, set);
 
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       storageAdapter?.onAttach();
-      onAttach?.({ state, set, reset });
+      onAttach?.({ state, set, reset, initialState });
     }
 
     listener(state);
@@ -57,7 +62,7 @@ export const createStore = <TState, TActions = undefined>(
 
       if (listeners.size === 0) {
         storageAdapter?.onDetach();
-        onDetach?.({ state, set, reset });
+        onDetach?.({ state, set, reset, initialState });
       }
     };
   };
@@ -68,16 +73,20 @@ export const createStore = <TState, TActions = undefined>(
       state,
       set: setSilently,
       reset: resetSilently,
+      initialState,
     });
     listeners.forEach((listener) => listener(state));
   };
 
   storageAdapter?.onLoad();
-  onLoad?.({ state, set, reset });
+  onLoad?.({ state, set, reset, initialState });
 
   return {
     get,
     subscribe,
     actions,
+    set,
+    reset,
+    initialState,
   };
 };

@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { describe, expect, it, vi } from "vitest";
-import { ActionContext, StorageAPI } from "../types/types";
+import { StorageAPI } from "../types/types";
 import { createStore } from "./createStore";
 
 describe("createStore (node)", () => {
@@ -9,7 +9,6 @@ describe("createStore (node)", () => {
     persist: true,
     key: "test",
     initialState: { count: 0 },
-    actions: <T>(ctx: ActionContext<T>) => ctx,
   };
 
   it("should not throw in a node environment", () => {
@@ -20,7 +19,7 @@ describe("createStore (node)", () => {
     const storage = new CustomStorage();
     const store = createStore({ ...baseConfig, storage });
     expect(storage.getItem("init_test")).toBe(JSON.stringify({ count: 0 }));
-    store.actions.set({ count: 1 });
+    store.set({ count: 1 });
     expect(storage.getItem("test")).toBe(JSON.stringify({ count: 1 }));
   });
 
@@ -38,7 +37,7 @@ describe("createStore (node)", () => {
       "[dharma-core] Failed to update state from snapshot",
     );
 
-    store.actions.set({ count: 1 });
+    store.set({ count: 1 });
     expect(warnSpy).toHaveBeenCalledWith(
       "[dharma-core] Failed to update snapshot",
     );

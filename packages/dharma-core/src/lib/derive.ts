@@ -81,9 +81,7 @@ export const derive = <TState, TActions, TDerived>(
   return {
     get,
     subscribe,
-    actions: {
-      mount,
-      unmount,
-    },
+    mount,
+    unmount,
   };
 };
