@@ -1,5 +1,16 @@
 # dharma-react
 
+## 1.0.0
+
+### Minor Changes
+
+- [#127](https://github.com/fransek/dharma/pull/127) [`042a3f2`](https://github.com/fransek/dharma/commit/042a3f22f516018fca032808573166785fcb19b8) Thanks [@fransek](https://github.com/fransek)! - Extended store API, including set, reset, and initialState
+
+### Patch Changes
+
+- Updated dependencies [[`042a3f2`](https://github.com/fransek/dharma/commit/042a3f22f516018fca032808573166785fcb19b8), [`042a3f2`](https://github.com/fransek/dharma/commit/042a3f22f516018fca032808573166785fcb19b8)]:
+  - dharma-core@0.12.0
+
 ## 0.8.5
 
 ### Patch Changes
