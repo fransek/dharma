@@ -17,14 +17,13 @@ describe("useStore", () => {
     actions: ({ set }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
-      reset: () => set({ count: 0 }),
     }),
   });
 
-  const { increment, reset } = store.actions;
+  const { increment } = store.actions;
 
   afterEach(() => {
-    reset();
+    store.reset();
   });
 
   it("should return the initial state and actions", () => {

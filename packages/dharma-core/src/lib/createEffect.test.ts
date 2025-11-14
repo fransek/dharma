@@ -8,22 +8,21 @@ describe("createEffect", () => {
 
   const store = createStore({
     initialState: { count: 0, other: "foo" },
-    actions: ({ set, reset }) => ({
+    actions: ({ set }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
-      reset: () => reset(),
       setOther: (other: string) => set({ other }),
     }),
     onAttach,
     onDetach,
   });
 
-  const { increment, setOther, reset } = store.actions;
+  const { increment, setOther } = store.actions;
 
   const effectFn = vi.fn();
 
   afterEach(() => {
-    reset();
+    store.reset();
     vi.clearAllMocks();
   });
 

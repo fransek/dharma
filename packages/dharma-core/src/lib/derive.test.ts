@@ -10,42 +10,41 @@ describe("derive", () => {
 
   const store = createStore({
     initialState: { count: 0, other: "foo" },
-    actions: ({ set, reset }) => ({
+    actions: ({ set }) => ({
       increment: () => set((state) => ({ count: state.count + 1 })),
       decrement: () => set((state) => ({ count: state.count - 1 })),
-      reset: () => reset(),
       setOther: (other: string) => set({ other }),
     }),
     onAttach,
     onDetach,
   });
 
-  const { increment, setOther, reset } = store.actions;
+  const { increment, setOther } = store.actions;
 
   const calculate = vi.fn((count: number) => count * 2);
 
   afterEach(() => {
-    reset();
+    store.reset();
     vi.clearAllMocks();
   });
 
   it("should derive a value from the store", () => {
     const derived = derive(store, (state) => calculate(state.count));
-    derived.actions.mount();
+    derived.mount();
     expect(derived.get()).toBe(0);
     increment();
     expect(derived.get()).toBe(2);
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should only recompute upon requesting the state", () => {
     const derived = derive(store, (state) => calculate(state.count));
-    derived.actions.mount();
+    derived.mount();
     increment();
     expect(calculate).toHaveBeenCalledTimes(0);
     derived.get();
     expect(calculate).toHaveBeenCalledTimes(1);
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should only recompute when dependencies change", () => {
@@ -54,13 +53,13 @@ describe("derive", () => {
       (state) => calculate(state.count),
       (state) => [state.count],
     );
-    derived.actions.mount();
+    derived.mount();
     increment();
     derived.get(); // Dependency changed, recomputing
     setOther("bar");
     derived.get(); // No dependency changed, returning memoized value
     expect(calculate).toHaveBeenCalledTimes(1);
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should notify subscribers when the derived state changes", () => {
@@ -69,7 +68,7 @@ describe("derive", () => {
     increment();
     expect(listener).toHaveBeenCalledTimes(2);
     unsubscribe();
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should only recompute once when notifying subscribers", () => {
@@ -87,7 +86,7 @@ describe("derive", () => {
 
     unsubscribe1();
     unsubscribe2();
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should only check dependencies when stale", () => {
@@ -97,7 +96,7 @@ describe("derive", () => {
       (state) => calculate(state.count),
       (state) => [state.count],
     );
-    derived.actions.mount();
+    derived.mount();
     derived.get(); // Stale, but no previous dependency snapshot
     expect(deeplyEqualsSpy).toHaveBeenCalledTimes(0);
     derived.get(); // Not stale, not checking dependencies
@@ -105,21 +104,21 @@ describe("derive", () => {
     increment();
     derived.get(); // Stale, checking dependencies
     expect(deeplyEqualsSpy).toHaveBeenCalledTimes(1);
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should subscribe to the original store when mounted", () => {
     const derived = derive(store, (state) => calculate(state.count));
     expect(onAttach).not.toHaveBeenCalled();
-    derived.actions.mount();
+    derived.mount();
     expect(onAttach).toHaveBeenCalledOnce();
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should unsubscribe to the original store when unmounted", () => {
     const derived = derive(store, (state) => calculate(state.count));
-    derived.actions.mount();
-    derived.actions.unmount();
+    derived.mount();
+    derived.unmount();
     expect(onDetach).toHaveBeenCalledOnce();
   });
 
@@ -128,7 +127,7 @@ describe("derive", () => {
     expect(onAttach).not.toHaveBeenCalled();
     derived.subscribe(listener);
     expect(onAttach).toHaveBeenCalledOnce();
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should unsubscribe to the original store when unsubscribed from", () => {
@@ -136,20 +135,20 @@ describe("derive", () => {
     const unsubscribe = derived.subscribe(listener);
     unsubscribe();
     expect(onDetach).toHaveBeenCalledOnce();
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should update the derived state when remounted", () => {
     const derived = derive(store, (state) => calculate(state.count));
-    derived.actions.mount();
+    derived.mount();
     increment();
     expect(derived.get()).toBe(2);
-    derived.actions.unmount();
+    derived.unmount();
     increment();
     expect(derived.get()).toBe(2); // Stale
-    derived.actions.mount();
+    derived.mount();
     expect(derived.get()).toBe(4);
-    derived.actions.unmount();
+    derived.unmount();
   });
 
   it("should update the derived state when remounted with dependencies", () => {
@@ -158,14 +157,14 @@ describe("derive", () => {
       (state) => calculate(state.count),
       (state) => [state.count],
     );
-    derived.actions.mount();
+    derived.mount();
     increment();
     expect(derived.get()).toBe(2);
-    derived.actions.unmount();
+    derived.unmount();
     increment();
     expect(derived.get()).toBe(2); // Stale
-    derived.actions.mount();
+    derived.mount();
     expect(derived.get()).toBe(4);
-    derived.actions.unmount();
+    derived.unmount();
   });
 });

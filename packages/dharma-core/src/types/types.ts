@@ -9,16 +9,24 @@ export type Store<TState, TActions> = {
   actions: TActions;
   /** Subscribes to changes in the state of the store. Returns an unsubscribe function. */
   subscribe: (listener: Listener<TState>) => () => void;
+  /** Sets the state of the store. */
+  set: SetState<TState>;
+  /** Resets the state of the store to its initial value. */
+  reset: () => TState;
+  /** The initial state of the store. */
+  initialState: TState;
 };
 
-export type DerivedStoreActions = {
+export type DerivedStore<TState> = {
+  /** Returns the current state of the store. */
+  get: () => TState;
+  /** Subscribes to changes in the state of the store. Returns an unsubscribe function. */
+  subscribe: (listener: Listener<TState>) => () => void;
   /** Start listening to changes in the original store. Called automatically on the first subscription. */
   mount: () => () => void;
   /** Stop listening to changes in the original store. Called automatically when there are no more subscribers. */
   unmount: () => void;
 };
-
-export type DerivedStore<TState> = Store<TState, DerivedStoreActions>;
 
 export type Effect = {
   /** Start listening to changes in the original store. */
@@ -30,6 +38,8 @@ export type Effect = {
 export type StoreEventContext<TState> = {
   /** The current state of the store. */
   state: TState;
+  /** The initial state of the store. */
+  initialState: TState;
   /** Sets the state of the store. */
   set: SetState<TState>;
   /** Resets the state of the store to its initial value. */
@@ -51,6 +61,8 @@ export type ActionContext<TState> = {
   set: SetState<TState>;
   /** Resets the state of the store to its initial value. */
   reset: () => TState;
+  /** The initial state of the store. */
+  initialState: TState;
 };
 
 export type StoreActions<TState, TActions> = (

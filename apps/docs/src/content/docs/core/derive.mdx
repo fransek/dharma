@@ -30,8 +30,8 @@ const derivedStore = derive(store, deriveFn, dependencyFn?);
 
 A new store containing the derived state.
 
-**Actions**
-
+- `get` - Returns the current derived state.
+- `subscribe` - Subscribes to changes in the derived state. Returns an unsubscribe function.
 - `mount` - Start listening to changes in the original store. Called automatically on the first subscription.
 - `unmount` - Stop listening to changes in the original store. Called automatically when there are no more subscribers.
 

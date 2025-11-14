@@ -20,7 +20,10 @@ const store = createStore(config);
 The created store with state management methods.
 
 - `get` - Returns the current state of the store.
-- `actions` - Actions that can modify the state of the store.
+- `set` - Sets the state of the store.
+- `reset` - Resets the state of the store to its initial value.
+- `initialState` - The initial state of the store.
+- `actions` - Actions that can modify the state of the store (if provided).
 - `subscribe` - Subscribes to changes in the state of the store. Returns an unsubscribe function.
 
 ## Configuration
