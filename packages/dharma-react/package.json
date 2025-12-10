@@ -62,14 +62,14 @@
   "devDependencies": {
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/react": "^19.1.10",
-    "dharma-core": "workspace:*",
-    "react": "^19.1.1"
+    "@types/react": "^19.2.7",
+    "dharma-core": "workspace:0.12.0",
+    "react": "^19.2.1"
   },
   "peerDependencies": {
+    "@types/react": ">=18.0.0",
     "dharma-core": ">=0.12.0",
-    "react": ">=18.0.0",
-    "@types/react": ">=18.0.0"
+    "react": ">=18.0.0"
   },
   "peerDependenciesMeta": {
     "dharma-core": {
