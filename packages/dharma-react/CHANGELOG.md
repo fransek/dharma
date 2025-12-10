@@ -1,5 +1,12 @@
 # dharma-react
 
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`70553a7`](https://github.com/fransek/dharma/commit/70553a7ad73ba152622991e0c5a208e0fe55b29b), [`70553a7`](https://github.com/fransek/dharma/commit/70553a7ad73ba152622991e0c5a208e0fe55b29b)]:
+  - dharma-core@0.13.0
+
 ## 0.9.0
 
 ### Minor Changes
