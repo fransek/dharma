@@ -164,6 +164,10 @@ importers:
         version: 2.2.0(react-native@0.81.1(@babel/core@7.28.5)(@types/react@19.2.7)(react@19.2.1))
 
   packages/dharma-react:
+    dependencies:
+      dharma-core:
+        specifier: '>=0.12.0'
+        version: 0.12.0
     devDependencies:
       '@testing-library/react':
         specifier: ^16.3.0
@@ -174,9 +178,6 @@ importers:
       '@types/react':
         specifier: ^19.2.7
         version: 19.2.7
-      dharma-core:
-        specifier: workspace:0.12.0
-        version: link:../dharma-core
       react:
         specifier: ^19.2.1
         version: 19.2.1
@@ -2218,6 +2219,9 @@ packages:
 
   dfa@1.2.0:
     resolution: {integrity: sha512-ED3jP8saaweFTjeGX8HQPjeC1YYyZs98jGNZx6IiBvxW7JG5v492kamAQB3m2wop07CvU/RQmzcKr6bgcC5D/Q==}
+
+  dharma-core@0.12.0:
+    resolution: {integrity: sha512-kCiSGq1Cel67rUH3NPyu1QG2B6+gXIpOZLG7GxrdUxqZD9kkShlXElPzxTnnhccS2Hjn6OgzE8veOEJiky5CqA==}
 
   diff@5.2.0:
     resolution: {integrity: sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==}
@@ -6989,6 +6993,8 @@ snapshots:
       dequal: 2.0.3
 
   dfa@1.2.0: {}
+
+  dharma-core@0.12.0: {}
 
   diff@5.2.0: {}
 
