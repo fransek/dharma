@@ -1,5 +1,13 @@
 # dharma-core
 
+## 0.13.0
+
+### Minor Changes
+
+- [#130](https://github.com/fransek/dharma/pull/130) [`70553a7`](https://github.com/fransek/dharma/commit/70553a7ad73ba152622991e0c5a208e0fe55b29b) Thanks [@fransek](https://github.com/fransek)! - Changing the initial state of a persistent store no longer deletes the current snapshot
+
+- [#130](https://github.com/fransek/dharma/pull/130) [`70553a7`](https://github.com/fransek/dharma/commit/70553a7ad73ba152622991e0c5a208e0fe55b29b) Thanks [@fransek](https://github.com/fransek)! - Persistent stores will now sync with storage on load, but setting the new `syncWithStorageOn` option to "attach" will result in the old behavior
+
 ## 0.12.0
 
 ### Minor Changes
