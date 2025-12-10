@@ -122,7 +122,6 @@ describe("createStore", () => {
 
   describe("persist", () => {
     const key = "test";
-    const initKey = `init_${key}`;
     const initialState = { count: 0 };
     const listener = vi.fn();
 
@@ -153,12 +152,22 @@ describe("createStore", () => {
     });
 
     it("should load state from localStorage if available", () => {
-      localStorage.setItem(initKey, JSON.stringify({ count: 0 }));
       localStorage.setItem(key, JSON.stringify({ count: 1 }));
       const store = createStore({
         persist: true,
         key,
         initialState,
+      });
+      expect(store.get()).toEqual({ count: 1 });
+    });
+
+    it("should load state from localStorage on attach if available", () => {
+      localStorage.setItem(key, JSON.stringify({ count: 1 }));
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        syncWithStorageOn: "attach",
       });
       expect(store.get()).toEqual({ count: 0 });
       store.subscribe(listener);
@@ -166,7 +175,6 @@ describe("createStore", () => {
     });
 
     it("should load state from sessionStorage if available", () => {
-      sessionStorage.setItem(initKey, JSON.stringify({ count: 0 }));
       sessionStorage.setItem(key, JSON.stringify({ count: 2 }));
       const store = createStore({
         persist: true,
@@ -226,7 +234,6 @@ describe("createStore", () => {
       const customStorage: StorageAPI = {
         getItem: vi.fn(),
         setItem: vi.fn(),
-        removeItem: vi.fn(),
       };
       const store = createStore({
         persist: true,

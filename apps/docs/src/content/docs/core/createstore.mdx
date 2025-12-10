@@ -47,6 +47,8 @@ The `config` object can contain the following properties:
 - `persist?` - Whether to persist the state of the store.
 - `key?` - The unique key used to identify this store in storage. Required if `persist` is true.
 - `storage?` - The storage to use for persisting the state. Defaults to local storage if available.
+- `syncWithStorageOn?` - When to initially synchronize the store's state with the storage. Defaults to "load".
+  Set to "attach" when using SSR to avoid hydration errors.
 - `serializer?` - The serializer to use for storing the state. Defaults to JSON.
 
 <Aside>

@@ -18,7 +18,6 @@ describe("createStore (node)", () => {
   it("should use the provided storage", () => {
     const storage = new CustomStorage();
     const store = createStore({ ...baseConfig, storage });
-    expect(storage.getItem("init_test")).toBe(JSON.stringify({ count: 0 }));
     store.set({ count: 1 });
     expect(storage.getItem("test")).toBe(JSON.stringify({ count: 1 }));
   });
@@ -28,13 +27,9 @@ describe("createStore (node)", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
     const store = createStore({ ...baseConfig, storage: faultyStorage });
-    expect(warnSpy).toHaveBeenCalledWith(
-      "[dharma-core] Failed to initialize snapshots. If this happened during SSR, you can safely ignore this warning.",
-    );
 
-    store.subscribe(vi.fn());
     expect(warnSpy).toHaveBeenCalledWith(
-      "[dharma-core] Failed to update state from snapshot",
+      "[dharma-core] Failed to sync state with snapshot. If this happened during SSR, you can safely ignore this warning.",
     );
 
     store.set({ count: 1 });
@@ -55,9 +50,6 @@ class CustomStorage implements StorageAPI {
   setItem(key: string, value: string): void {
     this.store[key] = value;
   }
-  removeItem(key: string): void {
-    delete this.store[key];
-  }
 }
 
 class FaultyStorage implements StorageAPI {
@@ -65,9 +57,6 @@ class FaultyStorage implements StorageAPI {
     throw new Error("Storage error");
   }
   setItem(): void {
-    throw new Error("Storage error");
-  }
-  removeItem(): void {
     throw new Error("Storage error");
   }
 }

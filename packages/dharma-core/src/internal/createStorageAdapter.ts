@@ -22,28 +22,7 @@ export const createStorageAdapter = <TState, TActions>(
     return null;
   }
 
-  const { key, serializer = JSON, initialState } = config;
-  const initKey = `init_${key}`;
-
-  const onLoad = async () => {
-    try {
-      let initialStateSnapshot = storage.getItem(initKey);
-      const initialStateString = serializer.stringify(initialState);
-
-      if (initialStateSnapshot instanceof Promise) {
-        initialStateSnapshot = await initialStateSnapshot;
-      }
-
-      if (initialStateSnapshot !== initialStateString) {
-        storage.setItem(initKey, initialStateString);
-        storage.removeItem(key);
-      }
-    } catch {
-      warn(
-        "Failed to initialize snapshots. If this happened during SSR, you can safely ignore this warning.",
-      );
-    }
-  };
+  const { key, serializer = JSON, syncWithStorageOn = "load" } = config;
 
   const syncWithSnapshot = async () => {
     try {
@@ -56,13 +35,24 @@ export const createStorageAdapter = <TState, TActions>(
       if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
         set(serializer.parse(currentSnapshot));
       }
-    } catch {
-      warn("Failed to update state from snapshot");
+    } catch (e) {
+      warn(
+        "Failed to sync state with snapshot. If this happened during SSR, you can safely ignore this warning.",
+      );
+      console.error(e);
+    }
+  };
+
+  const onLoad = () => {
+    if (syncWithStorageOn === "load") {
+      syncWithSnapshot();
     }
   };
 
   const onAttach = () => {
-    syncWithSnapshot();
+    if (syncWithStorageOn === "attach") {
+      syncWithSnapshot();
+    }
 
     if (IS_BROWSER) {
       window.addEventListener("focus", syncWithSnapshot);
@@ -81,8 +71,9 @@ export const createStorageAdapter = <TState, TActions>(
       if (newSnapshot !== currentSnapshot) {
         storage.setItem(key, newSnapshot);
       }
-    } catch {
+    } catch (e) {
       warn("Failed to update snapshot");
+      console.error(e);
     }
   };
 

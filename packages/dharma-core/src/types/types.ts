@@ -89,7 +89,6 @@ export type MaybePromise<T> = T | Promise<T>;
 export type StorageAPI = {
   getItem: (key: string) => MaybePromise<string | null>;
   setItem: (key: string, value: string) => MaybePromise<void>;
-  removeItem: (key: string) => MaybePromise<void>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -112,6 +111,12 @@ export type PersistConfig<TState> = {
   storage?: StorageAPI;
   /** The serializer to use for storing the state. Defaults to JSON. */
   serializer?: Serializer<TState>;
+  /**
+   * When to initially synchronize the store's state with the storage. Defaults to "load".
+   *
+   * Set to "attach" when using SSR to avoid hydration errors.
+   */
+  syncWithStorageOn?: "load" | "attach";
 };
 
 export type StoreConfig<TState, TActions> = BaseConfig<TState, TActions> &
