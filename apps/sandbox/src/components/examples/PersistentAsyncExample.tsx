@@ -9,6 +9,7 @@ const store = createStore({
   persist: true,
   initialState: { count: 0 },
   storage: AsyncStorage,
+  syncWithStorageOn: "attach",
   actions: ({ set }) => ({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
