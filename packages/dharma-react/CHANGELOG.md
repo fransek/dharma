@@ -1,6 +1,6 @@
 # dharma-react
 
-## 1.0.0
+## 0.9.1
 
 ### Patch Changes
 
