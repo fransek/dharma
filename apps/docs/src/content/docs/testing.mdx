@@ -1,0 +1,364 @@
+---
+title: Testing
+description: Learn how to test your Dharma stores and applications.
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Testing Philosophy
+
+Dharma is designed to be easy to test. Since stores are decoupled from the UI, you can test your state management logic independently from your components. This makes your tests more focused, faster, and easier to maintain.
+
+## Setup
+
+Dharma uses [Vitest](https://vitest.dev/) as its testing framework. Vitest is a fast, modern testing framework that works seamlessly with TypeScript and provides excellent developer experience.
+
+### Installation
+
+Install Vitest and any necessary testing utilities:
+
+```sh
+npm install -D vitest @vitest/ui
+# For React testing
+npm install -D @testing-library/react @testing-library/user-event
+```
+
+### Configuration
+
+Create a `vitest.config.ts` file in your project root:
+
+```ts
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    environment: "jsdom", // Use jsdom for React testing
+    include: ["**/*.test.{ts,tsx}"],
+  },
+});
+```
+
+## Testing Core Stores
+
+Testing Dharma stores is straightforward since they're just plain JavaScript objects with methods.
+
+### Basic Store Tests
+
+```ts
+import { describe, it, expect, afterEach, vi } from "vitest";
+import { createStore } from "dharma-core";
+
+describe("Counter Store", () => {
+  const store = createStore({
+    initialState: { count: 0 },
+    actions: ({ set }) => ({
+      increment: () => set((state) => ({ count: state.count + 1 })),
+      decrement: () => set((state) => ({ count: state.count - 1 })),
+      reset: () => set({ count: 0 }),
+    }),
+  });
+
+  afterEach(() => {
+    store.reset();
+  });
+
+  it("should initialize with the correct state", () => {
+    expect(store.get()).toEqual({ count: 0 });
+  });
+
+  it("should increment the counter", () => {
+    store.actions.increment();
+    expect(store.get().count).toBe(1);
+  });
+
+  it("should decrement the counter", () => {
+    store.actions.decrement();
+    expect(store.get().count).toBe(-1);
+  });
+
+  it("should reset to initial state", () => {
+    store.actions.increment();
+    store.actions.increment();
+    store.actions.reset();
+    expect(store.get().count).toBe(0);
+  });
+});
+```
+
+### Testing Subscriptions
+
+You can test that listeners are notified correctly when state changes:
+
+```ts
+import { describe, it, expect, vi } from "vitest";
+import { createStore } from "dharma-core";
+
+describe("Store Subscriptions", () => {
+  it("should notify subscribers on state change", () => {
+    const store = createStore({
+      initialState: { count: 0 },
+      actions: ({ set }) => ({
+        increment: () => set((state) => ({ count: state.count + 1 })),
+      }),
+    });
+
+    const listener = vi.fn();
+    store.subscribe(listener);
+
+    store.actions.increment();
+
+    // Called twice: once on subscribe, once on change
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(listener).toHaveBeenLastCalledWith({ count: 1 });
+  });
+
+  it("should unsubscribe listeners correctly", () => {
+    const store = createStore({
+      initialState: { count: 0 },
+      actions: ({ set }) => ({
+        increment: () => set((state) => ({ count: state.count + 1 })),
+      }),
+    });
+
+    const listener = vi.fn();
+    const unsubscribe = store.subscribe(listener);
+
+    unsubscribe();
+    store.actions.increment();
+
+    // Only called once on initial subscribe
+    expect(listener).toHaveBeenCalledOnce();
+  });
+});
+```
+
+### Testing Async Actions
+
+```ts
+import { describe, it, expect } from "vitest";
+import { createStore } from "dharma-core";
+
+describe("Async Store Actions", () => {
+  it("should handle async actions", async () => {
+    const store = createStore({
+      initialState: { data: null, loading: false },
+      actions: ({ set }) => ({
+        fetchData: async () => {
+          set({ loading: true });
+          const data = await fetch("/api/data").then((r) => r.json());
+          set({ data, loading: false });
+        },
+      }),
+    });
+
+    const promise = store.actions.fetchData();
+    expect(store.get().loading).toBe(true);
+
+    await promise;
+    expect(store.get().loading).toBe(false);
+    expect(store.get().data).toBeDefined();
+  });
+});
+```
+
+## Testing with React
+
+When testing React components that use Dharma stores, you can use React Testing Library along with Vitest.
+
+### Basic Component Tests
+
+```tsx
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { createStore } from "dharma-core";
+import { useStore } from "dharma-react";
+import { describe, it, expect, afterEach } from "vitest";
+
+const counterStore = createStore({
+  initialState: { count: 0 },
+  actions: ({ set }) => ({
+    increment: () => set((state) => ({ count: state.count + 1 })),
+    decrement: () => set((state) => ({ count: state.count - 1 })),
+  }),
+});
+
+function Counter() {
+  const { count } = useStore(counterStore);
+
+  return (
+    <div>
+      <span>Count: {count}</span>
+      <button onClick={counterStore.actions.increment}>Increment</button>
+      <button onClick={counterStore.actions.decrement}>Decrement</button>
+    </div>
+  );
+}
+
+describe("Counter Component", () => {
+  afterEach(() => {
+    counterStore.reset();
+  });
+
+  it("should render the initial count", () => {
+    render(<Counter />);
+    expect(screen.getByText("Count: 0")).toBeInTheDocument();
+  });
+
+  it("should increment when button is clicked", async () => {
+    const user = userEvent.setup();
+    render(<Counter />);
+
+    await user.click(screen.getByText("Increment"));
+    expect(screen.getByText("Count: 1")).toBeInTheDocument();
+  });
+
+  it("should decrement when button is clicked", async () => {
+    const user = userEvent.setup();
+    render(<Counter />);
+
+    await user.click(screen.getByText("Decrement"));
+    expect(screen.getByText("Count: -1")).toBeInTheDocument();
+  });
+});
+```
+
+### Testing with renderHook
+
+For testing hooks in isolation, use `renderHook` from React Testing Library:
+
+```tsx
+import { renderHook, act } from "@testing-library/react";
+import { createStore } from "dharma-core";
+import { useStore } from "dharma-react";
+import { describe, it, expect } from "vitest";
+
+describe("useStore Hook", () => {
+  it("should return the current state", () => {
+    const store = createStore({
+      initialState: { count: 0 },
+    });
+
+    const { result } = renderHook(() => useStore(store));
+    expect(result.current).toEqual({ count: 0 });
+  });
+
+  it("should update when store changes", () => {
+    const store = createStore({
+      initialState: { count: 0 },
+      actions: ({ set }) => ({
+        increment: () => set((state) => ({ count: state.count + 1 })),
+      }),
+    });
+
+    const { result } = renderHook(() => useStore(store));
+
+    act(() => {
+      store.actions.increment();
+    });
+
+    expect(result.current).toEqual({ count: 1 });
+  });
+});
+```
+
+### Testing Selective Subscriptions
+
+Test that components only re-render when their selected state changes:
+
+```tsx
+import { renderHook } from "@testing-library/react";
+import { createStore } from "dharma-core";
+import { useStore } from "dharma-react";
+import { useRef } from "react";
+import { describe, it, expect } from "vitest";
+
+describe("Selective Rendering", () => {
+  it("should only re-render when selected state changes", () => {
+    const store = createStore({
+      initialState: { count: 0, other: 0 },
+      actions: ({ set }) => ({
+        incrementCount: () => set((state) => ({ count: state.count + 1 })),
+        incrementOther: () => set((state) => ({ other: state.other + 1 })),
+      }),
+    });
+
+    let renderCount = 0;
+    const { result } = renderHook(() => {
+      renderCount++;
+      return useStore(store, (state) => state.count);
+    });
+
+    const initialRenders = renderCount;
+
+    act(() => {
+      store.actions.incrementOther();
+    });
+
+    // Should not re-render since we're only watching 'count'
+    expect(renderCount).toBe(initialRenders);
+
+    act(() => {
+      store.actions.incrementCount();
+    });
+
+    // Should re-render since 'count' changed
+    expect(renderCount).toBe(initialRenders + 1);
+  });
+});
+```
+
+## Running Tests
+
+### Run All Tests
+
+```sh
+npm test
+# or
+pnpm test
+```
+
+### Watch Mode
+
+Run tests in watch mode for development:
+
+```sh
+npm run test:watch
+# or
+pnpm test:watch
+```
+
+### Coverage
+
+Generate test coverage reports:
+
+```sh
+npm run test:coverage
+# or
+pnpm test:coverage
+```
+
+### UI Mode
+
+Run tests with Vitest's UI interface:
+
+```sh
+npm run test:ui
+# or
+pnpm test:ui
+```
+
+<Aside>
+  The Dharma repository includes comprehensive test suites for both
+  `dharma-core` and `dharma-react`. Check out the [source
+  code](https://github.com/fransek/dharma/tree/main/packages) for more testing
+  examples and patterns.
+</Aside>
+
+## Best Practices
+
+- **Test Store Logic Separately:** Test your store actions and state updates independently from UI components.
+- **Reset Stores After Each Test:** Use `afterEach` hooks to reset stores to their initial state, ensuring test isolation.
+- **Mock External Dependencies:** When testing stores with async actions, mock API calls and external dependencies.
+- **Test Subscriptions:** Verify that your stores notify subscribers correctly and that unsubscribe works as expected.
+- **Use Selective Selectors:** When testing React components, verify that selective subscriptions prevent unnecessary re-renders.
+- **Keep Tests Focused:** Each test should verify a single behavior or scenario.
