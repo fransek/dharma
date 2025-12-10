@@ -1,6 +1,6 @@
 {
   "name": "dharma-react",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "author": "Frans Ekman <fransedvinekman@gmail.com>",
   "license": "MIT",
   "description": "React bindings for Dharma",
@@ -68,7 +68,7 @@
   },
   "peerDependencies": {
     "@types/react": ">=18.0.0",
-    "dharma-core": ">=0.12.0",
+    "dharma-core": ">=0.13.0",
     "react": ">=18.0.0"
   },
   "peerDependenciesMeta": {
