@@ -182,7 +182,6 @@ describe("createStore", () => {
         initialState,
         storage: sessionStorage,
       });
-      store.subscribe(listener);
       expect(store.get()).toEqual({ count: 2 });
     });
 
