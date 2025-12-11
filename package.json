@@ -43,7 +43,6 @@
     "prettier": "^3.7.4",
     "prettier-plugin-organize-imports": "^4.3.0",
     "rollup": "^4.53.3",
-    "typedoc": "^0.28.15",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
   },
