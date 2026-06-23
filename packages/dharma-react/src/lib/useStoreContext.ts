@@ -30,8 +30,5 @@ export const useStoreContext = <
       "[dharma-react] Store context not found. Make sure you are using the store context within a provider.",
     );
   }
-  return {
-    state: useStore(store, select),
-    actions: store.actions,
-  };
+  return { ...store, state: useStore(store, select) };
 };

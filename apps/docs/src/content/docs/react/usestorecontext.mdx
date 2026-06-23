@@ -20,7 +20,12 @@ const store = useStoreContext(StoreContext, select?);
 The store instance.
 
 - `state` - The current state of the store.
-- `actions` - The actions that can modify the state of the store.
+- `get` - Returns the current state of the store.
+- `set` - Sets the state of the store.
+- `reset` - Resets the state of the store to its initial value.
+- `initialState` - The initial state of the store.
+- `actions` - Actions that can modify the state of the store (if provided).
+- `subscribe` - Subscribes to changes in the state of the store. Returns an unsubscribe function.
 
 ## Usage
 
@@ -52,7 +57,6 @@ function Counter() {
 const { state: count } = useStoreContext(StoreContext, (state) => state.count);
 ```
 
-If the `select` function is provided, an equality check is performed. This has some caveats:
-
-- For optimal performance, return a direct reference to the state. (e.g. `state.count`)
-- If you return an object literal, it should only contain direct references to the state. (e.g. `{ count: state.count }`)
+**Note:** If the `select` function is provided, an equality check is performed. For optimal performance, return a direct reference to the state. (e.g. `state.count`)
+If you wish to select multiple values, return an object or an array. (e.g. `{ count: state.count, name: state.name }` or `[state.count, state.name]`)
+Other unstable reference types will cause infinite loops.
