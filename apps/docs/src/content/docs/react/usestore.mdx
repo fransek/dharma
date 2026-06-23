@@ -47,7 +47,6 @@ function Counter() {
 const count = useStore(store, (state) => state.count);
 ```
 
-**Note:** If the `select` function is provided, an equality check is performed. This has some caveats:
-
-- For optimal performance, return a direct reference to the state. (e.g. `state.count`)
-- If you return an object literal, it should only contain direct references to the state. (e.g. `{ count: state.count }`)
+**Note:** If the `select` function is provided, an equality check is performed. For optimal performance, return a direct reference to the state. (e.g. `state.count`)
+If you wish to select multiple values, return an object or an array. (e.g. `{ count: state.count, name: state.name }` or `[state.count, state.name]`)
+Other unstable reference types will cause infinite loops.

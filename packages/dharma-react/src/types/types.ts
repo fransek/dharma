@@ -6,7 +6,9 @@ export type StoreContext<
   TStoreCreator extends (...args: any[]) => Store<any, any>,
 > = Context<ReturnType<TStoreCreator> | null>;
 
-export type BoundStore<TState, TActions, TSelection = TState> = {
+export type BoundStore<TState, TActions, TSelection = TState> = Store<
+  TState,
+  TActions
+> & {
   state: TSelection;
-  actions: TActions;
 };
