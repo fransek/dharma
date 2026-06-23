@@ -1,5 +1,11 @@
 # dharma-react
 
+## 0.10.0
+
+### Minor Changes
+
+- [#138](https://github.com/fransek/dharma/pull/138) [`4f6d445`](https://github.com/fransek/dharma/commit/4f6d445fd9737ea2e7e2a36586237e54a4141c9c) Thanks [@fransek](https://github.com/fransek)! - Extended `useStoreContext` to return the full store API along with the reactive state
+
 ## 0.9.1
 
 ### Patch Changes
