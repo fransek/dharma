@@ -1,0 +1,269 @@
+---
+title: Testing
+description: Learn how to test your Dharma stores.
+---
+
+## Testing Philosophy
+
+Dharma is designed to be easy to test. Since stores are decoupled from the UI, you can test your state management logic independently from your components. This makes your tests more focused, faster, and easier to maintain.
+
+**Focus on testing state changes in response to actions.** Dharma is responsible for handling subscriptions and rendering optimizations - you should focus on testing how your store's state reacts to actions.
+
+## Setup
+
+You can use any JavaScript testing framework to test Dharma stores. Popular choices include [Vitest](https://vitest.dev/), [Jest](https://jestjs.io/), and [Mocha](https://mochajs.org/).
+
+The examples below use a generic testing syntax that works with most frameworks.
+
+## Testing Stores
+
+Testing Dharma stores is straightforward since they're just plain JavaScript objects with methods. Focus on verifying that actions update the store's state correctly.
+
+### Basic Example
+
+Here's an example testing a counter store, organized by store → action → test:
+
+```ts
+import { describe, it, expect, beforeEach } from "your-test-framework";
+import { createStore } from "dharma-core";
+
+describe("counterStore", () => {
+  const counterStore = createStore({
+    initialState: { count: 0 },
+    actions: ({ set }) => ({
+      increment: () => set((state) => ({ count: state.count + 1 })),
+      decrement: () => set((state) => ({ count: state.count - 1 })),
+      reset: () => set({ count: 0 }),
+    }),
+  });
+
+  beforeEach(() => {
+    counterStore.reset();
+  });
+
+  describe("increment", () => {
+    it("should increment count by one", () => {
+      counterStore.actions.increment();
+      expect(counterStore.get().count).toBe(1);
+    });
+
+    it("should increment count multiple times", () => {
+      counterStore.actions.increment();
+      counterStore.actions.increment();
+      counterStore.actions.increment();
+      expect(counterStore.get().count).toBe(3);
+    });
+  });
+
+  describe("decrement", () => {
+    it("should decrement count by one", () => {
+      counterStore.actions.decrement();
+      expect(counterStore.get().count).toBe(-1);
+    });
+  });
+
+  describe("reset", () => {
+    it("should reset count to initial state", () => {
+      counterStore.actions.increment();
+      counterStore.actions.increment();
+      counterStore.actions.reset();
+      expect(counterStore.get().count).toBe(0);
+    });
+  });
+});
+```
+
+### Testing Complex State
+
+Here's an example testing a todo store with more complex state:
+
+```ts
+import { describe, it, expect, beforeEach } from "your-test-framework";
+import { createStore } from "dharma-core";
+
+describe("todoStore", () => {
+  const todoStore = createStore({
+    initialState: { todos: [], filter: "all" },
+    actions: ({ set, get }) => ({
+      addTodo: (text) =>
+        set((state) => ({
+          todos: [...state.todos, { id: Date.now(), text, completed: false }],
+        })),
+      toggleTodo: (id) =>
+        set((state) => ({
+          todos: state.todos.map((todo) =>
+            todo.id === id ? { ...todo, completed: !todo.completed } : todo
+          ),
+        })),
+      setFilter: (filter) => set({ filter }),
+    }),
+  });
+
+  beforeEach(() => {
+    todoStore.reset();
+  });
+
+  describe("addTodo", () => {
+    it("should add a new todo to the list", () => {
+      todoStore.actions.addTodo("Buy milk");
+      const state = todoStore.get();
+      expect(state.todos).toHaveLength(1);
+      expect(state.todos[0].text).toBe("Buy milk");
+      expect(state.todos[0].completed).toBe(false);
+    });
+
+    it("should add multiple todos", () => {
+      todoStore.actions.addTodo("Buy milk");
+      todoStore.actions.addTodo("Walk dog");
+      expect(todoStore.get().todos).toHaveLength(2);
+    });
+  });
+
+  describe("toggleTodo", () => {
+    it("should toggle todo completed status", () => {
+      todoStore.actions.addTodo("Buy milk");
+      const todoId = todoStore.get().todos[0].id;
+
+      todoStore.actions.toggleTodo(todoId);
+      expect(todoStore.get().todos[0].completed).toBe(true);
+
+      todoStore.actions.toggleTodo(todoId);
+      expect(todoStore.get().todos[0].completed).toBe(false);
+    });
+  });
+
+  describe("setFilter", () => {
+    it("should update the filter", () => {
+      todoStore.actions.setFilter("completed");
+      expect(todoStore.get().filter).toBe("completed");
+    });
+  });
+});
+```
+
+### Testing Async Actions
+
+When testing async actions, focus on how the state changes at different stages:
+
+```ts
+import { describe, it, expect, beforeEach } from "your-test-framework";
+import { createStore } from "dharma-core";
+
+describe("userStore", () => {
+  const userStore = createStore({
+    initialState: { user: null, loading: false, error: null },
+    actions: ({ set }) => ({
+      fetchUser: async (id) => {
+        set({ loading: true, error: null });
+        try {
+          const response = await fetch(`/api/users/${id}`);
+          const user = await response.json();
+          set({ user, loading: false });
+        } catch (error) {
+          set({ error: error.message, loading: false });
+        }
+      },
+    }),
+  });
+
+  beforeEach(() => {
+    userStore.reset();
+  });
+
+  describe("fetchUser", () => {
+    it("should set loading to true immediately", () => {
+      userStore.actions.fetchUser(1);
+      expect(userStore.get().loading).toBe(true);
+      expect(userStore.get().error).toBe(null);
+    });
+
+    it("should update user and set loading to false on success", async () => {
+      // Mock fetch to return a user
+      global.fetch = () =>
+        Promise.resolve({
+          json: () => Promise.resolve({ id: 1, name: "John" }),
+        });
+
+      await userStore.actions.fetchUser(1);
+
+      const state = userStore.get();
+      expect(state.loading).toBe(false);
+      expect(state.user).toEqual({ id: 1, name: "John" });
+      expect(state.error).toBe(null);
+    });
+
+    it("should set error and loading to false on failure", async () => {
+      // Mock fetch to fail
+      global.fetch = () => Promise.reject(new Error("Network error"));
+
+      await userStore.actions.fetchUser(1);
+
+      const state = userStore.get();
+      expect(state.loading).toBe(false);
+      expect(state.error).toBe("Network error");
+      expect(state.user).toBe(null);
+    });
+  });
+});
+```
+
+## Testing Derived State
+
+You can test derived state by verifying that it computes the correct value based on the store's state:
+
+```ts
+import { describe, it, expect, beforeEach } from "your-test-framework";
+import { createStore, derive } from "dharma-core";
+
+describe("cartStore with derived state", () => {
+  const cartStore = createStore({
+    initialState: { items: [], discount: 0 },
+    actions: ({ set }) => ({
+      addItem: (item) =>
+        set((state) => ({ items: [...state.items, item] })),
+      setDiscount: (discount) => set({ discount }),
+    }),
+  });
+
+  const totalPrice = derive(cartStore, (state) =>
+    state.items.reduce((sum, item) => sum + item.price, 0)
+  );
+
+  const finalPrice = derive(cartStore, (state) => {
+    const total = state.items.reduce((sum, item) => sum + item.price, 0);
+    return total - (total * state.discount) / 100;
+  });
+
+  beforeEach(() => {
+    cartStore.reset();
+  });
+
+  describe("addItem", () => {
+    it("should add item and update total price", () => {
+      cartStore.actions.addItem({ id: 1, name: "Book", price: 10 });
+      expect(totalPrice.get()).toBe(10);
+
+      cartStore.actions.addItem({ id: 2, name: "Pen", price: 5 });
+      expect(totalPrice.get()).toBe(15);
+    });
+  });
+
+  describe("setDiscount", () => {
+    it("should apply discount to final price", () => {
+      cartStore.actions.addItem({ id: 1, name: "Book", price: 100 });
+      cartStore.actions.setDiscount(10);
+
+      expect(finalPrice.get()).toBe(90);
+    });
+  });
+});
+```
+
+## Best Practices
+
+- **Test state changes, not implementation:** Focus on verifying that actions update the store's state correctly. Don't test how subscriptions or rendering work - that's Dharma's responsibility.
+- **Organize tests by store → action → behavior:** Use a nested structure like `describe("counterStore")` → `describe("increment")` → `it("should increment count by one")`.
+- **Reset stores between tests:** Use `beforeEach` or `afterEach` hooks to reset stores to their initial state, ensuring test isolation.
+- **Mock external dependencies:** When testing stores with async actions, mock API calls and external services.
+- **Test edge cases:** Consider boundary conditions, error states, and invalid inputs.
+- **Keep tests simple and focused:** Each test should verify a single behavior or state change.
