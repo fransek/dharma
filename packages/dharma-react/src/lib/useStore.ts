@@ -1,6 +1,6 @@
 import { DerivedStore, Store } from "dharma-core";
 import { deeplyEquals } from "dharma-core/deeplyEquals";
-import { useRef, useSyncExternalStore } from "react";
+import { use, useRef, useSyncExternalStore } from "react";
 
 /**
  * A hook used to access a store created with `createStore` and bind it to a component.
@@ -36,4 +36,12 @@ export const useStore = <TState, TActions, TSelection = TState>(
     getSelection,
     getSelection,
   ) as TSelection;
+};
+
+export const useDeferredStore = <TState, TActions, TSelection = TState>(
+  store: Store<TState, TActions> | DerivedStore<TState>,
+  select?: (state: TState) => TSelection,
+): TSelection => {
+  use(store.loaded);
+  return useStore(store, select);
 };
