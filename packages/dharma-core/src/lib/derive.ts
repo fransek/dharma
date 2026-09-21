@@ -83,5 +83,6 @@ export const derive = <TState, TActions, TDerived>(
     subscribe,
     mount,
     unmount,
+    loaded: store.loaded,
   };
 };

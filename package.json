@@ -40,6 +40,7 @@
     "jiti": "^2.6.1",
     "jsdom": "^27.3.0",
     "lint-staged": "^16.2.7",
+    "pkg-pr-new": "^0.0.88",
     "prettier": "^3.7.4",
     "prettier-plugin-organize-imports": "^4.3.0",
     "rollup": "^4.53.3",

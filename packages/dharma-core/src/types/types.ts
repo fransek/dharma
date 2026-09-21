@@ -15,6 +15,8 @@ export type Store<TState, TActions> = {
   reset: () => TState;
   /** The initial state of the store. */
   initialState: TState;
+
+  loaded: Promise<void>;
 };
 
 export type DerivedStore<TState> = {
@@ -26,6 +28,8 @@ export type DerivedStore<TState> = {
   mount: () => () => void;
   /** Stop listening to changes in the original store. Called automatically when there are no more subscribers. */
   unmount: () => void;
+
+  loaded: Promise<void>;
 };
 
 export type Effect = {
@@ -48,7 +52,7 @@ export type StoreEventContext<TState> = {
 
 export type StoreEventListener<TState> = (
   context: StoreEventContext<TState>,
-) => void;
+) => unknown | Promise<unknown>;
 
 export type StateModifier<TState> =
   | Partial<TState>
