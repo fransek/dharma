@@ -25,4 +25,4 @@ jobs:
         run: pnpm build
 
       - name: Publish
-        run: pnpm exec pkg-pr-new publish './packages/*
+        run: pnpm exec pkg-pr-new publish './packages/*'
