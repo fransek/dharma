@@ -25,4 +25,4 @@ jobs:
         run: pnpm build
 
       - name: Publish
-        run: pnpm -r exec pkg-pr-new publish --commentWithSha
+        run: pnpm exec pkg-pr-new publish './packages/*
