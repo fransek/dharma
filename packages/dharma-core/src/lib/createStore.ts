@@ -79,7 +79,10 @@ export const createStore = <TState, TActions = undefined>(
   };
 
   storageAdapter?.onLoad();
-  onLoad?.({ state, set, reset, initialState });
+
+  async function init() {
+    await onLoad?.({ state, set, reset, initialState });
+  }
 
   return {
     get,
@@ -88,5 +91,6 @@ export const createStore = <TState, TActions = undefined>(
     set,
     reset,
     initialState,
+    loaded: init(),
   };
 };
