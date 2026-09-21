@@ -49,6 +49,7 @@ describe("useStoreContext", () => {
       reset: expect.any(Function),
       set: expect.any(Function),
       subscribe: expect.any(Function),
+      loaded: expect.any(Promise),
       initialState: {
         count: 0,
       },
