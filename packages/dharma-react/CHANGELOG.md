@@ -1,5 +1,11 @@
 # dharma-react
 
+## 0.10.1
+
+### Patch Changes
+
+- [#143](https://github.com/fransek/dharma/pull/143) [`ceee0c5`](https://github.com/fransek/dharma/commit/ceee0c5069456768f13460b2f1b9411546e87c76) Thanks [@fransek](https://github.com/fransek)! - `useStoreContext` now returns a stable reference while the store and selected state are unchanged.
+
 ## 0.10.0
 
 ### Minor Changes
