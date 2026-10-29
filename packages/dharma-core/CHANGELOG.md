@@ -1,5 +1,23 @@
 # dharma-core
 
+## 0.14.0
+
+### Minor Changes
+
+- [#143](https://github.com/fransek/dharma/pull/143) [`ceee0c5`](https://github.com/fransek/dharma/commit/ceee0c5069456768f13460b2f1b9411546e87c76) Thanks [@fransek](https://github.com/fransek)! - - `set` and `reset` no longer notify subscribers or call `onChange` when the state is unchanged, e.g. `set((state) => state)`. `merge` returns the current state itself in that case.
+  - Derived stores now stay up to date when not mounted.
+  - Effects created with `createEffect` now run again when remounted.
+  - Persisted stores now sync with changes made in other tabs via the `storage` event.
+  - Async storage no longer overwrites state set while it was being read.
+  - `StorageAPI` now accepts any `PromiseLike`, not just native promises.
+  - Persisted stores no longer throw on subscribe in React Native, where `window` exists without `addEventListener`.
+
+- [#144](https://github.com/fransek/dharma/pull/144) [`cd4be9b`](https://github.com/fransek/dharma/commit/cd4be9be6b5499971d69856519242ab092ff63ff) Thanks [@fransek](https://github.com/fransek)! - Added the `onStorageError` option for handling persistence errors, along with the exported `StorageUnavailableError` class. Storage errors are no longer logged to the console, so use `onStorageError` to surface them.
+
+### Patch Changes
+
+- [#141](https://github.com/fransek/dharma/pull/141) [`c340dcd`](https://github.com/fransek/dharma/commit/c340dcdebf6ee38f5ad6051f5390e587a99abf3f) Thanks [@fransek](https://github.com/fransek)! - Fixed several persistence and subscription bugs: changes made in `onChange` are now persisted, async storage write errors are caught, inaccessible `localStorage` no longer throws, storage returning non-native thenables is now supported, and calling an unsubscribe function twice no longer triggers `onDetach` twice. Improved `deeplyEquals` performance for objects with many keys.
+
 ## 0.13.0
 
 ### Minor Changes
