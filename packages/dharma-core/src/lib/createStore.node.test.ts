@@ -23,6 +23,28 @@ describe("createStore (node)", () => {
     vi.unstubAllGlobals();
   });
 
+  it("should not warn about missing storage until the state changes", () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const store = createStore(baseConfig);
+    store.subscribe(vi.fn())();
+    store.set((state) => state);
+    expect(warnSpy).not.toHaveBeenCalled();
+    warnSpy.mockRestore();
+  });
+
+  it("should warn once per store when state changes can't be persisted", () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const store = createStore(baseConfig);
+    store.set({ count: 1 });
+    store.set({ count: 2 });
+    expect(warnSpy).toHaveBeenCalledExactlyOnceWith(
+      '[dharma-core] State changes to "test" won\'t be persisted because no storage is available. Pass a `storage` option to persist outside the browser.',
+    );
+    createStore(baseConfig).set({ count: 1 });
+    expect(warnSpy).toHaveBeenCalledTimes(2);
+    warnSpy.mockRestore();
+  });
+
   it("should use the provided storage", () => {
     const storage = new CustomStorage();
     const store = createStore({ ...baseConfig, storage });

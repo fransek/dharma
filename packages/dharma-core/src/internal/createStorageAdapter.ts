@@ -31,10 +31,23 @@ export const createStorageAdapter = <TState, TActions>(
     config.storage ?? (IS_BROWSER ? getDefaultStorage() : undefined);
 
   if (!storage) {
-    warn(
-      "No storage provider found. If this happened during SSR, you can safely ignore this warning.",
-    );
-    return null;
+    // Only warn on the first change, so stores that are only read during SSR stay quiet
+    let hasWarned = false;
+    const noop = () => {};
+
+    return {
+      onLoad: noop,
+      onAttach: noop,
+      onDetach: noop,
+      onChange: () => {
+        if (!hasWarned) {
+          hasWarned = true;
+          warn(
+            `State changes to "${config.key}" won't be persisted because no storage is available. Pass a \`storage\` option to persist outside the browser.`,
+          );
+        }
+      },
+    };
   }
 
   const { key, serializer = JSON, syncWithStorageOn = "load" } = config;
