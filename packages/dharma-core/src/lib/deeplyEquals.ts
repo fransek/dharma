@@ -34,14 +34,13 @@ export const deeplyEquals = (a: unknown, b: unknown): boolean => {
   }
 
   const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
 
-  if (keysA.length !== keysB.length) {
+  if (keysA.length !== Object.keys(b).length) {
     return false;
   }
 
   for (const key of keysA) {
-    if (!keysB.includes(key)) {
+    if (!Object.prototype.hasOwnProperty.call(b, key)) {
       return false;
     }
     if (

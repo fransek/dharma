@@ -1,6 +1,15 @@
 import { SetState, StorageAPI, StoreConfig } from "../types/types";
 import { warn } from "./warn";
 
+const getDefaultStorage = (): StorageAPI | undefined => {
+  try {
+    // Accessing localStorage can throw, e.g. in sandboxed iframes or when cookies are disabled
+    return localStorage;
+  } catch {
+    return undefined;
+  }
+};
+
 export const createStorageAdapter = <TState, TActions>(
   config: StoreConfig<TState, TActions>,
   get: () => TState,
@@ -13,7 +22,7 @@ export const createStorageAdapter = <TState, TActions>(
   const IS_BROWSER = typeof window !== "undefined";
 
   const storage =
-    config.storage ?? (IS_BROWSER ? (localStorage as StorageAPI) : undefined);
+    config.storage ?? (IS_BROWSER ? getDefaultStorage() : undefined);
 
   if (!storage) {
     warn(
@@ -69,7 +78,7 @@ export const createStorageAdapter = <TState, TActions>(
       }
 
       if (newSnapshot !== currentSnapshot) {
-        storage.setItem(key, newSnapshot);
+        await storage.setItem(key, newSnapshot);
       }
     } catch (e) {
       warn("Failed to update snapshot");
