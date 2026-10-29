@@ -29,6 +29,9 @@ export default defineConfig({
           slug: "core-concepts",
         },
         {
+          slug: "testing",
+        },
+        {
           label: "Core",
           items: [
             "core/quick-start",
