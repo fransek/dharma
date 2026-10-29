@@ -65,4 +65,13 @@ describe("useStoreContext", () => {
 
     expect(result.current.state).toStrictEqual(1);
   });
+
+  it("should return a stable reference while the state is unchanged", () => {
+    const { result, rerender } = renderUseStoreContext();
+    const initialResult = result.current;
+    rerender();
+    expect(result.current).toBe(initialResult);
+    act(() => result.current.actions.increment());
+    expect(result.current).not.toBe(initialResult);
+  });
 });

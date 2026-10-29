@@ -46,4 +46,11 @@ describe("merge", () => {
 
     expect(newState).toEqual({ a: 1, b: "initial" });
   });
+
+  it("should return the current state if the modifier resolves to it", () => {
+    const currentState: TestState = { a: 1, b: "initial" };
+
+    expect(merge(currentState, currentState)).toBe(currentState);
+    expect(merge(currentState, (state) => state)).toBe(currentState);
+  });
 });

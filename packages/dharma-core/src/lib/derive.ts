@@ -21,27 +21,30 @@ export const derive = <TState, TActions, TDerived>(
   dependencyFn?: (state: TState) => unknown[],
 ): DerivedStore<TDerived> => {
   let memo: TDerived | undefined;
-  let prev: unknown[] | undefined;
-  let isStale = true;
+  let hasMemo = false;
+  let prevState: TState | undefined;
+  let prevDeps: unknown[] | undefined;
   let unsubscribe: (() => void) | undefined;
   const listeners = new Set<Listener<TDerived>>();
 
-  const compute = () => {
-    memo = deriveFn(store.get());
-    isStale = false;
-    return memo;
-  };
-
   const get = () => {
-    const next = dependencyFn?.(store.get());
-    isStale &&= !prev || !deeplyEquals(prev, next);
+    const state = store.get();
 
-    if (isStale) {
-      prev = next;
-      return compute();
+    if (hasMemo && Object.is(state, prevState)) {
+      return memo as TDerived;
     }
 
-    return memo as TDerived;
+    prevState = state;
+    const deps = dependencyFn?.(state);
+
+    if (hasMemo && dependencyFn && deeplyEquals(prevDeps, deps)) {
+      return memo as TDerived;
+    }
+
+    prevDeps = deps;
+    memo = deriveFn(state);
+    hasMemo = true;
+    return memo;
   };
 
   const subscribe = (listener: Listener<TDerived>) => {
@@ -62,7 +65,6 @@ export const derive = <TState, TActions, TDerived>(
   };
 
   const listener = () => {
-    isStale = true;
     listeners.forEach((listener) => listener(get()));
   };
 

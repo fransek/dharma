@@ -41,6 +41,7 @@ export const createEffect = <TState, TActions, TDerived>(
   const unmount = () => {
     unsubscribe?.();
     unsubscribe = undefined;
+    prev = undefined;
   };
 
   return {

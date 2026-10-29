@@ -20,7 +20,7 @@ const store = createStore(config);
 The created store with state management methods.
 
 - `get` - Returns the current state of the store.
-- `set` - Sets the state of the store.
+- `set` - Sets the state of the store. If the new state is the current state itself (e.g. `set((state) => state)`), subscribers and `onChange` are not notified.
 - `reset` - Resets the state of the store to its initial value.
 - `initialState` - The initial state of the store.
 - `actions` - Actions that can modify the state of the store (if provided).
@@ -47,6 +47,7 @@ The `config` object can contain the following properties:
 - `persist?` - Whether to persist the state of the store.
 - `key?` - The unique key used to identify this store in storage. Required if `persist` is true.
 - `storage?` - The storage to use for persisting the state. Defaults to local storage if available.
+  The state is synchronized with the storage when the window gains focus, and when another tab changes local or session storage.
 - `syncWithStorageOn?` - When to initially synchronize the store's state with the storage. Defaults to "load".
   Set to "attach" when using SSR to avoid hydration errors.
 - `serializer?` - The serializer to use for storing the state. Defaults to JSON.

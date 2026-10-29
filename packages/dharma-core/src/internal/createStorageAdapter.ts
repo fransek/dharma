@@ -23,6 +23,9 @@ export const createStorageAdapter = <TState, TActions>(
   }
 
   const IS_BROWSER = typeof window !== "undefined";
+  // React Native defines window without the event listener API
+  const CAN_LISTEN =
+    IS_BROWSER && typeof window.addEventListener === "function";
 
   const storage =
     config.storage ?? (IS_BROWSER ? getDefaultStorage() : undefined);
@@ -38,10 +41,16 @@ export const createStorageAdapter = <TState, TActions>(
 
   const syncWithSnapshot = async () => {
     try {
+      const prevState = get();
       let currentSnapshot = storage.getItem(key);
 
       if (isThenable(currentSnapshot)) {
         currentSnapshot = await currentSnapshot;
+
+        // The state changed while reading, so the snapshot is outdated
+        if (!Object.is(get(), prevState)) {
+          return;
+        }
       }
 
       if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
@@ -61,13 +70,21 @@ export const createStorageAdapter = <TState, TActions>(
     }
   };
 
+  // Syncs changes made in other tabs
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === key && event.storageArea === storage) {
+      syncWithSnapshot();
+    }
+  };
+
   const onAttach = () => {
     if (syncWithStorageOn === "attach") {
       syncWithSnapshot();
     }
 
-    if (IS_BROWSER) {
+    if (CAN_LISTEN) {
       window.addEventListener("focus", syncWithSnapshot);
+      window.addEventListener("storage", onStorage);
     }
   };
 
@@ -90,8 +107,9 @@ export const createStorageAdapter = <TState, TActions>(
   };
 
   const onDetach = () => {
-    if (IS_BROWSER) {
+    if (CAN_LISTEN) {
       window.removeEventListener("focus", syncWithSnapshot);
+      window.removeEventListener("storage", onStorage);
     }
   };
 

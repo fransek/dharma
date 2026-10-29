@@ -1,5 +1,5 @@
 import { Store } from "dharma-core";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { BoundStore, StoreContext } from "../types/types";
 import { useStore } from "./useStore";
 
@@ -30,5 +30,6 @@ export const useStoreContext = <
       "[dharma-react] Store context not found. Make sure you are using the store context within a provider.",
     );
   }
-  return { ...store, state: useStore(store, select) };
+  const state = useStore(store, select);
+  return useMemo(() => ({ ...store, state }), [store, state]);
 };
