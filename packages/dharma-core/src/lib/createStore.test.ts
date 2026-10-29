@@ -300,6 +300,23 @@ describe("createStore", () => {
       localStorageSpy.mockRestore();
     });
 
+    it("should support storage that returns non-native thenables", async () => {
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        storage: {
+          getItem: () =>
+            ({
+              then: (resolve: (value: string) => void) =>
+                resolve(JSON.stringify({ count: 3 })),
+            }) as unknown as Promise<string>,
+          setItem: vi.fn(),
+        },
+      });
+      await vi.waitFor(() => expect(store.get()).toEqual({ count: 3 }));
+    });
+
     it("should use async storage", async () => {
       const listener = vi.fn();
       vi.spyOn(AsyncStorage, "setItem");

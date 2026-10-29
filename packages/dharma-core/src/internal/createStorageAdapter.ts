@@ -1,6 +1,9 @@
 import { SetState, StorageAPI, StoreConfig } from "../types/types";
 import { warn } from "./warn";
 
+const isThenable = (value: unknown): value is PromiseLike<unknown> =>
+  typeof (value as PromiseLike<unknown> | null)?.then === "function";
+
 const getDefaultStorage = (): StorageAPI | undefined => {
   try {
     // Accessing localStorage can throw, e.g. in sandboxed iframes or when cookies are disabled
@@ -37,7 +40,7 @@ export const createStorageAdapter = <TState, TActions>(
     try {
       let currentSnapshot = storage.getItem(key);
 
-      if (currentSnapshot instanceof Promise) {
+      if (isThenable(currentSnapshot)) {
         currentSnapshot = await currentSnapshot;
       }
 
@@ -73,7 +76,7 @@ export const createStorageAdapter = <TState, TActions>(
       let currentSnapshot = storage.getItem(key);
       const newSnapshot = serializer.stringify(newState);
 
-      if (currentSnapshot instanceof Promise) {
+      if (isThenable(currentSnapshot)) {
         currentSnapshot = await currentSnapshot;
       }
 
