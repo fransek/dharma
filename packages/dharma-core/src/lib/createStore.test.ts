@@ -79,6 +79,17 @@ describe("createStore", () => {
     expect(onDetach).toHaveBeenCalledOnce();
   });
 
+  it("should not notify subscribers when the state is unchanged", () => {
+    const listener = vi.fn();
+    const onChange = vi.fn();
+    const store = createStore({ initialState: { count: 0 }, onChange });
+    store.subscribe(listener);
+    store.set((state) => state);
+    store.reset();
+    expect(listener).toHaveBeenCalledOnce(); // Initial call on subscribe
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it("should call onAttach on first subscribe", () => {
     const initialState = { count: 0 };
     const store = createStore({
@@ -207,7 +218,7 @@ describe("createStore", () => {
       expect(store.get()).toEqual({ count: 2 });
     });
 
-    it("should add and remove focus event listener once", () => {
+    it("should add and remove window event listeners once", () => {
       const addEventListenerSpy = vi.spyOn(window, "addEventListener");
       const removeEventListenerSpy = vi.spyOn(window, "removeEventListener");
       const store = createStore({
@@ -217,10 +228,48 @@ describe("createStore", () => {
       });
       const unsubscribe = store.subscribe(vi.fn());
       const unsubscribe2 = store.subscribe(vi.fn());
-      expect(addEventListenerSpy).toHaveBeenCalledOnce();
+      const events = (spy: typeof addEventListenerSpy) =>
+        spy.mock.calls.map(([event]) => event);
+      expect(events(addEventListenerSpy)).toEqual(["focus", "storage"]);
       unsubscribe();
       unsubscribe2();
-      expect(removeEventListenerSpy).toHaveBeenCalledOnce();
+      expect(events(removeEventListenerSpy)).toEqual(["focus", "storage"]);
+    });
+
+    it("should update state when the storage changes in another tab", () => {
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+      });
+      store.subscribe(listener);
+      localStorage.setItem(key, JSON.stringify({ count: 2 }));
+      window.dispatchEvent(
+        new StorageEvent("storage", { key, storageArea: sessionStorage }),
+      );
+      expect(store.get()).toEqual(initialState);
+      window.dispatchEvent(
+        new StorageEvent("storage", { key, storageArea: localStorage }),
+      );
+      expect(store.get()).toEqual({ count: 2 });
+    });
+
+    it("should not overwrite state set while loading from async storage", async () => {
+      const pendingReads: ((value: string) => void)[] = [];
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        storage: {
+          getItem: () =>
+            new Promise<string>((resolve) => pendingReads.push(resolve)),
+          setItem: vi.fn(),
+        },
+      });
+      store.set({ count: 1 });
+      pendingReads.forEach((resolve) => resolve(JSON.stringify({ count: 5 })));
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(store.get()).toEqual({ count: 1 });
     });
 
     it("should use custom serializer", () => {

@@ -38,10 +38,16 @@ export const createStorageAdapter = <TState, TActions>(
 
   const syncWithSnapshot = async () => {
     try {
+      const prevState = get();
       let currentSnapshot = storage.getItem(key);
 
       if (isThenable(currentSnapshot)) {
         currentSnapshot = await currentSnapshot;
+
+        // The state changed while reading, so the snapshot is outdated
+        if (!Object.is(get(), prevState)) {
+          return;
+        }
       }
 
       if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
@@ -61,6 +67,13 @@ export const createStorageAdapter = <TState, TActions>(
     }
   };
 
+  // Syncs changes made in other tabs
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === key && event.storageArea === storage) {
+      syncWithSnapshot();
+    }
+  };
+
   const onAttach = () => {
     if (syncWithStorageOn === "attach") {
       syncWithSnapshot();
@@ -68,6 +81,7 @@ export const createStorageAdapter = <TState, TActions>(
 
     if (IS_BROWSER) {
       window.addEventListener("focus", syncWithSnapshot);
+      window.addEventListener("storage", onStorage);
     }
   };
 
@@ -92,6 +106,7 @@ export const createStorageAdapter = <TState, TActions>(
   const onDetach = () => {
     if (IS_BROWSER) {
       window.removeEventListener("focus", syncWithSnapshot);
+      window.removeEventListener("storage", onStorage);
     }
   };
 

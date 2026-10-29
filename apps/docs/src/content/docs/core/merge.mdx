@@ -16,7 +16,7 @@ const newState = merge(currentState, stateModifier);
 
 ## Returns
 
-The new state object, which is a combination of the current state and the state modifier.
+The new state object, which is a combination of the current state and the state modifier. If the state modifier resolves to the current state itself, it is returned as is.
 
 ## Usage
 

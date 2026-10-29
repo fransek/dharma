@@ -68,6 +68,19 @@ describe("createEffect", () => {
     expect(effectFn).toHaveBeenCalledTimes(1);
   });
 
+  it("should run the effect again when remounted", () => {
+    const effect = createEffect(
+      store,
+      (state) => effectFn(state.count),
+      (state) => [state.count],
+    );
+    effect.mount();
+    effect.unmount();
+    effect.mount();
+    expect(effectFn).toHaveBeenCalledTimes(2);
+    effect.unmount();
+  });
+
   it("should pass the store's state to the effect function", () => {
     const effect = createEffect(store, (state) => effectFn(state));
     effect.mount();

@@ -19,7 +19,7 @@ const effect = createEffect(store, effectFn, dependencyFn?);
 
 An `Effect` object with the following methods:
 
-- `mount` - Start listening to changes in the original store.
+- `mount` - Start listening to changes in the original store. The effect runs once on every mount.
 - `unmount` - Stop listening to changes in the original store.
 
 ## Usage

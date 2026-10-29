@@ -26,18 +26,19 @@ export const createStore = <TState, TActions = undefined>(
   };
 
   const set = (stateModifier: StateModifier<TState>) => {
+    const prevState = state;
     setSilently(stateModifier);
-    dispatch();
+
+    if (!Object.is(state, prevState)) {
+      dispatch();
+    }
+
     return state;
   };
 
   const resetSilently = () => setSilently(initialState);
 
-  const reset = () => {
-    resetSilently();
-    dispatch();
-    return state;
-  };
+  const reset = () => set(initialState);
 
   const listeners = new Set<Listener<TState>>();
   const actions = config.actions?.({

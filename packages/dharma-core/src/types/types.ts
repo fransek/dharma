@@ -84,7 +84,7 @@ export type BaseConfig<TState, TActions> = {
   onChange?: StoreEventListener<TState>;
 };
 
-export type MaybePromise<T> = T | Promise<T>;
+export type MaybePromise<T> = T | PromiseLike<T>;
 
 export type StorageAPI = {
   getItem: (key: string) => MaybePromise<string | null>;

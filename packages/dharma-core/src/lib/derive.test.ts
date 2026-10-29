@@ -138,33 +138,32 @@ describe("derive", () => {
     derived.unmount();
   });
 
-  it("should update the derived state when remounted", () => {
+  it("should stay up to date when not mounted", () => {
     const derived = derive(store, (state) => calculate(state.count));
-    derived.mount();
+    expect(derived.get()).toBe(0);
     increment();
     expect(derived.get()).toBe(2);
-    derived.unmount();
-    increment();
-    expect(derived.get()).toBe(2); // Stale
-    derived.mount();
-    expect(derived.get()).toBe(4);
-    derived.unmount();
+    expect(calculate).toHaveBeenCalledTimes(2);
   });
 
-  it("should update the derived state when remounted with dependencies", () => {
+  it("should stay up to date when not mounted with dependencies", () => {
     const derived = derive(
       store,
       (state) => calculate(state.count),
       (state) => [state.count],
     );
-    derived.mount();
+    expect(derived.get()).toBe(0);
+    setOther("bar");
+    expect(derived.get()).toBe(0);
     increment();
     expect(derived.get()).toBe(2);
-    derived.unmount();
-    increment();
-    expect(derived.get()).toBe(2); // Stale
-    derived.mount();
-    expect(derived.get()).toBe(4);
-    derived.unmount();
+    expect(calculate).toHaveBeenCalledTimes(2);
+  });
+
+  it("should not recompute when the original state is unchanged", () => {
+    const derived = derive(store, (state) => calculate(state.count));
+    derived.get();
+    derived.get();
+    expect(calculate).toHaveBeenCalledTimes(1);
   });
 });
