@@ -15,6 +15,14 @@ describe("createStore (node)", () => {
     expect(() => createStore(baseConfig)).not.toThrow();
   });
 
+  it("should not throw when window has no event listener API", () => {
+    // React Native defines window as globalThis without addEventListener
+    vi.stubGlobal("window", globalThis);
+    const store = createStore({ ...baseConfig, storage: new CustomStorage() });
+    expect(() => store.subscribe(vi.fn())()).not.toThrow();
+    vi.unstubAllGlobals();
+  });
+
   it("should use the provided storage", () => {
     const storage = new CustomStorage();
     const store = createStore({ ...baseConfig, storage });

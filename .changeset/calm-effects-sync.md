@@ -8,3 +8,4 @@
 - Persisted stores now sync with changes made in other tabs via the `storage` event.
 - Async storage no longer overwrites state set while it was being read.
 - `StorageAPI` now accepts any `PromiseLike`, not just native promises.
+- Persisted stores no longer throw on subscribe in React Native, where `window` exists without `addEventListener`.

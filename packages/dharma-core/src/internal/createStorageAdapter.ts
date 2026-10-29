@@ -23,6 +23,9 @@ export const createStorageAdapter = <TState, TActions>(
   }
 
   const IS_BROWSER = typeof window !== "undefined";
+  // React Native defines window without the event listener API
+  const CAN_LISTEN =
+    IS_BROWSER && typeof window.addEventListener === "function";
 
   const storage =
     config.storage ?? (IS_BROWSER ? getDefaultStorage() : undefined);
@@ -79,7 +82,7 @@ export const createStorageAdapter = <TState, TActions>(
       syncWithSnapshot();
     }
 
-    if (IS_BROWSER) {
+    if (CAN_LISTEN) {
       window.addEventListener("focus", syncWithSnapshot);
       window.addEventListener("storage", onStorage);
     }
@@ -104,7 +107,7 @@ export const createStorageAdapter = <TState, TActions>(
   };
 
   const onDetach = () => {
-    if (IS_BROWSER) {
+    if (CAN_LISTEN) {
       window.removeEventListener("focus", syncWithSnapshot);
       window.removeEventListener("storage", onStorage);
     }
