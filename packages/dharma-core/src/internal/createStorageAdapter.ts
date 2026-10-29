@@ -1,6 +1,18 @@
 import { SetState, StorageAPI, StoreConfig } from "../types/types";
 import { warn } from "./warn";
 
+const isThenable = (value: unknown): value is PromiseLike<unknown> =>
+  typeof (value as PromiseLike<unknown> | null)?.then === "function";
+
+const getDefaultStorage = (): StorageAPI | undefined => {
+  try {
+    // Accessing localStorage can throw, e.g. in sandboxed iframes or when cookies are disabled
+    return localStorage;
+  } catch {
+    return undefined;
+  }
+};
+
 export const createStorageAdapter = <TState, TActions>(
   config: StoreConfig<TState, TActions>,
   get: () => TState,
@@ -13,7 +25,7 @@ export const createStorageAdapter = <TState, TActions>(
   const IS_BROWSER = typeof window !== "undefined";
 
   const storage =
-    config.storage ?? (IS_BROWSER ? (localStorage as StorageAPI) : undefined);
+    config.storage ?? (IS_BROWSER ? getDefaultStorage() : undefined);
 
   if (!storage) {
     warn(
@@ -28,7 +40,7 @@ export const createStorageAdapter = <TState, TActions>(
     try {
       let currentSnapshot = storage.getItem(key);
 
-      if (currentSnapshot instanceof Promise) {
+      if (isThenable(currentSnapshot)) {
         currentSnapshot = await currentSnapshot;
       }
 
@@ -64,12 +76,12 @@ export const createStorageAdapter = <TState, TActions>(
       let currentSnapshot = storage.getItem(key);
       const newSnapshot = serializer.stringify(newState);
 
-      if (currentSnapshot instanceof Promise) {
+      if (isThenable(currentSnapshot)) {
         currentSnapshot = await currentSnapshot;
       }
 
       if (newSnapshot !== currentSnapshot) {
-        storage.setItem(key, newSnapshot);
+        await storage.setItem(key, newSnapshot);
       }
     } catch (e) {
       warn("Failed to update snapshot");

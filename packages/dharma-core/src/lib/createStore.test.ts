@@ -70,6 +70,15 @@ describe("createStore", () => {
     expect(store.get()).toEqual({ count: 1, other: "foobar" });
   });
 
+  it("should only call onDetach once when unsubscribe is called twice", () => {
+    const onDetach = vi.fn();
+    const store = createStore({ initialState: { count: 0 }, onDetach });
+    const unsubscribe = store.subscribe(vi.fn());
+    unsubscribe();
+    unsubscribe();
+    expect(onDetach).toHaveBeenCalledOnce();
+  });
+
   it("should call onAttach on first subscribe", () => {
     const initialState = { count: 0 };
     const store = createStore({
@@ -245,6 +254,67 @@ describe("createStore", () => {
         key,
         JSON.stringify({ count: 1 }),
       );
+    });
+
+    it("should persist changes made in onChange", () => {
+      const store = createStore({
+        persist: true,
+        key,
+        initialState: { count: 0, other: "foo" },
+        onChange: ({ state, set }) => set({ other: state.other + "bar" }),
+      });
+      store.set({ count: 1 });
+      expect(localStorage.getItem(key)).toBe(
+        JSON.stringify({ count: 1, other: "foobar" }),
+      );
+    });
+
+    it("should catch async storage write errors", async () => {
+      const consoleError = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+      vi.spyOn(console, "warn").mockImplementation(() => {});
+      const error = new Error("Write failed");
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        storage: {
+          getItem: async () => null,
+          setItem: () => Promise.reject(error),
+        },
+      });
+      store.set({ count: 1 });
+      await vi.waitFor(() => expect(consoleError).toHaveBeenCalledWith(error));
+    });
+
+    it("should not throw if localStorage is inaccessible", () => {
+      vi.spyOn(console, "warn").mockImplementation(() => {});
+      const localStorageSpy = vi
+        .spyOn(window, "localStorage", "get")
+        .mockImplementation(() => {
+          throw new DOMException("Access denied", "SecurityError");
+        });
+      const store = createStore({ persist: true, key, initialState });
+      expect(store.get()).toEqual(initialState);
+      localStorageSpy.mockRestore();
+    });
+
+    it("should support storage that returns non-native thenables", async () => {
+      const store = createStore({
+        persist: true,
+        key,
+        initialState,
+        storage: {
+          getItem: () =>
+            ({
+              then: (resolve: (value: string) => void) =>
+                resolve(JSON.stringify({ count: 3 })),
+            }) as unknown as Promise<string>,
+          setItem: vi.fn(),
+        },
+      });
+      await vi.waitFor(() => expect(store.get()).toEqual({ count: 3 }));
     });
 
     it("should use async storage", async () => {
