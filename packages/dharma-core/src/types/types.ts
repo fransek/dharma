@@ -117,6 +117,8 @@ export type PersistConfig<TState> = {
    * Set to "attach" when using SSR to avoid hydration errors.
    */
   syncWithStorageOn?: "load" | "attach";
+  /** Invoked when a storage error occurs. */
+  onStorageError?: (error: unknown) => void;
 };
 
 export type StoreConfig<TState, TActions> = BaseConfig<TState, TActions> &

@@ -1,5 +1,5 @@
+import { StorageUnavailableError } from "../lib/StorageUnavailableError";
 import { SetState, StorageAPI, StoreConfig } from "../types/types";
-import { warn } from "./warn";
 
 const isThenable = (value: unknown): value is PromiseLike<unknown> =>
   typeof (value as PromiseLike<unknown> | null)?.then === "function";
@@ -30,16 +30,21 @@ export const createStorageAdapter = <TState, TActions>(
   const storage =
     config.storage ?? (IS_BROWSER ? getDefaultStorage() : undefined);
 
+  const {
+    key,
+    serializer = JSON,
+    syncWithStorageOn = "load",
+    onStorageError,
+  } = config;
+
   if (!storage) {
-    warn(
-      "No storage provider found. If this happened during SSR, you can safely ignore this warning.",
-    );
+    onStorageError?.(new StorageUnavailableError(key));
     return null;
   }
 
-  const { key, serializer = JSON, syncWithStorageOn = "load" } = config;
-
   const syncWithSnapshot = async () => {
+    let nextState: TState;
+
     try {
       const prevState = get();
       let currentSnapshot = storage.getItem(key);
@@ -53,15 +58,17 @@ export const createStorageAdapter = <TState, TActions>(
         }
       }
 
-      if (currentSnapshot && currentSnapshot !== serializer.stringify(get())) {
-        set(serializer.parse(currentSnapshot));
+      if (!currentSnapshot || currentSnapshot === serializer.stringify(get())) {
+        return;
       }
-    } catch (e) {
-      warn(
-        "Failed to sync state with snapshot. If this happened during SSR, you can safely ignore this warning.",
-      );
-      console.error(e);
+
+      nextState = serializer.parse(currentSnapshot);
+    } catch (error) {
+      onStorageError?.(error);
+      return;
     }
+
+    set(nextState);
   };
 
   const onLoad = () => {
@@ -70,7 +77,6 @@ export const createStorageAdapter = <TState, TActions>(
     }
   };
 
-  // Syncs changes made in other tabs
   const onStorage = (event: StorageEvent) => {
     if (event.key === key && event.storageArea === storage) {
       syncWithSnapshot();
@@ -100,9 +106,8 @@ export const createStorageAdapter = <TState, TActions>(
       if (newSnapshot !== currentSnapshot) {
         await storage.setItem(key, newSnapshot);
       }
-    } catch (e) {
-      warn("Failed to update snapshot");
-      console.error(e);
+    } catch (error) {
+      onStorageError?.(error);
     }
   };
 

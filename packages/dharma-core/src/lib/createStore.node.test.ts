@@ -3,6 +3,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { StorageAPI } from "../types/types";
 import { createStore } from "./createStore";
+import { StorageUnavailableError } from "./StorageUnavailableError";
 
 describe("createStore (node)", () => {
   const baseConfig = {
@@ -30,22 +31,73 @@ describe("createStore (node)", () => {
     expect(storage.getItem("test")).toBe(JSON.stringify({ count: 1 }));
   });
 
-  it("should console.warn if storage methods throw", () => {
-    const faultyStorage = new FaultyStorage();
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-
-    const store = createStore({ ...baseConfig, storage: faultyStorage });
-
-    expect(warnSpy).toHaveBeenCalledWith(
-      "[dharma-core] Failed to sync state with snapshot. If this happened during SSR, you can safely ignore this warning.",
-    );
+  it("should report storage errors", () => {
+    const onStorageError = vi.fn();
+    const store = createStore({
+      ...baseConfig,
+      storage: new FaultyStorage(),
+      onStorageError,
+    });
+    expect(onStorageError).toHaveBeenLastCalledWith(new Error("Storage error"));
 
     store.set({ count: 1 });
-    expect(warnSpy).toHaveBeenCalledWith(
-      "[dharma-core] Failed to update snapshot",
-    );
+    expect(onStorageError).toHaveBeenCalledTimes(2);
+  });
 
-    warnSpy.mockRestore();
+  it("should report write errors", () => {
+    const onStorageError = vi.fn();
+    const error = new Error("Write failed");
+    const store = createStore({
+      ...baseConfig,
+      storage: {
+        getItem: () => null,
+        setItem: () => {
+          throw error;
+        },
+      },
+      onStorageError,
+    });
+    store.set({ count: 1 });
+    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(error);
+  });
+
+  it("should keep the state if the snapshot can't be parsed", () => {
+    const onStorageError = vi.fn();
+    const storage = new CustomStorage();
+    storage.setItem("test", "{not json");
+    const store = createStore({ ...baseConfig, storage, onStorageError });
+    expect(store.get()).toEqual(baseConfig.initialState);
+    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(
+      expect.any(SyntaxError),
+    );
+  });
+
+  it("should not write if the state can't be serialized", () => {
+    const onStorageError = vi.fn();
+    const error = new Error("Serialize error");
+    const storage = new CustomStorage();
+    const store = createStore({
+      ...baseConfig,
+      storage,
+      serializer: {
+        parse: JSON.parse,
+        stringify: () => {
+          throw error;
+        },
+      },
+      onStorageError,
+    });
+    store.set({ count: 1 });
+    expect(storage.getItem("test")).toBeNull();
+    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(error);
+  });
+
+  it("should report a missing storage provider outside the browser", () => {
+    const onStorageError = vi.fn();
+    createStore({ ...baseConfig, onStorageError });
+    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(
+      expect.any(StorageUnavailableError),
+    );
   });
 });
 
