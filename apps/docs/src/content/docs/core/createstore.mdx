@@ -49,8 +49,11 @@ The `config` object can contain the following properties:
 - `storage?` - The storage to use for persisting the state. Defaults to local storage if available.
   The state is synchronized with the storage when the window gains focus, and when another tab changes local or session storage.
 - `syncWithStorageOn?` - When to initially synchronize the store's state with the storage. Defaults to "load".
-  Set to "attach" when using SSR to avoid hydration errors.
+  Set to "attach" when using SSR to avoid hydration errors. See [Persisting state with SSR](#persisting-state-with-ssr).
 - `serializer?` - The serializer to use for storing the state. Defaults to JSON.
+- `onStorageError?` - Invoked with the error when the storage or the serializer throws, or with a `StorageUnavailableError` when no storage is available.
+  The failed read or write is skipped and the state is left unchanged.
+  Storage errors are not logged, so use this to surface them. A missing storage provider is also reported during SSR, where it can be safely ignored.
 
 <Aside>
   When persisting state it must be serializable. The default serializer is JSON
@@ -112,6 +115,34 @@ const store = createStore({
 });
 ```
 
+### Persisting state with SSR
+
+By default, a persisted store reads from storage as soon as it is created. When the page is rendered on the server, the server has no access to the client's storage and renders with the initial state, while the client renders with the persisted state. The two renders differ, which causes a hydration mismatch.
+
+Setting `syncWithStorageOn` to `"attach"` delays the read until the store is first subscribed to. With [`useStore`](/react/usestore) that happens after hydration, so the first client render matches the server, and the persisted state is applied right after as a regular update.
+
+```ts
+import { createStore } from "dharma-core";
+
+const store = createStore({
+  persist: true,
+  key: "count",
+  syncWithStorageOn: "attach",
+  initialState: { count: 0 },
+  onStorageError: (error) => {
+    // There's no storage on the server, so nothing to report
+    if (typeof window === "undefined") return;
+    reportError(error);
+  },
+});
+```
+
+<Aside>
+  Since the persisted state is applied after the first render, components
+  briefly show the initial state. If that causes a visible flash, consider
+  rendering a placeholder until the component has mounted.
+</Aside>
+
 ### Custom storage and serializer
 
 ```ts
@@ -128,5 +159,18 @@ const store = createStore({
     increment: () => set((state) => ({ count: state.count + 1 })),
     decrement: () => set((state) => ({ count: state.count - 1 })),
   }),
+});
+```
+
+### Handling storage errors
+
+```ts
+import { createStore } from "dharma-core";
+
+const store = createStore({
+  persist: true,
+  key: "count",
+  initialState: { count: 0 },
+  onStorageError: (error) => reportError(error),
 });
 ```

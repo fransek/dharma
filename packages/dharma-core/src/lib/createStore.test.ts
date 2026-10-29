@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Serializer, StorageAPI } from "../types/types";
 import { createStore } from "./createStore";
+import { StorageUnavailableError } from "./StorageUnavailableError";
 
 describe("createStore", () => {
   const initialState = { count: 0 };
@@ -148,6 +149,10 @@ describe("createStore", () => {
     beforeEach(() => {
       localStorage.clear();
       sessionStorage.clear();
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
     });
 
     it("should initialize with the given initial state", () => {
@@ -319,10 +324,7 @@ describe("createStore", () => {
     });
 
     it("should catch async storage write errors", async () => {
-      const consoleError = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
-      vi.spyOn(console, "warn").mockImplementation(() => {});
+      const onStorageError = vi.fn();
       const error = new Error("Write failed");
       const store = createStore({
         persist: true,
@@ -332,21 +334,49 @@ describe("createStore", () => {
           getItem: async () => null,
           setItem: () => Promise.reject(error),
         },
+        onStorageError,
       });
       store.set({ count: 1 });
-      await vi.waitFor(() => expect(consoleError).toHaveBeenCalledWith(error));
+      await vi.waitFor(() =>
+        expect(onStorageError).toHaveBeenCalledWith(error),
+      );
+    });
+
+    it("should report a missing storage provider in the browser", () => {
+      const onStorageError = vi.fn();
+      vi.spyOn(window, "localStorage", "get").mockImplementation(() => {
+        throw new DOMException("Access denied", "SecurityError");
+      });
+      createStore({ persist: true, key, initialState, onStorageError });
+      expect(onStorageError).toHaveBeenCalledExactlyOnceWith(
+        expect.any(StorageUnavailableError),
+      );
+    });
+
+    it("should catch async storage read errors", async () => {
+      const onStorageError = vi.fn();
+      const error = new Error("Read failed");
+      createStore({
+        persist: true,
+        key,
+        initialState,
+        storage: {
+          getItem: () => Promise.reject(error),
+          setItem: vi.fn(),
+        },
+        onStorageError,
+      });
+      await vi.waitFor(() =>
+        expect(onStorageError).toHaveBeenCalledWith(error),
+      );
     });
 
     it("should not throw if localStorage is inaccessible", () => {
-      vi.spyOn(console, "warn").mockImplementation(() => {});
-      const localStorageSpy = vi
-        .spyOn(window, "localStorage", "get")
-        .mockImplementation(() => {
-          throw new DOMException("Access denied", "SecurityError");
-        });
+      vi.spyOn(window, "localStorage", "get").mockImplementation(() => {
+        throw new DOMException("Access denied", "SecurityError");
+      });
       const store = createStore({ persist: true, key, initialState });
       expect(store.get()).toEqual(initialState);
-      localStorageSpy.mockRestore();
     });
 
     it("should support storage that returns non-native thenables", async () => {
@@ -378,11 +408,12 @@ describe("createStore", () => {
       });
       store.subscribe(listener);
       expect(listener).toHaveBeenCalledExactlyOnceWith(initialState);
-      await Promise.resolve(store.set({ count: 1 }));
+      store.set({ count: 1 });
       const expectedSnapshot = JSON.stringify({ count: 1 });
-      const snapshot = await AsyncStorage.getItem(key);
+      await vi.waitFor(async () =>
+        expect(await AsyncStorage.getItem(key)).toBe(expectedSnapshot),
+      );
       expect(AsyncStorage.setItem).toHaveBeenCalledWith(key, expectedSnapshot);
-      expect(snapshot).toBe(expectedSnapshot);
     });
   });
 });
