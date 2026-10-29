@@ -11,7 +11,6 @@ env:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -21,29 +20,27 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # Required to mint the OIDC token used for trusted publishing
       id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Uses the version from `packageManager` in package.json. `changeset publish`
+      # runs `pnpm publish`, and pnpm's OIDC (trusted publishing) support needs >=12
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 24
           cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build packages
-        run: pnpm build
-
-      - name: Create release PR or publish packages
+      - name: Create release PR or build and publish packages
         uses: changesets/action@v1
         with:
           publish: pnpm ci:publish
@@ -51,4 +48,3 @@ jobs:
           commit: "release: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -7,12 +7,13 @@
   "bugs": {
     "url": "https://github.com/fransek/dharma/issues"
   },
+  "packageManager": "pnpm@12.4.2",
   "scripts": {
     "build": "pnpm -F \"./packages/*\" build",
     "sandbox": "pnpm -F sandbox dev",
     "docs:dev": "pnpm -F docs dev",
     "docs:build": "pnpm -F docs build",
-    "ci:publish": "changeset publish",
+    "ci:publish": "pnpm build && changeset publish",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui --coverage",
