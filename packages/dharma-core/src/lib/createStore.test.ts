@@ -338,7 +338,7 @@ describe("createStore", () => {
       });
       store.set({ count: 1 });
       await vi.waitFor(() =>
-        expect(onStorageError).toHaveBeenCalledWith(error),
+        expect(onStorageError).toHaveBeenCalledWith(error, expect.anything()),
       );
     });
 
@@ -350,6 +350,7 @@ describe("createStore", () => {
       createStore({ persist: true, key, initialState, onStorageError });
       expect(onStorageError).toHaveBeenCalledExactlyOnceWith(
         expect.any(StorageUnavailableError),
+        expect.objectContaining({ state: initialState }),
       );
     });
 
@@ -367,7 +368,7 @@ describe("createStore", () => {
         onStorageError,
       });
       await vi.waitFor(() =>
-        expect(onStorageError).toHaveBeenCalledWith(error),
+        expect(onStorageError).toHaveBeenCalledWith(error, expect.anything()),
       );
     });
 

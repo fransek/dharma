@@ -53,6 +53,7 @@ The `config` object can contain the following properties:
 - `serializer?` - The serializer to use for storing the state. Defaults to JSON.
 - `onStorageError?` - Invoked with the error when the storage or the serializer throws, or with a `StorageUnavailableError` when no storage is available.
   The failed read or write is skipped and the state is left unchanged.
+  The second argument is the same context passed to the other event hooks, so the state can be recovered with `set` or `reset`.
   Storage errors are not logged, so use this to surface them. A missing storage provider is also reported during SSR, where it can be safely ignored.
 
 <Aside>
@@ -171,6 +172,10 @@ const store = createStore({
   persist: true,
   key: "count",
   initialState: { count: 0 },
-  onStorageError: (error) => reportError(error),
+  onStorageError: (error, { reset }) => {
+    reportError(error);
+    // Fall back to the initial state if the persisted state couldn't be loaded
+    if (error instanceof SyntaxError) reset();
+  },
 });
 ```

@@ -118,7 +118,7 @@ export type PersistConfig<TState> = {
    */
   syncWithStorageOn?: "load" | "attach";
   /** Invoked when a storage error occurs. */
-  onStorageError?: (error: unknown) => void;
+  onStorageError?: (error: unknown, context: StoreEventContext<TState>) => void;
 };
 
 export type StoreConfig<TState, TActions> = BaseConfig<TState, TActions> &

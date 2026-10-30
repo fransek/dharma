@@ -1,5 +1,10 @@
 import { StorageUnavailableError } from "../lib/StorageUnavailableError";
-import { SetState, StorageAPI, StoreConfig } from "../types/types";
+import {
+  SetState,
+  StorageAPI,
+  StoreConfig,
+  StoreEventContext,
+} from "../types/types";
 
 const isThenable = (value: unknown): value is PromiseLike<unknown> =>
   typeof (value as PromiseLike<unknown> | null)?.then === "function";
@@ -17,6 +22,7 @@ export const createStorageAdapter = <TState, TActions>(
   config: StoreConfig<TState, TActions>,
   get: () => TState,
   set: SetState<TState>,
+  getContext: () => StoreEventContext<TState>,
 ) => {
   if (!config.persist) {
     return null;
@@ -38,7 +44,7 @@ export const createStorageAdapter = <TState, TActions>(
   } = config;
 
   if (!storage) {
-    onStorageError?.(new StorageUnavailableError(key));
+    onStorageError?.(new StorageUnavailableError(key), getContext());
     return null;
   }
 
@@ -64,7 +70,7 @@ export const createStorageAdapter = <TState, TActions>(
 
       nextState = serializer.parse(currentSnapshot);
     } catch (error) {
-      onStorageError?.(error);
+      onStorageError?.(error, getContext());
       return;
     }
 
@@ -107,7 +113,7 @@ export const createStorageAdapter = <TState, TActions>(
         await storage.setItem(key, newSnapshot);
       }
     } catch (error) {
-      onStorageError?.(error);
+      onStorageError?.(error, getContext());
     }
   };
 

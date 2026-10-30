@@ -1,5 +1,11 @@
 import { createStorageAdapter } from "../internal/createStorageAdapter";
-import { Listener, StateModifier, Store, StoreConfig } from "../types/types";
+import {
+  Listener,
+  StateModifier,
+  Store,
+  StoreConfig,
+  StoreEventContext,
+} from "../types/types";
 import { merge } from "./merge";
 
 /**
@@ -40,6 +46,13 @@ export const createStore = <TState, TActions = undefined>(
 
   const reset = () => set(initialState);
 
+  const getContext = (): StoreEventContext<TState> => ({
+    state,
+    set,
+    reset,
+    initialState,
+  });
+
   const listeners = new Set<Listener<TState>>();
   const actions = config.actions?.({
     set,
@@ -47,12 +60,12 @@ export const createStore = <TState, TActions = undefined>(
     reset,
     initialState,
   }) as TActions;
-  const storageAdapter = createStorageAdapter(config, get, set);
+  const storageAdapter = createStorageAdapter(config, get, set, getContext);
 
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       storageAdapter?.onAttach();
-      onAttach?.({ state, set, reset, initialState });
+      onAttach?.(getContext());
     }
 
     listener(state);
@@ -61,7 +74,7 @@ export const createStore = <TState, TActions = undefined>(
     return () => {
       if (listeners.delete(listener) && listeners.size === 0) {
         storageAdapter?.onDetach();
-        onDetach?.({ state, set, reset, initialState });
+        onDetach?.(getContext());
       }
     };
   };
@@ -78,7 +91,7 @@ export const createStore = <TState, TActions = undefined>(
   };
 
   storageAdapter?.onLoad();
-  onLoad?.({ state, set, reset, initialState });
+  onLoad?.(getContext());
 
   return {
     get,

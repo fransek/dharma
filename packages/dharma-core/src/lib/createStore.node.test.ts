@@ -38,7 +38,10 @@ describe("createStore (node)", () => {
       storage: new FaultyStorage(),
       onStorageError,
     });
-    expect(onStorageError).toHaveBeenLastCalledWith(new Error("Storage error"));
+    expect(onStorageError).toHaveBeenLastCalledWith(
+      new Error("Storage error"),
+      expect.anything(),
+    );
 
     store.set({ count: 1 });
     expect(onStorageError).toHaveBeenCalledTimes(2);
@@ -58,7 +61,25 @@ describe("createStore (node)", () => {
       onStorageError,
     });
     store.set({ count: 1 });
-    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(error);
+    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(error, {
+      state: { count: 1 },
+      initialState: baseConfig.initialState,
+      set: store.set,
+      reset: store.reset,
+    });
+  });
+
+  it("should allow recovering from storage errors with the context", () => {
+    const storage = new CustomStorage();
+    storage.setItem("test", "{not json");
+    const store = createStore({
+      persist: true,
+      key: "test",
+      initialState: { count: 0 },
+      storage,
+      onStorageError: (_error, { set }) => set({ count: -1 }),
+    });
+    expect(store.get()).toEqual({ count: -1 });
   });
 
   it("should keep the state if the snapshot can't be parsed", () => {
@@ -69,6 +90,7 @@ describe("createStore (node)", () => {
     expect(store.get()).toEqual(baseConfig.initialState);
     expect(onStorageError).toHaveBeenCalledExactlyOnceWith(
       expect.any(SyntaxError),
+      expect.objectContaining({ state: baseConfig.initialState }),
     );
   });
 
@@ -89,7 +111,10 @@ describe("createStore (node)", () => {
     });
     store.set({ count: 1 });
     expect(storage.getItem("test")).toBeNull();
-    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(error);
+    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(
+      error,
+      expect.anything(),
+    );
   });
 
   it("should report a missing storage provider outside the browser", () => {
@@ -97,6 +122,7 @@ describe("createStore (node)", () => {
     createStore({ ...baseConfig, onStorageError });
     expect(onStorageError).toHaveBeenCalledExactlyOnceWith(
       expect.any(StorageUnavailableError),
+      expect.objectContaining({ state: baseConfig.initialState }),
     );
   });
 });
