@@ -48,6 +48,17 @@ export const createStorageAdapter = <TState, TActions>(
     return null;
   }
 
+  let isReportingError = false;
+
+  const reportError = (error: unknown) => {
+    isReportingError = true;
+    try {
+      onStorageError?.(error, getContext());
+    } finally {
+      isReportingError = false;
+    }
+  };
+
   const syncWithSnapshot = async () => {
     let nextState: TState;
 
@@ -70,7 +81,7 @@ export const createStorageAdapter = <TState, TActions>(
 
       nextState = serializer.parse(currentSnapshot);
     } catch (error) {
-      onStorageError?.(error, getContext());
+      reportError(error);
       return;
     }
 
@@ -101,6 +112,9 @@ export const createStorageAdapter = <TState, TActions>(
   };
 
   const onChange = async (newState: TState) => {
+    // A write caused by onStorageError that fails again would call it in a loop
+    const isRecovery = isReportingError;
+
     try {
       let currentSnapshot = storage.getItem(key);
       const newSnapshot = serializer.stringify(newState);
@@ -113,7 +127,9 @@ export const createStorageAdapter = <TState, TActions>(
         await storage.setItem(key, newSnapshot);
       }
     } catch (error) {
-      onStorageError?.(error, getContext());
+      if (!isRecovery) {
+        reportError(error);
+      }
     }
   };
 

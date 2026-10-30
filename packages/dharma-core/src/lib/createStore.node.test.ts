@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { describe, expect, it, vi } from "vitest";
-import { StorageAPI } from "../types/types";
+import { StorageAPI, StoreEventContext } from "../types/types";
 import { createStore } from "./createStore";
 import { StorageUnavailableError } from "./StorageUnavailableError";
 
@@ -80,6 +80,47 @@ describe("createStore (node)", () => {
       onStorageError: (_error, { set }) => set({ count: -1 }),
     });
     expect(store.get()).toEqual({ count: -1 });
+  });
+
+  it("should not loop when the state set in onStorageError can't be written", () => {
+    const onStorageError = vi.fn(
+      (_error: unknown, { set }: StoreEventContext<{ count: bigint }>) =>
+        set({ count: 0n }),
+    );
+    const store = createStore({
+      persist: true,
+      key: "test",
+      initialState: { count: 0n },
+      storage: new CustomStorage(),
+      onStorageError,
+    });
+    store.set({ count: 1n });
+    expect(store.get()).toEqual({ count: 0n });
+    expect(onStorageError).toHaveBeenCalledExactlyOnceWith(
+      expect.any(TypeError),
+      expect.anything(),
+    );
+  });
+
+  it("should not loop when the state set in onStorageError can't be written async", async () => {
+    const onStorageError = vi.fn(
+      (_error: unknown, { set }: StoreEventContext<{ count: number }>) =>
+        set({ count: -1 }),
+    );
+    const store = createStore({
+      persist: true,
+      key: "test",
+      initialState: { count: 0 },
+      storage: {
+        getItem: async () => null,
+        setItem: () => Promise.reject(new Error("Write failed")),
+      },
+      onStorageError,
+    });
+    store.set({ count: 1 });
+    await vi.waitFor(() => expect(store.get()).toEqual({ count: -1 }));
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    expect(onStorageError).toHaveBeenCalledOnce();
   });
 
   it("should keep the state if the snapshot can't be parsed", () => {
