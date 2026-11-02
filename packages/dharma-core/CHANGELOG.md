@@ -1,5 +1,19 @@
 # dharma-core
 
+## 0.15.0
+
+### Minor Changes
+
+- [#147](https://github.com/fransek/dharma/pull/147) [`4b5d3af`](https://github.com/fransek/dharma/commit/4b5d3af5010c9ce4f9d0270cba684535bf0e0d9a) Thanks [@fransek](https://github.com/fransek)! - Add `get` to the context passed to `onLoad`, `onAttach`, `onDetach` and `onChange`, and deprecate `state`.
+
+  `state` is a snapshot taken when the hook is invoked, so it goes stale after calling `set` or `reset`, or after an `await`. `get()` always returns the current state. Replace `({ state }) => ...` with `({ get }) => { const state = get(); ... }`.
+
+- [#147](https://github.com/fransek/dharma/pull/147) [`4b5d3af`](https://github.com/fransek/dharma/commit/4b5d3af5010c9ce4f9d0270cba684535bf0e0d9a) Thanks [@fransek](https://github.com/fransek)! - **Breaking:** Notify subscribers of `set` and `reset` calls made asynchronously inside `onChange`.
+
+  Previously, `onChange` received a silent `set`, so changes made after an `await` updated the state without notifying subscribers, persisting, or invoking `onChange`. Now only calls made synchronously inside `onChange` are folded into the current change. Asynchronous calls are regular changes and trigger `onChange` again, so guard them to avoid an infinite loop.
+
+- [#147](https://github.com/fransek/dharma/pull/147) [`4b5d3af`](https://github.com/fransek/dharma/commit/4b5d3af5010c9ce4f9d0270cba684535bf0e0d9a) Thanks [@fransek](https://github.com/fransek)! - `Serializer` is no longer generic. Like `JSON`, `stringify` takes `any` and `parse` returns `any`.
+
 ## 0.14.0
 
 ### Minor Changes
