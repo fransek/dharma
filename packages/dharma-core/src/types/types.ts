@@ -35,13 +35,13 @@ export type Effect = {
   unmount: () => void;
 };
 
+// TODO: Deprecate and replace occurrences with `ActionContext` once `state` is removed.
 export type StoreEventContext<TState> = {
-  /** Returns the current state of the store. Can be called at any time, including after an `await`. */
+  /** Returns the current state of the store. */
   get: () => TState;
   /**
-   * A snapshot of the state at the moment the hook was invoked.
-   *
-   * @deprecated Use `get()` instead. `state` is not updated by subsequent calls to `set` or `reset`, or after an `await`.
+   * A snapshot of the state.
+   * @deprecated Use `get()` instead.
    */
   state: TState;
   /** The initial state of the store. */
@@ -97,10 +97,9 @@ export type StorageAPI = {
   setItem: (key: string, value: string) => MaybePromise<void>;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Serializer<T = any> = {
-  stringify: (value: T) => string;
-  parse: (value: string) => T;
+export type Serializer = {
+  stringify: (value: unknown) => string;
+  parse: (value: string) => unknown;
 };
 
 export type NoPersistConfig = {
@@ -108,7 +107,7 @@ export type NoPersistConfig = {
   persist?: false;
 };
 
-export type PersistConfig<TState> = {
+export type PersistConfig = {
   /** Whether to persist the state of the store. */
   persist: true;
   /** The unique key used to identify this store in storage. Required if `persist` is true. */
@@ -116,7 +115,7 @@ export type PersistConfig<TState> = {
   /** The storage to use for persisting the state. Defaults to local storage if available. */
   storage?: StorageAPI;
   /** The serializer to use for storing the state. Defaults to JSON. */
-  serializer?: Serializer<TState>;
+  serializer?: Serializer;
   /**
    * When to initially synchronize the store's state with the storage. Defaults to "load".
    *
@@ -128,4 +127,4 @@ export type PersistConfig<TState> = {
 };
 
 export type StoreConfig<TState, TActions> = BaseConfig<TState, TActions> &
-  (PersistConfig<TState> | NoPersistConfig);
+  (PersistConfig | NoPersistConfig);
