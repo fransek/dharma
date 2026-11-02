@@ -50,6 +50,25 @@ Each hook receives a context object with:
 - `initialState` - The initial state of the store.
 - `state` - _Deprecated._ A snapshot of the state at the moment the hook was invoked. Use `get()` instead.
 
+<Aside type="caution">
+  Calls to `set` made synchronously inside `onChange` are folded into the
+  current change, so they don't trigger `onChange` again. Calls made
+  asynchronously (e.g. after an `await`) are regular changes: they notify
+  subscribers and trigger `onChange` again. Guard such calls so they only set
+  state when something relevant changed, otherwise `onChange` will loop
+  indefinitely.
+
+```ts
+onChange: async ({ get, set }) => {
+  const { query, resultsFor } = get();
+  if (query === resultsFor) return;
+  const results = await search(query);
+  set({ results, resultsFor: query });
+},
+```
+
+</Aside>
+
 **Persistence**
 
 - `persist?` - Whether to persist the state of the store.
