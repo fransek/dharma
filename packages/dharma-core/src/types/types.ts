@@ -36,7 +36,13 @@ export type Effect = {
 };
 
 export type StoreEventContext<TState> = {
-  /** The current state of the store. */
+  /** Returns the current state of the store. Can be called at any time, including after an `await`. */
+  get: () => TState;
+  /**
+   * A snapshot of the state at the moment the hook was invoked.
+   *
+   * @deprecated Use `get()` instead. `state` is not updated by subsequent calls to `set` or `reset`, or after an `await`.
+   */
   state: TState;
   /** The initial state of the store. */
   initialState: TState;

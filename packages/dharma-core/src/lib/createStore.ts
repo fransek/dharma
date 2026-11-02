@@ -52,7 +52,7 @@ export const createStore = <TState, TActions = undefined>(
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       storageAdapter?.onAttach();
-      onAttach?.({ state, set, reset, initialState });
+      onAttach?.({ get, state, set, reset, initialState });
     }
 
     listener(state);
@@ -61,13 +61,14 @@ export const createStore = <TState, TActions = undefined>(
     return () => {
       if (listeners.delete(listener) && listeners.size === 0) {
         storageAdapter?.onDetach();
-        onDetach?.({ state, set, reset, initialState });
+        onDetach?.({ get, state, set, reset, initialState });
       }
     };
   };
 
   const dispatch = () => {
     onChange?.({
+      get,
       state,
       set: setSilently,
       reset: resetSilently,
@@ -78,7 +79,7 @@ export const createStore = <TState, TActions = undefined>(
   };
 
   storageAdapter?.onLoad();
-  onLoad?.({ state, set, reset, initialState });
+  onLoad?.({ get, state, set, reset, initialState });
 
   return {
     get,

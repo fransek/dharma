@@ -65,7 +65,7 @@ describe("createStore", () => {
     const initialState = { count: 0, other: "foo" };
     const store = createStore({
       initialState,
-      onChange: ({ state, set }) => set({ other: state.other + "bar" }),
+      onChange: ({ get, set }) => set({ other: get().other + "bar" }),
     });
     store.set({ count: 1 });
     expect(store.get()).toEqual({ count: 1, other: "foobar" });
@@ -95,7 +95,7 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      onAttach: ({ state, set }) => set({ count: state.count + 1 }),
+      onAttach: ({ get, set }) => set({ count: get().count + 1 }),
     });
     const listener = vi.fn();
     store.subscribe(listener);
@@ -106,7 +106,7 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      onDetach: ({ state, set }) => set({ count: state.count + 1 }),
+      onDetach: ({ get, set }) => set({ count: get().count + 1 }),
     });
     const listener = vi.fn();
     const unsubscribe = store.subscribe(listener);
@@ -118,9 +118,52 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      onLoad: ({ state, set }) => set({ count: state.count + 1 }),
+      onLoad: ({ get, set }) => set({ count: get().count + 1 }),
     });
     expect(store.get().count).toBe(1);
+  });
+
+  it("should return the latest state from get in event hooks", () => {
+    const snapshots: number[] = [];
+    createStore({
+      initialState: { count: 0 },
+      onLoad: ({ get, state, set }) => {
+        set({ count: 1 });
+        snapshots.push(state.count, get().count);
+      },
+    });
+    expect(snapshots).toEqual([0, 1]);
+  });
+
+  it("should return the latest state from get in onChange", () => {
+    const snapshots: number[] = [];
+    const store = createStore({
+      initialState: { count: 0 },
+      onChange: ({ get, state, set }) => {
+        set({ count: 10 });
+        snapshots.push(state.count, get().count);
+      },
+    });
+    store.set({ count: 1 });
+    expect(snapshots).toEqual([1, 10]);
+  });
+
+  it("should return the latest state from get after an await", async () => {
+    let resolve!: () => void;
+    const done = new Promise<void>((r) => (resolve = r));
+    const snapshots: number[] = [];
+    const store = createStore({
+      initialState: { count: 0 },
+      onAttach: async ({ get, state }) => {
+        await Promise.resolve();
+        snapshots.push(state.count, get().count);
+        resolve();
+      },
+    });
+    store.subscribe(vi.fn());
+    store.set({ count: 5 });
+    await done;
+    expect(snapshots).toEqual([0, 5]);
   });
 
   describe("atomic stores", () => {
@@ -315,7 +358,7 @@ describe("createStore", () => {
         persist: true,
         key,
         initialState: { count: 0, other: "foo" },
-        onChange: ({ state, set }) => set({ other: state.other + "bar" }),
+        onChange: ({ get, set }) => set({ other: get().other + "bar" }),
       });
       store.set({ count: 1 });
       expect(localStorage.getItem(key)).toBe(
