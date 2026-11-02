@@ -40,7 +40,7 @@ export const deeplyEquals = (a: unknown, b: unknown): boolean => {
   }
 
   for (const key of keysA) {
-    if (!Object.prototype.hasOwnProperty.call(b, key)) {
+    if (!Object.hasOwn(b, key)) {
       return false;
     }
     if (

@@ -1,5 +1,11 @@
 import { createStorageAdapter } from "../internal/createStorageAdapter";
-import { Listener, StateModifier, Store, StoreConfig } from "../types/types";
+import {
+  Listener,
+  StateModifier,
+  Store,
+  StoreConfig,
+  StoreEventContext,
+} from "../types/types";
 import { merge } from "./merge";
 
 /**
@@ -18,41 +24,48 @@ export const createStore = <TState, TActions = undefined>(
 
   let state = initialState;
 
-  const get = () => state;
+  // Set while onChange runs, so its synchronous sets join the current dispatch
+  let isSilent = false;
 
-  const setSilently = (stateModifier: StateModifier<TState>) => {
-    state = merge(state, stateModifier);
-    return state;
-  };
+  const get = () => state;
 
   const set = (stateModifier: StateModifier<TState>) => {
     const prevState = state;
-    setSilently(stateModifier);
+    state = merge(state, stateModifier);
 
-    if (!Object.is(state, prevState)) {
+    if (!Object.is(state, prevState) && !isSilent) {
       dispatch();
     }
 
     return state;
   };
 
-  const resetSilently = () => setSilently(initialState);
-
   const reset = () => set(initialState);
 
   const listeners = new Set<Listener<TState>>();
+
   const actions = config.actions?.({
     set,
     get,
     reset,
     initialState,
   }) as TActions;
+
+  // TODO: Replace with a static object once `state` is removed.
+  const getContext = (): StoreEventContext<TState> => ({
+    get,
+    state,
+    set,
+    reset,
+    initialState,
+  });
+
   const storageAdapter = createStorageAdapter(config, get, set);
 
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       storageAdapter?.onAttach();
-      onAttach?.({ state, set, reset, initialState });
+      onAttach?.(getContext());
     }
 
     listener(state);
@@ -61,24 +74,24 @@ export const createStore = <TState, TActions = undefined>(
     return () => {
       if (listeners.delete(listener) && listeners.size === 0) {
         storageAdapter?.onDetach();
-        onDetach?.({ state, set, reset, initialState });
+        onDetach?.(getContext());
       }
     };
   };
 
   const dispatch = () => {
-    onChange?.({
-      state,
-      set: setSilently,
-      reset: resetSilently,
-      initialState,
-    });
+    isSilent = true;
+    try {
+      onChange?.(getContext());
+    } finally {
+      isSilent = false;
+    }
     storageAdapter?.onChange(state);
     listeners.forEach((listener) => listener(state));
   };
 
   storageAdapter?.onLoad();
-  onLoad?.({ state, set, reset, initialState });
+  onLoad?.(getContext());
 
   return {
     get,

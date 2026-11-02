@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Serializer, StorageAPI } from "../types/types";
+import { createEffect } from "./createEffect";
 import { createStore } from "./createStore";
 import { StorageUnavailableError } from "./StorageUnavailableError";
 
@@ -65,7 +66,7 @@ describe("createStore", () => {
     const initialState = { count: 0, other: "foo" };
     const store = createStore({
       initialState,
-      onChange: ({ state, set }) => set({ other: state.other + "bar" }),
+      onChange: ({ get, set }) => set({ other: get().other + "bar" }),
     });
     store.set({ count: 1 });
     expect(store.get()).toEqual({ count: 1, other: "foobar" });
@@ -95,7 +96,7 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      onAttach: ({ state, set }) => set({ count: state.count + 1 }),
+      onAttach: ({ get, set }) => set({ count: get().count + 1 }),
     });
     const listener = vi.fn();
     store.subscribe(listener);
@@ -106,7 +107,7 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      onDetach: ({ state, set }) => set({ count: state.count + 1 }),
+      onDetach: ({ get, set }) => set({ count: get().count + 1 }),
     });
     const listener = vi.fn();
     const unsubscribe = store.subscribe(listener);
@@ -118,9 +119,93 @@ describe("createStore", () => {
     const initialState = { count: 0 };
     const store = createStore({
       initialState,
-      onLoad: ({ state, set }) => set({ count: state.count + 1 }),
+      onLoad: ({ get, set }) => set({ count: get().count + 1 }),
     });
     expect(store.get().count).toBe(1);
+  });
+
+  it("should return the latest state from get in event hooks", () => {
+    const snapshots: number[] = [];
+    createStore({
+      initialState: { count: 0 },
+      onLoad: ({ get, state, set }) => {
+        set({ count: 1 });
+        snapshots.push(state.count, get().count);
+      },
+    });
+    expect(snapshots).toEqual([0, 1]);
+  });
+
+  it("should return the latest state from get in onChange", () => {
+    const snapshots: number[] = [];
+    const store = createStore({
+      initialState: { count: 0 },
+      onChange: ({ get, state, set }) => {
+        set({ count: 10 });
+        snapshots.push(state.count, get().count);
+      },
+    });
+    store.set({ count: 1 });
+    expect(snapshots).toEqual([1, 10]);
+  });
+
+  it("should return the latest state from get after an await", async () => {
+    let resolve!: () => void;
+    const done = new Promise<void>((r) => (resolve = r));
+    const snapshots: number[] = [];
+    const store = createStore({
+      initialState: { count: 0 },
+      onAttach: async ({ get, state }) => {
+        await Promise.resolve();
+        snapshots.push(state.count, get().count);
+        resolve();
+      },
+    });
+    store.subscribe(vi.fn());
+    store.set({ count: 5 });
+    await done;
+    expect(snapshots).toEqual([0, 5]);
+  });
+
+  it("should not dispatch again for synchronous sets in onChange", () => {
+    const listener = vi.fn();
+    const onChange = vi.fn(({ get, set }) => {
+      if (get().count === 1) set({ count: 2 });
+    });
+    const store = createStore({ initialState: { count: 0 }, onChange });
+    store.subscribe(listener);
+    store.set({ count: 1 });
+    expect(onChange).toHaveBeenCalledOnce();
+    expect(listener).toHaveBeenCalledTimes(2);
+    expect(listener).toHaveBeenLastCalledWith({ count: 2 });
+  });
+
+  it("should notify listeners of asynchronous sets in onChange", async () => {
+    const listener = vi.fn();
+    const store = createStore({
+      initialState: { count: 0, doubled: 0 },
+      onChange: async ({ get, set }) => {
+        await Promise.resolve();
+        const { count, doubled } = get();
+        if (doubled !== count * 2) set({ doubled: count * 2 });
+      },
+    });
+    store.subscribe(listener);
+    store.set({ count: 1 });
+    await vi.waitFor(() =>
+      expect(listener).toHaveBeenLastCalledWith({ count: 1, doubled: 2 }),
+    );
+  });
+
+  it("should notify earlier listeners of sets made by a listener", () => {
+    const store = createStore({ initialState: { count: 0 } });
+    const first = vi.fn();
+    store.subscribe(first);
+    store.subscribe(({ count }) => {
+      if (count === 1) store.set({ count: 2 });
+    });
+    store.set({ count: 1 });
+    expect(first).toHaveBeenLastCalledWith({ count: 2 });
   });
 
   describe("atomic stores", () => {
@@ -310,12 +395,33 @@ describe("createStore", () => {
       );
     });
 
+    it("should persist and dispatch changes made by an effect", () => {
+      const onChange = vi.fn();
+      const store = createStore({
+        initialState: { count: 0 },
+        persist: true,
+        key: "clamped",
+        onChange,
+      });
+      createEffect(store, ({ count }) => {
+        if (count > 10) store.set({ count: 10 });
+      }).mount();
+      store.set({ count: 50 });
+      expect(store.get()).toEqual({ count: 10 });
+      expect(localStorage.getItem("clamped")).toBe(
+        JSON.stringify({ count: 10 }),
+      );
+      expect(onChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({ state: { count: 10 } }),
+      );
+    });
+
     it("should persist changes made in onChange", () => {
       const store = createStore({
         persist: true,
         key,
         initialState: { count: 0, other: "foo" },
-        onChange: ({ state, set }) => set({ other: state.other + "bar" }),
+        onChange: ({ get, set }) => set({ other: get().other + "bar" }),
       });
       store.set({ count: 1 });
       expect(localStorage.getItem(key)).toBe(
