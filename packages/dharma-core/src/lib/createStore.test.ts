@@ -128,25 +128,25 @@ describe("createStore", () => {
     const snapshots: number[] = [];
     createStore({
       initialState: { count: 0 },
-      onLoad: ({ get, state, set }) => {
+      onLoad: ({ get, set }) => {
         set({ count: 1 });
-        snapshots.push(state.count, get().count);
+        snapshots.push(get().count);
       },
     });
-    expect(snapshots).toEqual([0, 1]);
+    expect(snapshots).toEqual([1]);
   });
 
   it("should return the latest state from get in onChange", () => {
     const snapshots: number[] = [];
     const store = createStore({
       initialState: { count: 0 },
-      onChange: ({ get, state, set }) => {
+      onChange: ({ get, set }) => {
         set({ count: 10 });
-        snapshots.push(state.count, get().count);
+        snapshots.push(get().count);
       },
     });
     store.set({ count: 1 });
-    expect(snapshots).toEqual([1, 10]);
+    expect(snapshots).toEqual([10]);
   });
 
   it("should return the latest state from get after an await", async () => {
@@ -155,16 +155,16 @@ describe("createStore", () => {
     const snapshots: number[] = [];
     const store = createStore({
       initialState: { count: 0 },
-      onAttach: async ({ get, state }) => {
+      onAttach: async ({ get }) => {
         await Promise.resolve();
-        snapshots.push(state.count, get().count);
+        snapshots.push(get().count);
         resolve();
       },
     });
     store.subscribe(vi.fn());
     store.set({ count: 5 });
     await done;
-    expect(snapshots).toEqual([0, 5]);
+    expect(snapshots).toEqual([5]);
   });
 
   it("should not dispatch again for synchronous sets in onChange", () => {
@@ -396,7 +396,8 @@ describe("createStore", () => {
     });
 
     it("should persist and dispatch changes made by an effect", () => {
-      const onChange = vi.fn();
+      const seen: { count: number }[] = [];
+      const onChange = vi.fn(({ get }) => seen.push(get()));
       const store = createStore({
         initialState: { count: 0 },
         persist: true,
@@ -411,9 +412,7 @@ describe("createStore", () => {
       expect(localStorage.getItem("clamped")).toBe(
         JSON.stringify({ count: 10 }),
       );
-      expect(onChange).toHaveBeenLastCalledWith(
-        expect.objectContaining({ state: { count: 10 } }),
-      );
+      expect(seen.at(-1)).toEqual({ count: 10 });
     });
 
     it("should persist changes made in onChange", () => {
