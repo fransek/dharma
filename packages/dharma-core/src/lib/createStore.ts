@@ -1,10 +1,10 @@
 import { createStorageAdapter } from "../internal/createStorageAdapter";
 import {
   Listener,
+  StateContext,
   StateModifier,
   Store,
   StoreConfig,
-  StoreEventContext,
 } from "../types/types";
 import { merge } from "./merge";
 
@@ -44,28 +44,21 @@ export const createStore = <TState, TActions = undefined>(
 
   const listeners = new Set<Listener<TState>>();
 
-  const actions = config.actions?.({
-    set,
+  const ctx: StateContext<TState> = {
     get,
+    set,
     reset,
     initialState,
-  }) as TActions;
+  };
 
-  // TODO: Replace with a static object once `state` is removed.
-  const getContext = (): StoreEventContext<TState> => ({
-    get,
-    state,
-    set,
-    reset,
-    initialState,
-  });
+  const actions = config.actions?.(ctx) as TActions;
 
   const storageAdapter = createStorageAdapter(config, get, set);
 
   const subscribe = (listener: Listener<TState>) => {
     if (listeners.size === 0) {
       storageAdapter?.onAttach();
-      onAttach?.(getContext());
+      onAttach?.(ctx);
     }
 
     listener(state);
@@ -74,7 +67,7 @@ export const createStore = <TState, TActions = undefined>(
     return () => {
       if (listeners.delete(listener) && listeners.size === 0) {
         storageAdapter?.onDetach();
-        onDetach?.(getContext());
+        onDetach?.(ctx);
       }
     };
   };
@@ -82,7 +75,7 @@ export const createStore = <TState, TActions = undefined>(
   const dispatch = () => {
     isSilent = true;
     try {
-      onChange?.(getContext());
+      onChange?.(ctx);
     } finally {
       isSilent = false;
     }
@@ -91,7 +84,7 @@ export const createStore = <TState, TActions = undefined>(
   };
 
   storageAdapter?.onLoad();
-  onLoad?.(getContext());
+  onLoad?.(ctx);
 
   return {
     get,

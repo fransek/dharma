@@ -48,7 +48,6 @@ Each hook receives a context object with:
 - `set` - Sets the state of the store.
 - `reset` - Resets the state of the store to its initial value.
 - `initialState` - The initial state of the store.
-- `state` - _Deprecated._ A snapshot of the state. Use `get()` instead.
 
 <Aside type="caution">
   Calls to `set` made synchronously inside `onChange` are folded into the

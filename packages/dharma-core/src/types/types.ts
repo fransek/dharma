@@ -35,32 +35,15 @@ export type Effect = {
   unmount: () => void;
 };
 
-// TODO: Deprecate and replace occurrences with `ActionContext` once `state` is removed.
-export type StoreEventContext<TState> = {
-  /** Returns the current state of the store. */
-  get: () => TState;
-  /**
-   * A snapshot of the state.
-   * @deprecated Use `get()` instead.
-   */
-  state: TState;
-  /** The initial state of the store. */
-  initialState: TState;
-  /** Sets the state of the store. */
-  set: SetState<TState>;
-  /** Resets the state of the store to its initial value. */
-  reset: () => TState;
-};
-
 export type StoreEventListener<TState> = (
-  context: StoreEventContext<TState>,
+  context: StateContext<TState>,
 ) => void;
 
 export type StateModifier<TState> =
   | Partial<TState>
   | ((state: TState) => Partial<TState>);
 
-export type ActionContext<TState> = {
+export type StateContext<TState> = Readonly<{
   /** Returns the current state of the store. */
   get: () => TState;
   /** Sets the state of the store. */
@@ -69,10 +52,10 @@ export type ActionContext<TState> = {
   reset: () => TState;
   /** The initial state of the store. */
   initialState: TState;
-};
+}>;
 
 export type StoreActions<TState, TActions> = (
-  context: ActionContext<TState>,
+  context: StateContext<TState>,
 ) => TActions;
 
 export type BaseConfig<TState, TActions> = {
@@ -130,3 +113,8 @@ export type PersistConfig = {
 
 export type StoreConfig<TState, TActions> = BaseConfig<TState, TActions> &
   (PersistConfig | NoPersistConfig);
+
+/** @deprecated Use `StateContext` instead. */
+export type StoreEventContext<TState> = StateContext<TState>;
+/** @deprecated Use `StateContext` instead. */
+export type ActionContext<TState> = StateContext<TState>;
