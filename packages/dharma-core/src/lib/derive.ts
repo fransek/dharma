@@ -69,9 +69,7 @@ export const derive = <TState, TActions, TDerived>(
   };
 
   const mount = () => {
-    if (!unsubscribe) {
-      unsubscribe = store.subscribe(listener);
-    }
+    unsubscribe ??= store.subscribe(listener);
     return unmount;
   };
 

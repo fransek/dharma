@@ -32,9 +32,7 @@ export const createEffect = <TState, TActions, TDerived>(
   };
 
   const mount = () => {
-    if (!unsubscribe) {
-      unsubscribe = store.subscribe(effect);
-    }
+    unsubscribe ??= store.subscribe(effect);
     return unmount;
   };
 

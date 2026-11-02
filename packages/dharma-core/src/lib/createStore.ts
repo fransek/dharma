@@ -71,7 +71,7 @@ export const createStore = <TState, TActions = undefined>(
     } finally {
       isSilent = false;
     }
-    void storageAdapter?.onChange(state);
+    storageAdapter?.onChange(state);
     listeners.forEach((listener) => listener(state));
   };
 
