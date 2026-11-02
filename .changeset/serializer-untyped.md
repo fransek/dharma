@@ -2,4 +2,4 @@
 "dharma-core": minor
 ---
 
-`Serializer` is no longer generic. `stringify` now takes `unknown` and `parse` returns `unknown`.
+`Serializer` is no longer generic. Like `JSON`, `stringify` takes `any` and `parse` returns `any`.

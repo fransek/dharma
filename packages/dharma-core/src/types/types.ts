@@ -97,10 +97,12 @@ export type StorageAPI = {
   setItem: (key: string, value: string) => MaybePromise<void>;
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type Serializer = {
-  stringify: (value: unknown) => string;
-  parse: (value: string) => unknown;
+  stringify: (value: any) => string;
+  parse: (value: string) => any;
 };
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export type NoPersistConfig = {
   /** Whether to persist the state of the store. */
