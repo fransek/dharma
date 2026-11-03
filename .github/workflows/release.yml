@@ -41,6 +41,7 @@ jobs:
         run: pnpm install
 
       - name: Create release PR or build and publish packages
+        id: changesets
         uses: changesets/action@v1
         with:
           publish: pnpm ci:publish
@@ -48,3 +49,10 @@ jobs:
           commit: "release: version packages"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # docs/main is the Vercel production branch (dharma.fransek.dev), so it
+      # should only move when a release is actually published. main itself is
+      # served as the release candidate on next.dharma.fransek.dev.
+      - name: Deploy docs for the published release
+        if: steps.changesets.outputs.published == 'true'
+        run: git push origin HEAD:refs/heads/docs/main
